@@ -65,16 +65,13 @@ const DevotionalView = ({ devocional }) => {
           <div className="text-xs text-blue-600 dark:text-blue-400 uppercase font-semibold tracking-wider">VOCES DE ESPERANZA</div>
           <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">Devocional del día</div>
           <div className="text-sm text-gray-500 dark:text-gray-400">
-            {/* Aseguramos que la fecha se interprete correctamente antes de formatear.
-                Si d.fecha ya viene como 'YYYY-MM-DD' sin hora, new Date() podría interpretarlo como UTC.
-                Para forzar interpretación local si es solo fecha: new Date(devocional.fecha.replace(/-/g, '\/'))
-                o new Date(devocional.fecha + 'T00:00:00') si sabes que no tiene hora.
-                Pero si `devocional.fecha` puede tener hora y es un string ISO, `new Date()` es generalmente robusto.
-                Para la comparación, nos aseguramos que `d.fecha` se trate como local 'YYYY-MM-DD'.
-                Para la visualización, `toLocaleDateString` usa la zona horaria del navegador.
-            */}
-            {new Date(devocional.fecha.includes('T') ? devocional.fecha : devocional.fecha.replace(/-/g, '/') + ' 00:00:00')
-                .toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}
+            {(() => {
+              // Normaliza la fecha a solo YYYY-MM-DD para evitar desfase de zona
+              const fechaStr = devocional.fecha.split("T")[0];
+              const [y, m, d] = fechaStr.split("-");
+              const fechaLocal = new Date(Number(y), Number(m) - 1, Number(d));
+              return fechaLocal.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+            })()}
           </div>
         </div>
       </div>
