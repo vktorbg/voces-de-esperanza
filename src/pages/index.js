@@ -65,7 +65,16 @@ const DevotionalView = ({ devocional }) => {
           <div className="text-xs text-blue-600 dark:text-blue-400 uppercase font-semibold tracking-wider">VOCES DE ESPERANZA</div>
           <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">Devocional del día</div>
           <div className="text-sm text-gray-500 dark:text-gray-400">
-            {new Date(devocional.fecha).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}
+            {/* Aseguramos que la fecha se interprete correctamente antes de formatear.
+                Si d.fecha ya viene como 'YYYY-MM-DD' sin hora, new Date() podría interpretarlo como UTC.
+                Para forzar interpretación local si es solo fecha: new Date(devocional.fecha.replace(/-/g, '\/'))
+                o new Date(devocional.fecha + 'T00:00:00') si sabes que no tiene hora.
+                Pero si `devocional.fecha` puede tener hora y es un string ISO, `new Date()` es generalmente robusto.
+                Para la comparación, nos aseguramos que `d.fecha` se trate como local 'YYYY-MM-DD'.
+                Para la visualización, `toLocaleDateString` usa la zona horaria del navegador.
+            */}
+            {new Date(devocional.fecha.includes('T') ? devocional.fecha : devocional.fecha.replace(/-/g, '/') + ' 00:00:00')
+                .toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}
           </div>
         </div>
       </div>
@@ -130,11 +139,25 @@ const PlaceholderView = ({ title, IconComponent }) => ( // Renamed Icon to IconC
 const IndexPage = ({ data }) => {
   const [activeTab, setActiveTab] = useState("Devocionales");
 
-  const hoy = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+  // --- CÁLCULO DE LA FECHA LOCAL ---
+  const todayDate = new Date();
+  const year = todayDate.getFullYear();
+  const month = String(todayDate.getMonth() + 1).padStart(2, '0'); // Los meses son 0-indexados (0=Enero)
+  const day = String(todayDate.getDate()).padStart(2, '0');
+  const hoy = `${year}-${month}-${day}`; // Formato YYYY-MM-DD local
+  // --- FIN CÁLCULO DE LA FECHA LOCAL ---
+
+  // console.log("Fecha 'hoy' calculada (local):", hoy); // Descomenta para depuración
 
   const devocional = data.allGoogleSpreadsheetHoja1.nodes.find(d => {
-    if (!d.fecha) return false;
-    const fechaSheet = d.fecha.split(" ")[0].split("T")[0]; 
+    if (!d.fecha) {
+        // console.log("Entrada sin fecha:", d); // Descomenta para depuración
+        return false;
+    }
+    // Asumiendo que d.fecha puede ser 'YYYY-MM-DD HH:MM:SS' o 'YYYY-MM-DDTHH:MM:SS' o solo 'YYYY-MM-DD'
+    // Normalizamos a YYYY-MM-DD para la comparación
+    const fechaSheet = String(d.fecha).split(" ")[0].split("T")[0];
+    // console.log(`Comparando hoy (${hoy}) con fechaSheet (${fechaSheet}) de: ${d.titulo || 'Sin título'}`); // Descomenta para depuración
     return fechaSheet === hoy;
   });
   
@@ -162,14 +185,14 @@ const IndexPage = ({ data }) => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-      <main className="flex flex-col flex-grow overflow-y-auto p-4 sm:p-6 pb-40"> {/* <--- AUMENTA ESTE VALOR */}
+      <main className="flex flex-col flex-grow overflow-y-auto p-4 sm:p-6 pb-40"> {/* Mantienes tu pb-40 */}
         {renderContent()}
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-top-md z-50">
         <div className="flex justify-around max-w-md mx-auto">
           {tabs.map((tab) => {
-            const Icon = tab.icon; // Standard practice to Capitalize component variables
+            const Icon = tab.icon; 
             const isActive = activeTab === tab.name;
             return (
               <button
@@ -181,7 +204,7 @@ const IndexPage = ({ data }) => {
                               : "text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-300"
                             }`}
               >
-                <Icon className={`w-6 h-6 mb-1`} /> {/* Removed conditional class here, can be added if specific active icon style is needed */}
+                <Icon className={`w-6 h-6 mb-1`} /> 
                 <span className="text-xs font-medium">{tab.name}</span>
               </button>
             );
