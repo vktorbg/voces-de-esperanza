@@ -117,20 +117,18 @@ const DevotionalView = ({ devocional }) => {
           <button
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2"
             onClick={async () => {
-              const shareData = {
-                title: devocional.titulo,
-                text: `🌟 ${devocional.titulo}\n\n📖 ${devocional.versiculo} (${devocional.cita})\n\n🙏 Reflexión:\n${devocional.reflexion}\n\n🤔 Pregunta:\n${devocional.pregunta}\n\n🔥 Aplicación:\n${devocional.aplicacion}`,
-                url: window.location.href,
-              };
+              const textToShare = `${devocional.copytext}\n \n ${window.location.href}`;
               if (navigator.share) {
                 try {
-                  await navigator.share(shareData);
+                  await navigator.share({
+                    title: devocional.titulo,
+                    text: textToShare,
+                  });
                 } catch (err) {
                   // usuario canceló o error
                 }
               } else {
-                // fallback: copiar al portapapeles
-                navigator.clipboard.writeText(shareData.text).then(() =>
+                navigator.clipboard.writeText(textToShare).then(() =>
                   alert("¡Texto copiado! Puedes pegarlo en WhatsApp, Telegram, etc.")
                 );
               }
@@ -271,7 +269,7 @@ const QuienesSomosView = () => {
               <li><strong>Pastor Bernabé Vázquez:</strong> Pastor.</li>
               <li><strong>Misael Cabrera:</strong> Tutor.</li>
               <li><strong>Pastora Lilia Meza:</strong> Pastora.</li>
-              <li><strong>Víctor Briceño:</strong> Maestro de español y Director técnico.</li>
+              <li><strong>Víctor Briceño:</strong> Director técnico.</li>
             </ul>
           </div>
 
