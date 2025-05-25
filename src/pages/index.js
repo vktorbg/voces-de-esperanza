@@ -79,7 +79,8 @@ const DevotionalView = ({ devocional }) => {
       </div>
 
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">
-         {devocional.titulo}
+         <span role="img" aria-label="star emoji" className="mr-2"></span>
+           {devocional.titulo}
       </h1>
 
       <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
