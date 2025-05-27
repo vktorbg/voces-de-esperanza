@@ -154,7 +154,9 @@ const DevotionalView = ({ devocional }) => {
 };
 
 const VideosView = () => {
+  // Add the new video first in the array
   const videos = [
+    { id: "ze9ZMur-g98", title: "YouTube Short Nuevo" },
     { id: "1kTJjSjxObg", title: "YouTube Short 1" },
     { id: "mH9BtLuElyg", title: "YouTube Short 2" },
     { id: "Bz7w2GZXijQ", title: "YouTube Short 3" },
@@ -163,6 +165,10 @@ const VideosView = () => {
     { id: "46xV9VF2y1M", title: "YouTube Short 6" },
   ];
   const youtubeIconUrl = "https://www.vectorlogo.zone/logos/youtube/youtube-icon.svg"; // Red and white YouTube icon
+
+  // The first video will be shown above the button, the rest below in reverse order
+  const [firstVideo, ...restVideos] = videos;
+  const restVideosReversed = [...restVideos].reverse();
 
   return (
     <div className="font-sans max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
@@ -178,7 +184,7 @@ const VideosView = () => {
           <img 
             src={youtubeIconUrl}
             alt="YouTube" 
-            className="w-16 h-16 sm:w-20 sm:h-20 mb-2 sm:mb-3" // Opacity removed, icon has its own colors
+            className="w-16 h-16 sm:w-20 sm:h-20 mb-2 sm:mb-3"
           />
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-1 sm:mb-2 shadow-sm">Nuestros Videos</h2>
           <p className="text-sm sm:text-base text-gray-200 max-w-md">
@@ -189,39 +195,49 @@ const VideosView = () => {
       
       {/* Content area with padding */}
       <div className="p-4 sm:p-6">
-        {/* Shorts en columna, formato vertical */}
         <div className="flex flex-col gap-8 mb-8 items-center">
-          {videos.map((video, idx) => (
-            <React.Fragment key={video.id}>
-              <div className="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md overflow-hidden flex flex-col items-center w-[320px] max-w-full mx-auto">
-                <div className="relative w-[320px] h-[570px] max-w-full mx-auto"> {/* Aspect ratio for Shorts */}
-                  <iframe
-                    className="absolute top-0 left-0 w-full h-full rounded-t-lg sm:rounded-lg"
-                    src={`https://www.youtube.com/embed/${video.id}?playlist=${video.id}&loop=1&autoplay=0&mute=0`}
-                    title={video.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
+          {/* First video */}
+          <div className="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md overflow-hidden flex flex-col items-center w-[320px] max-w-full mx-auto">
+            <div className="relative w-[320px] h-[570px] max-w-full mx-auto">
+              <iframe
+                className="absolute top-0 left-0 w-full h-full rounded-t-lg sm:rounded-lg"
+                src={`https://www.youtube.com/embed/${firstVideo.id}?playlist=${firstVideo.id}&loop=1&autoplay=0&mute=0`}
+                title={firstVideo.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+          </div>
+          {/* Button */}
+          <div className="text-center py-4">
+            <a
+              href="https://www.youtube.com/@vocesdesperanza025" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-sm sm:text-base"
+            >
+              <img src={youtubeIconUrl} alt="" className="w-5 h-5 mr-2" />
+              Visita y Sigue Nuestro Canal
+            </a>
+            <p className="mt-3 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+              ¡No te pierdas nuestros últimos videos!
+            </p>
+          </div>
+          {/* Rest of videos in reverse order */}
+          {restVideosReversed.map((video) => (
+            <div key={video.id} className="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md overflow-hidden flex flex-col items-center w-[320px] max-w-full mx-auto">
+              <div className="relative w-[320px] h-[570px] max-w-full mx-auto">
+                <iframe
+                  className="absolute top-0 left-0 w-full h-full rounded-t-lg sm:rounded-lg"
+                  src={`https://www.youtube.com/embed/${video.id}?playlist=${video.id}&loop=1&autoplay=0&mute=0`}
+                  title={video.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
               </div>
-              {idx === 0 && ( // Show button after the first video
-                <div className="text-center py-4">
-                  <a
-                    href="https://www.youtube.com/@vocesdesperanza025" 
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-sm sm:text-base"
-                  >
-                    <img src={youtubeIconUrl} alt="" className="w-5 h-5 mr-2" /> {/* Alt empty as button has text */}
-                    Visita y Sigue Nuestro Canal
-                  </a>
-                  <p className="mt-3 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                    ¡No te pierdas nuestros últimos videos!
-                  </p>
-                </div>
-              )}
-            </React.Fragment>
+            </div>
           ))}
         </div>
       </div>
@@ -264,7 +280,7 @@ const QuienesSomosView = () => {
           <div>
             <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">Nuestro <strong>Equipo de Capacitación</strong> está compuesto por:</p>
             <ul className="list-disc list-inside pl-4 space-y-1">
-              <li><strong>Dr. Phil English:</strong> Director, misionero canadiense.</li>
+              <li><strong>Phil English:</strong> Director.</li>
               <li><strong>Christopher e Irys Chantres:</strong> Consejeros.</li>
               <li><strong>Pastor Bernabé Vázquez:</strong> Pastor.</li>
               <li><strong>Misael Cabrera:</strong> Tutor.</li>
