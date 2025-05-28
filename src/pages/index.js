@@ -49,6 +49,7 @@ export const query = graphql`
   }
 `
 
+// Devocionales y Quiénes Somos: menos ancho en móvil
 const DevotionalView = ({ devocional }) => {
   if (!devocional) {
     return (
@@ -61,7 +62,8 @@ const DevotionalView = ({ devocional }) => {
   }
 
   return (
-    <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto p-4 sm:p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+    <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto p-4 sm:p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg"
+         style={{ maxWidth: '95vw' }}>
       <div className="flex items-center mb-6">
         <img src="/icon.jpg" alt="Logo Voces de Esperanza" className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg mr-4 shadow" />
         <div>
@@ -171,7 +173,8 @@ const VideosView = () => {
   const restVideosReversed = [...restVideos].reverse();
 
   return (
-    <div className="font-sans w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+    <div className="font-sans w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden px-2"
+         style={{ maxWidth: '98vw' }}>
       {/* Banner with Background Image */}
       <div className="relative h-48 sm:h-64">
         {/* <!-- REPLACE WITH YOUR IMAGE --> */}
@@ -247,7 +250,8 @@ const VideosView = () => {
 
 const QuienesSomosView = () => {
   return (
-    <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+    <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden"
+         style={{ maxWidth: '95vw' }}>
       {/* Banner with Background Image */}
       <div className="relative h-48 sm:h-64">
         {/* <!-- REPLACE WITH YOUR IMAGE --> */}
@@ -320,7 +324,8 @@ const QuienesSomosView = () => {
 
 const RecursosView = () => {
   return (
-    <div className="font-sans w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+    <div className="font-sans w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden px-2"
+         style={{ maxWidth: '98vw' }}>
       {/* Banner con imagen */}
       <div className="relative h-48 sm:h-64">
         <img 
