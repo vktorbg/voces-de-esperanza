@@ -319,11 +319,16 @@ const QuienesSomosView = () => {
 };
 
 const RecursosView = () => {
+  const [openSection, setOpenSection] = useState(null);
+
+  const handleToggle = (section) => {
+    setOpenSection(openSection === section ? null : section);
+  };
+
   return (
     <div className="font-sans max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
       {/* Banner with Background Image */}
       <div className="relative h-48 sm:h-64">
-        {/* <!-- REPLACE WITH YOUR IMAGE --> */}
         <img 
           src="/banner-recursos.jpg" 
           alt="Recursos banner background" 
@@ -331,21 +336,79 @@ const RecursosView = () => {
         />
         <div className="absolute inset-0 bg-green-700 bg-opacity-60 flex flex-col items-center justify-center text-center p-4">
           <DocumentTextIcon className="w-16 h-16 sm:w-20 sm:h-20 text-white mb-2 sm:mb-3 opacity-90" />
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-1 sm:mb-2 shadow-sm">Recursos Bíblicos</h2>
-          <p className="text-sm sm:text-base text-gray-200 max-w-md">Materiales para tu crecimiento espiritual.</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-1 sm:mb-2 shadow-sm">Recursos para el Liderazgo</h2>
+          <p className="text-sm sm:text-base text-gray-200 max-w-md">Materiales para tu crecimiento espiritual y liderazgo.</p>
         </div>
       </div>
       
       {/* Content area with padding */}
-      <div className="p-6 sm:p-8 text-center">
-        <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Próximamente...</h3>
-        <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-base sm:text-lg max-w-xl mx-auto">
-          En esta sección encontrarás una cuidada selección de <strong>recursos bíblicos y lecturas recomendadas</strong> para enriquecer tu estudio de la Palabra y fomentar tu crecimiento espiritual.
-        </p>
-        <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-base sm:text-lg mt-3 max-w-xl mx-auto">
-          Estamos trabajando para ofrecerte materiales valiosos que te ayuden a profundizar en tu fe. ¡Vuelve pronto!
-        </p>
-        <BookOpenIcon className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mt-8"/>
+      <div className="p-6 sm:p-8">
+        {/* Sección 1: Discipulado */}
+        <div className="mb-6">
+          <button
+            className="w-full flex justify-between items-center px-4 py-3 bg-green-100 dark:bg-green-900 rounded-lg font-semibold text-lg text-left text-green-800 dark:text-green-200 focus:outline-none focus:ring-2 focus:ring-green-400 transition"
+            onClick={() => handleToggle('discipulado')}
+            aria-expanded={openSection === 'discipulado'}
+          >
+            Recursos para el Discipulado
+            <span className="ml-2">{openSection === 'discipulado' ? '▲' : '▼'}</span>
+          </button>
+          {openSection === 'discipulado' && (
+            <div className="mt-4 bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+              <div className="w-full flex justify-center mb-4">
+                <iframe
+                  src="/pdfs/Manual%20del%20Estudiante.pdf"
+                  title="Manual del Estudiante"
+                  width="100%"
+                  height="500px"
+                  className="rounded border shadow"
+                ></iframe>
+              </div>
+              <div className="text-center">
+                <a
+                  href="/pdfs/Manual%20del%20Estudiante.pdf"
+                  download
+                  className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
+                >
+                  Descargar Manual del Estudiante
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
+        {/* Sección 2: Seminario */}
+        <div>
+          <button
+            className="w-full flex justify-between items-center px-4 py-3 bg-green-100 dark:bg-green-900 rounded-lg font-semibold text-lg text-left text-green-800 dark:text-green-200 focus:outline-none focus:ring-2 focus:ring-green-400 transition"
+            onClick={() => handleToggle('seminario')}
+            aria-expanded={openSection === 'seminario'}
+          >
+            Recursos del Seminario
+            <span className="ml-2">{openSection === 'seminario' ? '▲' : '▼'}</span>
+          </button>
+          {openSection === 'seminario' && (
+            <div className="mt-4 bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+              <div className="w-full flex justify-center mb-4">
+                <iframe
+                  src="/pdfs/Manual%20del%20Maestro.pdf"
+                  title="Manual del Maestro"
+                  width="100%"
+                  height="500px"
+                  className="rounded border shadow"
+                ></iframe>
+              </div>
+              <div className="text-center">
+                <a
+                  href="/pdfs/Manual%20del%20Maestro.pdf"
+                  download
+                  className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
+                >
+                  Descargar Manual del Maestro
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
