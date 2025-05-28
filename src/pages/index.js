@@ -324,8 +324,8 @@ const QuienesSomosView = () => {
 
 const RecursosView = () => {
   return (
-    <div className="font-sans w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden px-2"
-         style={{ maxWidth: '98vw' }}>
+    <div className="font-sans w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden"
+         style={{ maxWidth: '95vw' }}> {/* Consider reducing to 95vw or similar if issues persist */}
       {/* Banner superior */}
       <div className="relative h-44 sm:h-60">
         <img
@@ -340,7 +340,8 @@ const RecursosView = () => {
         </div>
       </div>
 
-      {/* Secciones */}
+      {/* Secciones - This div now handles all padding for the content below the banner */}
+      {/* The p-4 sm:p-8 here will provide consistent padding including horizontal */}
       <div className="p-4 sm:p-8 space-y-7">
         {/* Discipulado */}
         <section className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow flex flex-col items-center px-4 py-6">

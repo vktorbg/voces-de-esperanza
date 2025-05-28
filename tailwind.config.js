@@ -13,10 +13,5 @@ module.exports = {
     },
   },
   plugins: [],
-  safelist: [
-    "bg-white", "dark:bg-gray-900", "border", "border-gray-200", "dark:border-gray-700",
-    "rounded-xl", "shadow", "px-4", "py-6", "text-green-800", "dark:text-green-300",
-    "text-indigo-800", "dark:text-indigo-300", "bg-green-800", "hover:bg-green-900",
-    "bg-indigo-800", "hover:bg-indigo-900", "text-white", "font-semibold"
-  ],
+  
 }
