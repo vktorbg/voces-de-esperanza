@@ -1,7 +1,7 @@
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
-    "./src/pages/**/*.{js,jsx,ts,tsx}",
+    
   ],
   darkMode: 'media', // or 'class'
   theme: {

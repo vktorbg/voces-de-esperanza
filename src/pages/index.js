@@ -174,7 +174,7 @@ const VideosView = () => {
 
   return (
     <div className="font-sans w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden px-2"
-         style={{ maxWidth: '98vw' }}>
+         style={{ maxWidth: '95vw' }}>
       {/* Banner with Background Image */}
       <div className="relative h-48 sm:h-64">
         {/* <!-- REPLACE WITH YOUR IMAGE --> */}
@@ -325,7 +325,7 @@ const QuienesSomosView = () => {
 const RecursosView = () => {
   return (
     <div className="font-sans w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden px-2"
-         style={{ maxWidth: '98vw' }}>
+         style={{ maxWidth: '95vw' }}>
       {/* Banner con imagen */}
       <div className="relative h-48 sm:h-64">
         <img 
