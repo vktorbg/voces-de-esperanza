@@ -354,25 +354,15 @@ const RecursosView = () => {
             <span className="ml-2">{openSection === 'discipulado' ? '▲' : '▼'}</span>
           </button>
           {openSection === 'discipulado' && (
-            <div className="mt-4 bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <div className="w-full flex justify-center mb-4">
-                <iframe
-                  src="/pdfs/Manual%20del%20Estudiante.pdf"
-                  title="Manual del Estudiante"
-                  width="100%"
-                  height="500px"
-                  className="rounded border shadow"
-                ></iframe>
-              </div>
-              <div className="text-center">
-                <a
-                  href="/pdfs/Manual%20del%20Estudiante.pdf"
-                  download
-                  className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
-                >
-                  Descargar Manual del Estudiante
-                </a>
-              </div>
+            <div className="mt-4 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
+              <a
+                href="/pdfs/Manual%20del%20Estudiante.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
+              >
+                Ver Manual del Estudiante
+              </a>
             </div>
           )}
         </div>
@@ -387,25 +377,15 @@ const RecursosView = () => {
             <span className="ml-2">{openSection === 'seminario' ? '▲' : '▼'}</span>
           </button>
           {openSection === 'seminario' && (
-            <div className="mt-4 bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <div className="w-full flex justify-center mb-4">
-                <iframe
-                  src="/pdfs/Manual%20del%20Maestro.pdf"
-                  title="Manual del Maestro"
-                  width="100%"
-                  height="500px"
-                  className="rounded border shadow"
-                ></iframe>
-              </div>
-              <div className="text-center">
-                <a
-                  href="/pdfs/Manual%20del%20Maestro.pdf"
-                  download
-                  className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
-                >
-                  Descargar Manual del Maestro
-                </a>
-              </div>
+            <div className="mt-4 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
+              <a
+                href="/pdfs/Manual%20del%20Maestro.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
+              >
+                Ver Manual del Maestro
+              </a>
             </div>
           )}
         </div>
