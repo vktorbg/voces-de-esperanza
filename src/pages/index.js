@@ -61,7 +61,7 @@ const DevotionalView = ({ devocional }) => {
   }
 
   return (
-    <div className="font-sans max-w-2xl mx-auto p-4 sm:p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+    <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto p-4 sm:p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
       <div className="flex items-center mb-6">
         <img src="/icon.jpg" alt="Logo Voces de Esperanza" className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg mr-4 shadow" />
         <div>
@@ -171,7 +171,7 @@ const VideosView = () => {
   const restVideosReversed = [...restVideos].reverse();
 
   return (
-    <div className="font-sans max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+    <div className="font-sans w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
       {/* Banner with Background Image */}
       <div className="relative h-48 sm:h-64">
         {/* <!-- REPLACE WITH YOUR IMAGE --> */}
@@ -247,7 +247,7 @@ const VideosView = () => {
 
 const QuienesSomosView = () => {
   return (
-    <div className="font-sans max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+    <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
       {/* Banner with Background Image */}
       <div className="relative h-48 sm:h-64">
         {/* <!-- REPLACE WITH YOUR IMAGE --> */}
@@ -319,76 +319,62 @@ const QuienesSomosView = () => {
 };
 
 const RecursosView = () => {
-  const [openSection, setOpenSection] = useState(null);
-
-  const handleToggle = (section) => {
-    setOpenSection(openSection === section ? null : section);
-  };
-
   return (
-    <div className="font-sans max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-      {/* Banner with Background Image */}
+    <div className="font-sans w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+      {/* Banner con imagen */}
       <div className="relative h-48 sm:h-64">
         <img 
           src="/banner-recursos.jpg" 
           alt="Recursos banner background" 
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-green-700 bg-opacity-60 flex flex-col items-center justify-center text-center p-4">
-          <DocumentTextIcon className="w-16 h-16 sm:w-20 sm:h-20 text-white mb-2 sm:mb-3 opacity-90" />
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-1 sm:mb-2 shadow-sm">Recursos para el Liderazgo</h2>
-          <p className="text-sm sm:text-base text-gray-200 max-w-md">Materiales para tu crecimiento espiritual y liderazgo.</p>
+        <div className="absolute inset-0 bg-gradient-to-t from-green-900/80 via-green-800/60 to-transparent flex flex-col items-center justify-center text-center p-4">
+          <DocumentTextIcon className="w-16 h-16 sm:w-20 sm:h-20 text-white mb-2 sm:mb-3 opacity-90 drop-shadow-lg" />
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-1 sm:mb-2 shadow-sm drop-shadow-lg">Recursos para el Liderazgo</h2>
+          <p className="text-sm sm:text-base text-gray-100 max-w-md drop-shadow">Materiales para tu crecimiento espiritual y liderazgo.</p>
         </div>
       </div>
       
-      {/* Content area with padding */}
-      <div className="p-6 sm:p-8">
-        {/* Sección 1: Discipulado */}
-        <div className="mb-6">
-          <button
-            className="w-full flex justify-between items-center px-4 py-3 bg-green-100 dark:bg-green-900 rounded-lg font-semibold text-lg text-left text-green-800 dark:text-green-200 focus:outline-none focus:ring-2 focus:ring-green-400 transition"
-            onClick={() => handleToggle('discipulado')}
-            aria-expanded={openSection === 'discipulado'}
+      {/* Secciones de recursos */}
+      <div className="p-6 sm:p-10 space-y-8">
+        {/* Discipulado */}
+        <section className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow flex flex-col items-center px-6 py-8">
+          <div className="flex items-center gap-3 mb-2">
+            <BookOpenIcon className="w-7 h-7 text-green-700 dark:text-green-300" />
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Recursos para el Discipulado</h3>
+          </div>
+          <p className="text-base text-gray-700 dark:text-gray-300 mb-5 text-center max-w-lg">
+            Materiales y herramientas para el crecimiento personal y espiritual de los estudiantes y discipuladores.
+          </p>
+          <a
+            href="/pdfs/Manual%20del%20Estudiante.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2.5 rounded-lg shadow transition text-base"
           >
-            Recursos para el Discipulado
-            <span className="ml-2">{openSection === 'discipulado' ? '▲' : '▼'}</span>
-          </button>
-          {openSection === 'discipulado' && (
-            <div className="mt-4 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
-              <a
-                href="/pdfs/Manual%20del%20Estudiante.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
-              >
-                Ver Manual del Estudiante
-              </a>
-            </div>
-          )}
-        </div>
-        {/* Sección 2: Seminario */}
-        <div>
-          <button
-            className="w-full flex justify-between items-center px-4 py-3 bg-green-100 dark:bg-green-900 rounded-lg font-semibold text-lg text-left text-green-800 dark:text-green-200 focus:outline-none focus:ring-2 focus:ring-green-400 transition"
-            onClick={() => handleToggle('seminario')}
-            aria-expanded={openSection === 'seminario'}
+            <DocumentTextIcon className="w-5 h-5" />
+            Ver Manual del Estudiante
+          </a>
+        </section>
+        {/* Seminario */}
+        <section className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow flex flex-col items-center px-6 py-8">
+          <div className="flex items-center gap-3 mb-2">
+            <DocumentTextIcon className="w-7 h-7 text-indigo-700 dark:text-indigo-300" />
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Recursos del Seminario</h3>
+          </div>
+          <p className="text-base text-gray-700 dark:text-gray-300 mb-5 text-center max-w-lg">
+            Guías, manuales y materiales de apoyo para maestros y líderes en el proceso de enseñanza y formación.
+          </p>
+          <a
+            href="/pdfs/Manual%20del%20Maestro.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-indigo-700 hover:bg-indigo-800 text-white font-semibold px-6 py-2.5 rounded-lg shadow transition text-base"
           >
-            Recursos del Seminario
-            <span className="ml-2">{openSection === 'seminario' ? '▲' : '▼'}</span>
-          </button>
-          {openSection === 'seminario' && (
-            <div className="mt-4 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
-              <a
-                href="/pdfs/Manual%20del%20Maestro.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
-              >
-                Ver Manual del Maestro
-              </a>
-            </div>
-          )}
-        </div>
+            <DocumentTextIcon className="w-5 h-5" />
+            Ver Manual del Maestro
+          </a>
+        </section>
       </div>
     </div>
   );
