@@ -324,60 +324,60 @@ const QuienesSomosView = () => {
 
 const RecursosView = () => {
   return (
-    <div className="font-sans w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden px-2"
-         style={{ maxWidth: '95vw' }}>
-      {/* Banner con imagen */}
-      <div className="relative h-48 sm:h-64">
-        <img 
-          src="/banner-recursos.jpg" 
-          alt="Recursos banner background" 
+    <div className="font-sans w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden px-2"
+         style={{ maxWidth: '98vw' }}>
+      {/* Banner superior */}
+      <div className="relative h-44 sm:h-60">
+        <img
+          src="/banner-recursos.jpg"
+          alt="Recursos banner background"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-green-900/80 via-green-800/60 to-transparent flex flex-col items-center justify-center text-center p-4">
-          <DocumentTextIcon className="w-16 h-16 sm:w-20 sm:h-20 text-white mb-2 sm:mb-3 opacity-90 drop-shadow-lg" />
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-1 sm:mb-2 shadow-sm drop-shadow-lg">Recursos para el Liderazgo</h2>
-          <p className="text-sm sm:text-base text-gray-100 max-w-md drop-shadow">Materiales para tu crecimiento espiritual y liderazgo.</p>
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-800/60 to-transparent flex flex-col items-center justify-center text-center p-4">
+          <DocumentTextIcon className="w-14 h-14 sm:w-20 sm:h-20 text-white mb-2 sm:mb-3 opacity-90 drop-shadow" />
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2 shadow-sm drop-shadow">Recursos para el Liderazgo</h2>
+          <p className="text-xs sm:text-base text-gray-100 max-w-md drop-shadow">Materiales para tu crecimiento espiritual y liderazgo.</p>
         </div>
       </div>
-      
-      {/* Secciones de recursos */}
-      <div className="p-6 sm:p-10 space-y-8">
+
+      {/* Secciones */}
+      <div className="p-4 sm:p-8 space-y-7">
         {/* Discipulado */}
-        <section className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow flex flex-col items-center px-6 py-8">
-          <div className="flex items-center gap-3 mb-2">
-            <BookOpenIcon className="w-7 h-7 text-green-700 dark:text-green-300" />
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Recursos para el Discipulado</h3>
+        <section className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow flex flex-col items-center px-4 py-6">
+          <div className="flex items-center gap-2 mb-2">
+            <BookOpenIcon className="w-6 h-6 text-green-800 dark:text-green-300" />
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Recursos para el Discipulado</h3>
           </div>
-          <p className="text-base text-gray-700 dark:text-gray-300 mb-5 text-center max-w-lg">
-            Materiales y herramientas para el crecimiento personal y espiritual de los estudiantes y discipuladores.
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 text-center max-w-md">
+            Herramientas y materiales para el acompañamiento y formación de discípulos, enfocados en el crecimiento personal y espiritual.
           </p>
           <a
             href="/pdfs/Manual%20del%20Estudiante.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2.5 rounded-lg shadow transition text-base"
+            className="inline-flex items-center gap-2 bg-green-800 hover:bg-green-900 text-white font-semibold px-5 py-2 rounded-md shadow transition text-base"
           >
             <DocumentTextIcon className="w-5 h-5" />
-            Ver Manual del Estudiante
+            Manual del Estudiante
           </a>
         </section>
         {/* Seminario */}
-        <section className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow flex flex-col items-center px-6 py-8">
-          <div className="flex items-center gap-3 mb-2">
-            <DocumentTextIcon className="w-7 h-7 text-indigo-700 dark:text-indigo-300" />
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Recursos del Seminario</h3>
+        <section className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow flex flex-col items-center px-4 py-6">
+          <div className="flex items-center gap-2 mb-2">
+            <DocumentTextIcon className="w-6 h-6 text-indigo-800 dark:text-indigo-300" />
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Recursos del Seminario</h3>
           </div>
-          <p className="text-base text-gray-700 dark:text-gray-300 mb-5 text-center max-w-lg">
-            Guías, manuales y materiales de apoyo para maestros y líderes en el proceso de enseñanza y formación.
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 text-center max-w-md">
+            Materiales de apoyo, guías y manuales para maestros y líderes en el proceso de enseñanza y formación bíblica.
           </p>
           <a
             href="/pdfs/Manual%20del%20Maestro.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-indigo-700 hover:bg-indigo-800 text-white font-semibold px-6 py-2.5 rounded-lg shadow transition text-base"
+            className="inline-flex items-center gap-2 bg-indigo-800 hover:bg-indigo-900 text-white font-semibold px-5 py-2 rounded-md shadow transition text-base"
           >
             <DocumentTextIcon className="w-5 h-5" />
-            Ver Manual del Maestro
+            Manual del Maestro
           </a>
         </section>
       </div>
