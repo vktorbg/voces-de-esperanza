@@ -69,9 +69,9 @@ const QuienesSomosView = () => {
             <ul className="list-disc list-inside pl-4 space-y-1">
               <li><strong>Phil English:</strong> Director.</li>
               <li><strong>Christopher e Irys Chantres:</strong> Consejeros.</li>
-              <li><strong>Pastor Bernabé Vázquez:</strong> Pastor.</li>
+              <li><strong>Bernabé Vázquez:</strong> Pastor.</li>
               <li><strong>Misael Cabrera:</strong> Tutor.</li>
-              <li><strong>Pastora Lilia Meza:</strong> Pastora.</li>
+              <li><strong>Lilia Meza:</strong> Pastora.</li>
               <li><strong>Víctor Briceño:</strong> Director técnico.</li>
             </ul>
           </div>

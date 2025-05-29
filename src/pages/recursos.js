@@ -39,6 +39,33 @@ const EyeIcon = (props) => (
 // --- Fin Icon Components ---
 
 const RecursosView = () => {
+  const compartirEnlace = (url) => {
+    navigator.clipboard.writeText(url)
+      .then(() => {
+        alert("Enlace copiado al portapapeles: " + url);
+      })
+      .catch((err) => {
+        console.error("Error al copiar el enlace: ", err);
+      });
+  };
+
+  const estudianteUrl = "/pdfs/Manual-del-Estudiante.pdf";
+  const maestroUrl = "/pdfs/Manual-del-Maestro.pdf";
+
+  const sharePdf = (url, tipo) => {
+    if (navigator.share) {
+      navigator.share({
+        title: `Compartir ${tipo}`,
+        url: url,
+      })
+        .then(() => console.log(`Compartido con éxito ${tipo}`))
+        .catch((error) => console.error("Error al compartir:", error));
+    } else {
+      // Fallback para navegadores que no soportan la API de Web Share
+      compartirEnlace(url);
+    }
+  };
+
   return (
     <div className="font-sans w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden"
          style={{ maxWidth: '95vw' }}> {/* Ajustado a max-w-4xl, puedes cambiar a 98vw si prefieres */}
@@ -84,7 +111,7 @@ const RecursosView = () => {
               Leer Manual Estudiante
             </Link>
             <a
-              href="/pdfs/Manual-del-Estudiante.pdf" // Asegúrate que este nombre es correcto
+              href="/pdfs/Manual-del-Estudiante.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-700 text-white font-medium px-6 py-3 rounded-lg shadow hover:shadow-md transition-all text-base"
@@ -92,6 +119,17 @@ const RecursosView = () => {
               <ArrowDownTrayIcon className="w-5 h-5" />
               Descargar PDF
             </a>
+            <button
+              type="button"
+              onClick={() => sharePdf(estudianteUrl, "Manual del Estudiante")}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              title="Compartir o copiar enlace"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12l-3-3m0 0l3-3m-3 3h9" />
+              </svg>
+              Compartir PDF
+            </button>
           </div>
         </section>
 
@@ -119,7 +157,7 @@ const RecursosView = () => {
               Leer Manual Maestro
             </Link>
             <a
-              href="/pdfs/Manual-del-Maestro.pdf" // Asegúrate que este nombre es correcto
+              href="/pdfs/Manual-del-Maestro.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-700 text-white font-medium px-6 py-3 rounded-lg shadow hover:shadow-md transition-all text-base"
@@ -127,6 +165,17 @@ const RecursosView = () => {
               <ArrowDownTrayIcon className="w-5 h-5" />
               Descargar PDF
             </a>
+            <button
+              type="button"
+              onClick={() => sharePdf(maestroUrl, "Manual del Maestro")}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              title="Compartir o copiar enlace"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12l-3-3m0 0l3-3m-3 3h9" />
+              </svg>
+              Compartir PDF
+            </button>
           </div>
         </section>
       </div>
