@@ -219,12 +219,12 @@ const IndexPage = ({ data }) => {
   const contacts = [
     {
       name: "Christopher",
-      phone: "5211234567890", // Reemplaza con el número real
+      phone: "522462945809", // Reemplaza con el número real
       photo: "/chris.png",
     },
     {
       name: "Phil",
-      phone: "5219876543210", // Reemplaza con el número real
+      phone: "522223614495", // Reemplaza con el número real
       photo: "/phil.png",
     },
   ];
