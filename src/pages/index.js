@@ -1,9 +1,10 @@
 // File: voces-de-esperanza/src/pages/index.js
 
-import React, { useState } from "react"
-import { graphql } from "gatsby"
+import React from "react";
+import { graphql, Link } from "gatsby"; // Import Link from Gatsby
 
 // --- Icon Components (Heroicons - outline style) ---
+// These are kept as they are used by DevotionalView or the Navigation
 const BookOpenIcon = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
@@ -28,8 +29,6 @@ const DocumentTextIcon = (props) => (
     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
   </svg>
 );
-
-// YouTubeIcon component is removed as we'll use an <img> tag for external SVG/PNG.
 // --- End Icon Components ---
 
 export const query = graphql`
@@ -47,13 +46,13 @@ export const query = graphql`
       }
     }
   }
-`
+`;
 
-// Devocionales y Quiénes Somos: menos ancho en móvil
+// Devocional View Component
 const DevotionalView = ({ devocional }) => {
   if (!devocional) {
     return (
-      <div className="flex flex-col items-center justify-center flex-grow text-center p-8 max-w-2xl mx-auto"> {/* Added max-w-2xl mx-auto for consistency if no devotional */}
+      <div className="flex flex-col items-center justify-center flex-grow text-center p-8 max-w-2xl mx-auto">
         <BookOpenIcon className="w-16 h-16 text-gray-400 dark:text-gray-500 mb-4" />
         <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Sin devocional para hoy</h2>
         <p className="text-gray-500 dark:text-gray-400">Por favor, revisa más tarde.</p>
@@ -81,8 +80,9 @@ const DevotionalView = ({ devocional }) => {
       </div>
 
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">
-         <span role="img" aria-label="star emoji" className="mr-2"></span>
-           {devocional.titulo}
+         {/* Consider if emoji should be static or dynamic based on content */}
+         {/* <span role="img" aria-label="star emoji" className="mr-2">✨</span> */}
+         {devocional.titulo}
       </h1>
 
       <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -119,8 +119,8 @@ const DevotionalView = ({ devocional }) => {
           <button
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2"
             onClick={async () => {
-              const textToShare = `${devocional.copytext}\n \n ${window.location.href}`;
-              if (navigator.share) {
+              const textToShare = `${devocional.copytext}\n \n${typeof window !== 'undefined' ? window.location.href : ''}`;
+              if (typeof navigator !== 'undefined' && navigator.share) {
                 try {
                   await navigator.share({
                     title: devocional.titulo,
@@ -129,10 +129,12 @@ const DevotionalView = ({ devocional }) => {
                 } catch (err) {
                   // usuario canceló o error
                 }
-              } else {
+              } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
                 navigator.clipboard.writeText(textToShare).then(() =>
                   alert("¡Texto copiado! Puedes pegarlo en WhatsApp, Telegram, etc.")
                 );
+              } else {
+                alert("No se pudo copiar o compartir el texto. Por favor, intente manualmente.");
               }
             }}
           >
@@ -145,7 +147,7 @@ const DevotionalView = ({ devocional }) => {
             Compartir Devocional
           </button>
           <div className="text-xs text-gray-400 mt-2">
-            {navigator.share
+            {typeof navigator !== 'undefined' && navigator.share
               ? "Puedes compartir en WhatsApp, Telegram, redes sociales, etc."
               : "Si no ves opciones de compartir, el texto se copiará al portapapeles."}
           </div>
@@ -155,241 +157,9 @@ const DevotionalView = ({ devocional }) => {
   );
 };
 
-const VideosView = () => {
-  // Add the new video first in the array
-  const videos = [
-    { id: "ze9ZMur-g98", title: "YouTube Short Nuevo" },
-    { id: "1kTJjSjxObg", title: "YouTube Short 1" },
-    { id: "mH9BtLuElyg", title: "YouTube Short 2" },
-    { id: "Bz7w2GZXijQ", title: "YouTube Short 3" },
-    { id: "suA4dd5QzjY", title: "YouTube Short 4" },
-    { id: "axoHbLM9Gnw", title: "YouTube Short 5" },
-    { id: "46xV9VF2y1M", title: "YouTube Short 6" },
-  ];
-  const youtubeIconUrl = "https://www.vectorlogo.zone/logos/youtube/youtube-icon.svg"; // Red and white YouTube icon
 
-  // The first video will be shown above the button, the rest below in reverse order
-  const [firstVideo, ...restVideos] = videos;
-  const restVideosReversed = [...restVideos].reverse();
-
-  return (
-    <div className="font-sans w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden px-2"
-         style={{ maxWidth: '95vw' }}>
-      {/* Banner with Background Image */}
-      <div className="relative h-48 sm:h-64">
-        {/* <!-- REPLACE WITH YOUR IMAGE --> */}
-        <img 
-          src="/banner-videos.jpg" 
-          alt="Video banner background" 
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent flex flex-col items-center justify-center text-center p-4">
-          <img 
-            src={youtubeIconUrl}
-            alt="YouTube" 
-            className="w-16 h-16 sm:w-20 sm:h-20 mb-2 sm:mb-3"
-          />
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-1 sm:mb-2 shadow-sm">Nuestros Videos</h2>
-          <p className="text-sm sm:text-base text-gray-200 max-w-md">
-            Contenido inspirador en videos cortos. ¡Esperanza y sabiduría para tu día!
-          </p>
-        </div>
-      </div>
-      
-      {/* Content area with padding */}
-      <div className="p-4 sm:p-6">
-        <div className="flex flex-col gap-8 mb-8 items-center">
-          {/* First video */}
-          <div className="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md overflow-hidden flex flex-col items-center w-[320px] max-w-full mx-auto">
-            <div className="relative w-[320px] h-[570px] max-w-full mx-auto">
-              <iframe
-                className="absolute top-0 left-0 w-full h-full rounded-t-lg sm:rounded-lg"
-                src={`https://www.youtube.com/embed/${firstVideo.id}?playlist=${firstVideo.id}&loop=1&autoplay=0&mute=0`}
-                title={firstVideo.title}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
-          </div>
-          {/* Button */}
-          <div className="text-center py-4">
-            <a
-              href="https://www.youtube.com/@vocesdesperanza025" 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-sm sm:text-base"
-            >
-              <img src={youtubeIconUrl} alt="" className="w-5 h-5 mr-2" />
-              Visita y Sigue Nuestro Canal
-            </a>
-            <p className="mt-3 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-              ¡No te pierdas nuestros últimos videos!
-            </p>
-          </div>
-          {/* Rest of videos in reverse order */}
-          {restVideosReversed.map((video) => (
-            <div key={video.id} className="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md overflow-hidden flex flex-col items-center w-[320px] max-w-full mx-auto">
-              <div className="relative w-[320px] h-[570px] max-w-full mx-auto">
-                <iframe
-                  className="absolute top-0 left-0 w-full h-full rounded-t-lg sm:rounded-lg"
-                  src={`https://www.youtube.com/embed/${video.id}?playlist=${video.id}&loop=1&autoplay=0&mute=0`}
-                  title={video.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const QuienesSomosView = () => {
-  return (
-    <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden"
-         style={{ maxWidth: '95vw' }}>
-      {/* Banner with Background Image */}
-      <div className="relative h-48 sm:h-64">
-        {/* <!-- REPLACE WITH YOUR IMAGE --> */}
-        <img 
-          src="/banner-nosotros.jpg" 
-          alt="Quiénes Somos banner background" 
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center text-center p-4">
-          <UsersIcon className="w-16 h-16 sm:w-20 sm:h-20 text-white mb-2 sm:mb-3 opacity-90" />
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-1 sm:mb-2 shadow-sm">Quiénes Somos</h2>
-          <p className="text-sm sm:text-base text-gray-200 max-w-md">Conoce el corazón y la misión detrás de Voces de Esperanza.</p>
-        </div>
-      </div>
-
-      {/* Content area with padding */}
-      <div className="p-4 sm:p-6">
-        <div className="space-y-6 text-gray-700 dark:text-gray-300 leading-relaxed text-base">
-          <p>
-            <strong>Voces de Esperanza</strong> es un proyecto conjunto entre <strong>Ayuda para Vivir</strong> y nuestro <strong>Equipo de Capacitación</strong>. Este proyecto ofrece capacitación en discipulado y liderazgo en las siguientes áreas ministeriales bíblicas:
-          </p>
-          <ul className="list-disc list-inside pl-4 space-y-2">
-            <li>Desarrollo de Liderazgo,</li>
-            <li>El Seminario de Semillas y</li>
-            <li>Discipulado Enfocado (Ayuda para Vivir)</li>
-          </ul>
-          <p>
-            <strong>Ayuda para Vivir</strong> es un ministerio de consejería bíblica enfocado en ayudar a las personas a usar herramientas bíblicas para encontrar libertad y crecimiento espiritual. Christopher Chantres y su esposa dirigen este ministerio en Puebla, México.
-          </p>
-          <div>
-            <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">Nuestro <strong>Equipo de Capacitación</strong> está compuesto por:</p>
-            <ul className="list-disc list-inside pl-4 space-y-1">
-              <li><strong>Phil English:</strong> Director.</li>
-              <li><strong>Christopher e Irys Chantres:</strong> Consejeros.</li>
-              <li><strong>Pastor Bernabé Vázquez:</strong> Pastor.</li>
-              <li><strong>Misael Cabrera:</strong> Tutor.</li>
-              <li><strong>Pastora Lilia Meza:</strong> Pastora.</li>
-              <li><strong>Víctor Briceño:</strong> Director técnico.</li>
-            </ul>
-          </div>
-
-          <div className="mt-8 pt-6 pb-4 border-t border-gray-200 dark:border-gray-700">
-            <h3 className="text-xl font-semibold text-center text-gray-800 dark:text-gray-100 mb-4">
-              ¡Conéctate con nosotros!
-            </h3>
-            <div className="space-y-3 text-center">
-              <div className="text-gray-700 dark:text-gray-300">
-                <strong className="block sm:inline mb-1 sm:mb-0">WhatsApp:</strong>
-                <a href="https://wa.me/522223614495" target="_blank" rel="noopener noreferrer" className="ml-0 sm:ml-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 block sm:inline">
-                  +52 222 361 4495
-                </a>
-                <span className="mx-2 hidden sm:inline text-gray-400 dark:text-gray-500">|</span>
-                <a href="https://wa.me/522462945809" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 block sm:inline mt-1 sm:mt-0">
-                  +52 246 294 5809
-                </a>
-              </div>
-              <div className="text-gray-700 dark:text-gray-300">
-                <strong className="block sm:inline mb-1 sm:mb-0">Correo:</strong>
-                <a href="mailto:voces.deesperanza025@gmail.com" className="ml-0 sm:ml-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 block sm:inline">
-                  voces.deesperanza025@gmail.com
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const RecursosView = () => {
-  return (
-    <div className="font-sans w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden"
-         style={{ maxWidth: '95vw' }}> {/* Consider reducing to 95vw or similar if issues persist */}
-      {/* Banner superior */}
-      <div className="relative h-44 sm:h-60">
-        <img
-          src="/banner-recursos.jpg"
-          alt="Recursos banner background"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-800/60 to-transparent flex flex-col items-center justify-center text-center p-4">
-          <DocumentTextIcon className="w-14 h-14 sm:w-20 sm:h-20 text-white mb-2 sm:mb-3 opacity-90 drop-shadow" />
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2 shadow-sm drop-shadow">Recursos para el Liderazgo</h2>
-          <p className="text-xs sm:text-base text-gray-100 max-w-md drop-shadow">Materiales para tu crecimiento espiritual y liderazgo.</p>
-        </div>
-      </div>
-
-      {/* Secciones - This div now handles all padding for the content below the banner */}
-      {/* The p-4 sm:p-8 here will provide consistent padding including horizontal */}
-      <div className="p-4 sm:p-8 space-y-7">
-        {/* Discipulado */}
-        <section className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow flex flex-col items-center px-4 py-6">
-          <div className="flex items-center gap-2 mb-2">
-            <BookOpenIcon className="w-6 h-6 text-green-800 dark:text-green-300" />
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Recursos para el Discipulado</h3>
-          </div>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 text-center max-w-md">
-            Herramientas y materiales para el acompañamiento y formación de discípulos, enfocados en el crecimiento personal y espiritual.
-          </p>
-          <a
-            href="/pdfs/Manual%20del%20Estudiante.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-green-800 hover:bg-green-900 text-white font-semibold px-5 py-2 rounded-md shadow transition text-base"
-          >
-            <DocumentTextIcon className="w-5 h-5" />
-            Manual del Estudiante
-          </a>
-        </section>
-        {/* Seminario */}
-        <section className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow flex flex-col items-center px-4 py-6">
-          <div className="flex items-center gap-2 mb-2">
-            <DocumentTextIcon className="w-6 h-6 text-indigo-800 dark:text-indigo-300" />
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Recursos del Seminario</h3>
-          </div>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 text-center max-w-md">
-            Materiales de apoyo, guías y manuales para maestros y líderes en el proceso de enseñanza y formación bíblica.
-          </p>
-          <a
-            href="/pdfs/Manual%20del%20Maestro.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-indigo-800 hover:bg-indigo-900 text-white font-semibold px-5 py-2 rounded-md shadow transition text-base"
-          >
-            <DocumentTextIcon className="w-5 h-5" />
-            Manual del Maestro
-          </a>
-        </section>
-      </div>
-    </div>
-  );
-};
-
-
+// IndexPage now only renders DevotionalView and the navigation
 const IndexPage = ({ data }) => {
-  const [activeTab, setActiveTab] = useState("Devocionales");
-
   const todayDate = new Date();
   const year = todayDate.getFullYear();
   const month = String(todayDate.getMonth() + 1).padStart(2, '0');
@@ -400,57 +170,40 @@ const IndexPage = ({ data }) => {
     if (!d.fecha) {
         return false;
     }
+    // Ensure date comparison is robust, handle potential 'YYYY-MM-DD HH:MM:SS' from sheets
     const fechaSheet = String(d.fecha).split(" ")[0].split("T")[0];
     return fechaSheet === hoy;
   });
   
-  const tabs = [
-    { name: "Devocionales", icon: BookOpenIcon },
-    { name: "Videos", icon: PlayCircleIcon },
-    { name: "Quiénes somos", icon: UsersIcon },
-    { name: "Recursos", icon: DocumentTextIcon },
+  const navItems = [
+    { name: "Devocionales", path: "/", icon: BookOpenIcon },
+    { name: "Videos", path: "/videos/", icon: PlayCircleIcon },
+    { name: "Quiénes somos", path: "/quienes-somos/", icon: UsersIcon },
+    { name: "Recursos", path: "/recursos/", icon: DocumentTextIcon },
   ];
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case "Devocionales":
-        return <DevotionalView devocional={devocional} />;
-      case "Videos":
-        return <VideosView />;
-      case "Quiénes somos":
-        return <QuienesSomosView />;
-      case "Recursos":
-        return <RecursosView />;
-      default:
-        return <DevotionalView devocional={devocional} />; 
-    }
-  };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
       <main className="flex flex-col flex-grow overflow-y-auto pt-4 sm:pt-6 pb-24 sm:pb-28">
-        {renderContent()}
+        {/* Directly render DevotionalView */}
+        <DevotionalView devocional={devocional} />
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-top-lg z-50">
         <div className="flex justify-around max-w-md mx-auto">
-          {tabs.map((tab) => {
-            const Icon = tab.icon; 
-            const isActive = activeTab === tab.name;
+          {navItems.map((item) => {
+            const Icon = item.icon; 
             return (
-              <button
-                key={tab.name}
-                onClick={() => setActiveTab(tab.name)}
-                className={`flex flex-col items-center justify-center flex-1 py-2.5 sm:py-3 px-1 text-center focus:outline-none transition-all duration-200 ease-in-out group
-                            ${isActive
-                              ? "text-blue-600 dark:text-blue-400 scale-105" 
-                              : "text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-300"
-                            }`}
-                aria-current={isActive ? "page" : undefined}
+              <Link
+                key={item.name}
+                to={item.path}
+                className="flex flex-col items-center justify-center flex-1 py-2.5 sm:py-3 px-1 text-center focus:outline-none transition-all duration-200 ease-in-out group text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-300"
+                activeClassName="!text-blue-600 dark:!text-blue-400 scale-105" // Added ! for higher specificity
+                partiallyActive={item.path !== "/"} // Devocionales (path: "/") should only be active on exact match
               >
-                <Icon className={`w-6 h-6 mb-0.5 transition-transform duration-200 ease-in-out ${isActive ? "transform" : "group-hover:scale-110"}`} /> 
-                <span className={`text-xs font-medium transition-opacity duration-200 ease-in-out ${isActive ? "opacity-100" : "opacity-90 group-hover:opacity-100"}`}>{tab.name}</span>
-              </button>
+                <Icon className={`w-6 h-6 mb-0.5 transition-transform duration-200 ease-in-out group-hover:scale-110`} /> 
+                <span className={`text-xs font-medium transition-opacity duration-200 ease-in-out opacity-90 group-hover:opacity-100`}>{item.name}</span>
+              </Link>
             );
           })}
         </div>
