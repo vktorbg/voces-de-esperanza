@@ -227,12 +227,7 @@ const IndexPage = ({ data }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Si está en modo standalone (PWA), recarga para evitar caché vieja
-  useEffect(() => {
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      window.location.reload();
-    }
-  }, []);
+  
 
   // Datos de contacto
   const contacts = [
