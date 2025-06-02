@@ -73,7 +73,19 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
         <img src="/icon.jpg" alt="Logo Voces de Esperanza" className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg mr-4 shadow" />
         <div>
           <div className="text-xs text-blue-600 dark:text-blue-400 uppercase font-semibold tracking-wider">VOCES DE ESPERANZA</div>
-          <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">Devocional del día</div>
+          <div className="flex items-center gap-2">
+            <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">Devocional del día</div>
+            <button
+              onClick={() => window.location.reload()}
+              title="Recargar"
+              className="ml-2 p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+              aria-label="Recargar"
+            >
+              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582M20 20v-5h-.581M5.582 9A7.003 7.003 0 0112 5c3.314 0 6.127 2.01 7.418 4.857M18.418 15A7.003 7.003 0 0112 19c-3.314 0-6.127-2.01-7.418-4.857" />
+              </svg>
+            </button>
+          </div>
           <div className="text-sm text-gray-500 dark:text-gray-400">
             {(() => {
               const fechaStr = devocional.fecha.split("T")[0];
@@ -215,6 +227,13 @@ const IndexPage = ({ data }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Si está en modo standalone (PWA), recarga para evitar caché vieja
+  useEffect(() => {
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      window.location.reload();
+    }
+  }, []);
+
   // Datos de contacto
   const contacts = [
     {
@@ -252,11 +271,6 @@ const IndexPage = ({ data }) => {
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 bg-green-50 dark:bg-green-900/40 hover:bg-green-100 dark:hover:bg-green-800/70 rounded-lg px-3 py-2 transition w-full"
                 >
-                  <img
-                    src={c.photo}
-                    alt={c.name}
-                    className="w-10 h-10 rounded-full border-2 border-green-600 object-cover"
-                  />
                   <span className="font-medium text-gray-800 dark:text-gray-100">{c.name}</span>
                   <WhatsAppIcon className="w-6 h-6 text-green-600 ml-auto" />
                 </a>

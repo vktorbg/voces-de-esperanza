@@ -51,26 +51,105 @@ const RecursosView = () => {
 
   const estudianteUrl = "/pdfs/Manual-del-Estudiante.pdf";
   const maestroUrl = "/pdfs/Manual-del-Maestro.pdf";
+  const libertadEmocionalUrl = "/pdfs/Estudio-Libertad-Emocional.pdf";
 
-  const sharePdf = (url, tipo) => {
-    if (navigator.share) {
-      navigator.share({
-        title: `Compartir ${tipo}`,
-        url: url,
-      })
-        .then(() => console.log(`Compartido con éxito ${tipo}`))
-        .catch((error) => console.error("Error al compartir:", error));
-    } else {
-      // Fallback para navegadores que no soportan la API de Web Share
-      compartirEnlace(url);
-    }
+  // Nuevo: rutas de previews e "leer" para libertad emocional
+  const previewEstudiante = "/pdfs/preview-estudiante.png";
+  const previewMaestro = "/pdfs/preview-maestro.png";
+  const previewLibertad = "/pdfs/preview-libertad.png";
+  const leerLibertad = "/recursos/estudio-libertad-emocional-react-pdf/";
+
+  // Dropdown para acciones
+  const DocDropdown = ({ leerTo, descargarHref, compartirHref, compartirLabel }) => {
+    const [open, setOpen] = React.useState(false);
+    return (
+      <div className="relative w-full">
+        <button
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded shadow flex items-center justify-center gap-2 transition"
+          onClick={() => setOpen((v) => !v)}
+          type="button"
+        >
+          {/* Cambia el "+" por el ícono de libro */}
+          <BookOpenIcon className="w-4 h-4" />
+          Opciones
+          <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        {open && (
+          <div className="absolute left-0 right-0 mt-2 z-20 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded shadow-lg flex flex-col py-1 animate-fade-in">
+            {leerTo && (
+              <Link
+                to={leerTo}
+                className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 text-green-700 dark:text-green-300 text-sm font-medium transition"
+                onClick={() => setOpen(false)}
+              >
+                <EyeIcon className="w-4 h-4" />
+                Leer
+              </Link>
+            )}
+            <a
+              href={descargarHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 text-sm font-medium transition"
+              onClick={() => setOpen(false)}
+            >
+              <ArrowDownTrayIcon className="w-4 h-4" />
+              Descargar
+            </a>
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                if (navigator.share) {
+                  navigator.share({
+                    title: `Compartir ${compartirLabel}`,
+                    url: compartirHref,
+                  })
+                    .then(() => console.log(`Compartido con éxito ${compartirLabel}`))
+                    .catch((error) => console.error("Error al compartir:", error));
+                } else {
+                  compartirEnlace(compartirHref);
+                }
+              }}
+              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 text-blue-700 dark:text-blue-300 text-sm font-medium transition w-full text-left"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12l-3-3m0 0l3-3m-3 3h9" />
+              </svg>
+              Compartir
+            </button>
+          </div>
+        )}
+      </div>
+    );
   };
+
+  // Card component para cada documento
+  const DocCard = ({ title, previewImg, leerTo, descargarHref, compartirHref, compartirLabel }) => (
+    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow p-4 flex flex-col items-center gap-3 transition hover:shadow-lg w-full">
+      <img
+        src={previewImg}
+        alt={`Preview ${title}`}
+        className="w-full max-w-xs rounded mb-2 shadow object-cover"
+        style={{ aspectRatio: "16/9", background: "#2223" }}
+      />
+      <h4 className="text-base font-semibold text-gray-700 dark:text-gray-200 text-center mb-1">{title}</h4>
+      <DocDropdown
+        leerTo={leerTo}
+        descargarHref={descargarHref}
+        compartirHref={compartirHref}
+        compartirLabel={compartirLabel}
+      />
+    </div>
+  );
 
   return (
     <div className="font-sans w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden"
-         style={{ maxWidth: '95vw' }}> {/* Ajustado a max-w-4xl, puedes cambiar a 98vw si prefieres */}
+         style={{ maxWidth: '95vw' }}>
       {/* Banner superior */}
-      <div className="relative h-48 sm:h-60 md:h-64"> {/* Aumentado un poco la altura del banner en pantallas medianas */}
+      <div className="relative h-48 sm:h-60 md:h-64">
         <img
           src="/banner-recursos.jpg"
           alt="Recursos banner background"
@@ -78,7 +157,7 @@ const RecursosView = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent flex flex-col items-center justify-center text-center p-4">
           <DocumentTextIcon className="w-16 h-16 sm:w-20 sm:h-20 text-white mb-2 sm:mb-3 opacity-90 drop-shadow-lg" />
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-1 sm:mb-2 shadow-md">Recursos para el Liderazgo</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-1 sm:mb-2 shadow-md">Recursos</h2>
           <p className="text-sm sm:text-base text-gray-100 max-w-lg drop-shadow">
             Materiales y guías para fortalecer tu crecimiento espiritual y habilidades de liderazgo.
           </p>
@@ -86,96 +165,60 @@ const RecursosView = () => {
       </div>
 
       {/* Secciones de Contenido */}
-      <div className="p-6 sm:p-8 space-y-8 md:space-y-10">
-        {/* Sección: Discipulado */}
-        <section className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-5">
-            <div className="flex-shrink-0 p-3 bg-green-100 dark:bg-green-700 rounded-full">
-              <BookOpenIcon className="w-8 h-8 text-green-600 dark:text-green-300" />
-            </div>
-            <div>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-1 text-center sm:text-left">
-                Recursos para el Discipulado
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300 text-center sm:text-left max-w-md">
-                Herramientas para el acompañamiento y formación de discípulos, enfocadas en el crecimiento integral.
-              </p>
-            </div>
-          </div>
-          <div className="space-y-3 sm:space-y-0 sm:flex sm:flex-wrap sm:justify-center sm:gap-4">
-            <Link
-              to="/recursos/manual-del-estudiante-react-pdf/"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-lg shadow hover:shadow-md transition-all text-base"
-            >
-              <EyeIcon className="w-5 h-5" />
-              Leer Manual Estudiante
-            </Link>
-            <a
-              href="/pdfs/Manual-del-Estudiante.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-700 text-white font-medium px-6 py-3 rounded-lg shadow hover:shadow-md transition-all text-base"
-            >
-              <ArrowDownTrayIcon className="w-5 h-5" />
-              Descargar PDF
-            </a>
-            <button
-              type="button"
-              onClick={() => sharePdf(estudianteUrl, "Manual del Estudiante")}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-              title="Compartir o copiar enlace"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12l-3-3m0 0l3-3m-3 3h9" />
-              </svg>
-              Compartir PDF
-            </button>
+      <div className="p-6 sm:p-8 space-y-10 md:space-y-12">
+
+        {/* 1. Liderazgo */}
+        <section className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md p-6 transition-shadow duration-300">
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-8 text-center flex items-center justify-center gap-2">
+            <BookOpenIcon className="w-7 h-7 text-green-600 dark:text-green-300" />
+            Liderazgo
+          </h3>
+          <div className="grid gap-6 md:grid-cols-2">
+            <DocCard
+              title="Manual del Estudiante"
+              previewImg={previewEstudiante}
+              leerTo="/recursos/manual-del-estudiante-react-pdf/"
+              descargarHref={estudianteUrl}
+              compartirHref={estudianteUrl}
+              compartirLabel="Manual del Estudiante"
+            />
+            <DocCard
+              title="Manual del Maestro"
+              previewImg={previewMaestro}
+              leerTo="/recursos/manual-del-maestro-react-pdf/"
+              descargarHref={maestroUrl}
+              compartirHref={maestroUrl}
+              compartirLabel="Manual del Maestro"
+            />
           </div>
         </section>
 
-        {/* Sección: Seminario */}
-        <section className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-5">
-            <div className="flex-shrink-0 p-3 bg-indigo-100 dark:bg-indigo-700 rounded-full">
-              <DocumentTextIcon className="w-8 h-8 text-indigo-600 dark:text-indigo-300" />
-            </div>
-            <div>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-1 text-center sm:text-left">
-                Recursos del Seminario
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300 text-center sm:text-left max-w-md">
-                Materiales de apoyo y guías para maestros en el proceso de enseñanza y formación bíblica.
-              </p>
-            </div>
+        {/* 2. Discipulado */}
+        <section className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md p-6 transition-shadow duration-300">
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-8 text-center flex items-center justify-center gap-2">
+            <BookOpenIcon className="w-7 h-7 text-green-600 dark:text-green-300" />
+            Discipulado
+          </h3>
+          <div className="grid gap-6 max-w-md mx-auto">
+            <DocCard
+              title="Estudio Libertad Emocional"
+              previewImg={previewLibertad}
+              leerTo={leerLibertad}
+              descargarHref={libertadEmocionalUrl}
+              compartirHref={libertadEmocionalUrl}
+              compartirLabel="Estudio Libertad Emocional"
+            />
           </div>
-          <div className="space-y-3 sm:space-y-0 sm:flex sm:flex-wrap sm:justify-center sm:gap-4">
-            <Link
-              to="/recursos/manual-del-maestro-react-pdf/"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 py-3 rounded-lg shadow hover:shadow-md transition-all text-base"
-            >
-              <EyeIcon className="w-5 h-5" />
-              Leer Manual Maestro
-            </Link>
-            <a
-              href="/pdfs/Manual-del-Maestro.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-700 text-white font-medium px-6 py-3 rounded-lg shadow hover:shadow-md transition-all text-base"
-            >
-              <ArrowDownTrayIcon className="w-5 h-5" />
-              Descargar PDF
-            </a>
-            <button
-              type="button"
-              onClick={() => sharePdf(maestroUrl, "Manual del Maestro")}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-              title="Compartir o copiar enlace"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12l-3-3m0 0l3-3m-3 3h9" />
-              </svg>
-              Compartir PDF
-            </button>
+        </section>
+
+        {/* 3. Seminario */}
+        <section className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md p-6 transition-shadow duration-300">
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center flex items-center justify-center gap-2">
+            <DocumentTextIcon className="w-7 h-7 text-indigo-600 dark:text-indigo-300" />
+            Seminario
+          </h3>
+          <div className="text-center text-gray-500 dark:text-gray-400">
+            Próximamente materiales y guías para el seminario.
           </div>
         </section>
       </div>
@@ -183,7 +226,6 @@ const RecursosView = () => {
   );
 };
 
-// Page component (sin cambios, ya estaba bien)
 const RecursosPage = () => {
   const navItems = [
     { name: "Devocionales", path: "/", icon: BookOpenIcon },
