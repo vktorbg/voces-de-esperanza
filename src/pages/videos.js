@@ -32,21 +32,20 @@ const DocumentTextIcon = (props) => (
 // --- End Icon Components ---
 
 const VideosView = () => {
-  // Add the new video first in the array
+  // Orden exacto solicitado:
   const videos = [
+    { id: "1kTJjSjxObg", title: "YouTube Short 1" },            // Siempre primero
+    { id: "zrdZhJ5Wz9Y", title: "YouTube Short Nuevo 2" },
     { id: "ze9ZMur-g98", title: "YouTube Short Nuevo" },
-    { id: "1kTJjSjxObg", title: "YouTube Short 1" },
-    { id: "mH9BtLuElyg", title: "YouTube Short 2" },
-    { id: "Bz7w2GZXijQ", title: "YouTube Short 3" },
-    { id: "suA4dd5QzjY", title: "YouTube Short 4" },
-    { id: "axoHbLM9Gnw", title: "YouTube Short 5" },
     { id: "46xV9VF2y1M", title: "YouTube Short 6" },
+    { id: "axoHbLM9Gnw", title: "YouTube Short 5" },
+    { id: "suA4dd5QzjY", title: "YouTube Short 4" },
+    { id: "Bz7w2GZXijQ", title: "YouTube Short 3" },
+    { id: "mH9BtLuElyg", title: "YouTube Short 2" }
   ];
-  const youtubeIconUrl = "https://www.vectorlogo.zone/logos/youtube/youtube-icon.svg"; // Red and white YouTube icon
+  const youtubeIconUrl = "https://www.vectorlogo.zone/logos/youtube/youtube-icon.svg";
 
-  // The first video will be shown above the button, the rest below in reverse order
   const [firstVideo, ...restVideos] = videos;
-  const restVideosReversed = [...restVideos].reverse();
 
   return (
     <div className="font-sans w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden px-2"
@@ -74,7 +73,7 @@ const VideosView = () => {
       {/* Content area with padding */}
       <div className="p-4 sm:p-6">
         <div className="flex flex-col gap-8 mb-8 items-center">
-          {/* First video */}
+          {/* Primer video */}
           <div className="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md overflow-hidden flex flex-col items-center w-[320px] max-w-full mx-auto">
             <div className="relative w-[320px] h-[570px] max-w-full mx-auto">
               <iframe
@@ -87,10 +86,10 @@ const VideosView = () => {
               ></iframe>
             </div>
           </div>
-          {/* Button */}
+          {/* Botón y resto de videos */}
           <div className="text-center py-4">
             <a
-              href="https://www.youtube.com/@vocesdesperanza025" 
+              href="https://www.youtube.com/@vocesdesperanza025"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-sm sm:text-base"
@@ -102,8 +101,8 @@ const VideosView = () => {
               ¡No te pierdas nuestros últimos videos!
             </p>
           </div>
-          {/* Rest of videos in reverse order */}
-          {restVideosReversed.map((video) => (
+          {/* Resto de videos en el orden dado */}
+          {restVideos.map((video) => (
             <div key={video.id} className="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md overflow-hidden flex flex-col items-center w-[320px] max-w-full mx-auto">
               <div className="relative w-[320px] h-[570px] max-w-full mx-auto">
                 <iframe

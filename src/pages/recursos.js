@@ -59,6 +59,11 @@ const RecursosView = () => {
   const previewLibertad = "/pdfs/preview-libertad.png";
   const leerLibertad = "/recursos/estudio-libertad-emocional-react-pdf/";
 
+  // Nuevo: ruta para leer el PDF de consejería matrimonial
+  const clavesConsejeriaUrl = "/pdfs/Claves-Consejeria-Matrimonial.pdf";
+  const previewClavesConsejeria = "/pdfs/preview-consejeria.png"; // Usa una imagen de preview si tienes, si no puedes dejar un placeholder
+  const leerClavesConsejeria = "/recursos/claves-consejeria-matrimonial-react-pdf/";
+
   // Dropdown para acciones
   const DocDropdown = ({ leerTo, descargarHref, compartirHref, compartirLabel }) => {
     const [open, setOpen] = React.useState(false);
@@ -207,6 +212,14 @@ const RecursosView = () => {
               descargarHref={libertadEmocionalUrl}
               compartirHref={libertadEmocionalUrl}
               compartirLabel="Estudio Libertad Emocional"
+            />
+            <DocCard
+              title="Claves Consejería Matrimonial"
+              previewImg={previewClavesConsejeria}
+              leerTo={leerClavesConsejeria}
+              descargarHref={clavesConsejeriaUrl}
+              compartirHref={clavesConsejeriaUrl}
+              compartirLabel="Claves Consejería Matrimonial"
             />
           </div>
         </section>

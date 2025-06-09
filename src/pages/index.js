@@ -237,7 +237,7 @@ const IndexPage = ({ data }) => {
       photo: "/chris.png",
     },
     {
-      name: "Phil",
+      name: "Felipe",
       phone: "522223614495", // Reemplaza con el número real
       photo: "/phil.png",
     },
