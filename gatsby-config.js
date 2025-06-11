@@ -8,13 +8,10 @@ const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS);
  * @type {import('gatsby').GatsbyConfig}
  */
 module.exports = {
-  // --- INICIO: CAMBIO 1 ---
-  
   siteMetadata: {
     title: `Voces de Esperanza`,
-    siteUrl: `https://www.voces-de-esperanza.com`, // <--- ¡IMPORTANTE: ACTUALIZA ESTA LÍNEA!
+    siteUrl: `https://www.voces-de-esperanza.com`,
   },
-  // --- FIN: CAMBIO 1 ---
   plugins: [
     `gatsby-plugin-postcss`,
     {
@@ -32,14 +29,12 @@ module.exports = {
         short_name: `Devocionales`,
         start_url: `/`,
         background_color: `#ffffff`,
-        theme_color: `#4b5563`, // gris neutro
+        theme_color: `#4b5563`,
         display: `standalone`,
-        icon: `src/images/icon.jpg`, // crea este ícono
+        icon: `src/images/icon.jpg`,
       },
     },
     `gatsby-plugin-offline`,
-    // --- INICIO: CAMBIO 2 ---
-    // Añadiendo el plugin gatsby-plugin-sitemap
     {
       resolve: `gatsby-plugin-sitemap`,
       options: {
@@ -57,26 +52,30 @@ module.exports = {
             }
           }
         `,
-        // La función resolveSiteUrl le dice al plugin cómo obtener la URL de tu sitio.
-        // Asume que la tienes definida en siteMetadata.siteUrl.
-        resolveSiteUrl: ({ site, allSitePage }) => {
+        resolveSiteUrl: ({ site }) => {
           return site.siteMetadata.siteUrl;
         },
-        // Aquí puedes excluir páginas que no quieres que aparezcan en el sitemap.
-        // Las páginas de error y desarrollo ya vienen por defecto.
         excludes: [
           `/dev-404-page/`,
           `/404/`,
           `/404.html`,
           `/offline-plugin-app-shell-fallback/`,
-          // Si tienes otras rutas que no quieres en el sitemap (ej. /admin, /gracias), añádelas aquí:
-          // `/ruta-a-excluir/`,
         ],
-        // Opcional: Para sitios muy grandes, puedes generar sitemaps más pequeños.
-        // Este plugin lo maneja automáticamente con un sitemap de índice.
-        // output: `/sitemap.xml`, // Esto es el valor por defecto y funciona bien
+        // output: `/sitemap.xml`,
       },
     },
-    // --- FIN: CAMBIO 2 ---
+    {
+      resolve: `gatsby-plugin-google-gtag`,
+      options: {
+        trackingIds: [
+          "G-45L02H1E57", // Reemplaza esto con tu ID real de GA4
+        ],
+        respectDNT: true,
+        exclude: ["/preview/**", "/do-not-track/"],
+        pluginConfig: {
+          head: true,
+        },
+      },
+    },
   ],
 };
