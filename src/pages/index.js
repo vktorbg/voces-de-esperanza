@@ -66,6 +66,7 @@ export const query = graphql`
         copytext
         audioEspanolUrl
         audioNahuatlUrl
+        audioEnglishUrl
       }
     }
   }
@@ -75,59 +76,82 @@ export const query = graphql`
 const DevotionalView = ({ devocional, onWhatsAppClick }) => {
   const [showAudioOptions, setShowAudioOptions] = useState(false);
   const [isPlaying, setIsPlaying] = useState({ espanol: false, nahuatl: false });
-  const [currentAudio, setCurrentAudio] = useState(null); // 'espanol' o 'nahuatl'
+  const [currentAudioLang, setCurrentAudioLang] = useState(null); // 'espanol' o 'nahuatl'
   const audioRef = useRef(null);
+  const audioButtonRef = useRef(null);
 
   const toggleAudioOptions = () => {
     setShowAudioOptions(prev => !prev);
-    if (showAudioOptions && audioRef.current) { // Si se cierra y hay audio, pausarlo
-        audioRef.current.pause();
-        setIsPlaying({ espanol: false, nahuatl: false });
-        setCurrentAudio(null);
+    if (showAudioOptions && audioRef.current) {
+      audioRef.current.pause();
+      setIsPlaying({ espanol: false, nahuatl: false });
+      setCurrentAudioLang(null);
     }
   };
 
-  const playAudio = (lang, url) => {
+  const handleAudioPlay = (lang, url) => {
+    // Now all languages (including 'english') play audio in-app
     if (audioRef.current) {
-        audioRef.current.pause(); // Pausa el audio anterior si existe
-    }
-
-    if (currentAudio === lang && isPlaying[lang]) { // Si es el mismo audio y está sonando, pausarlo
+      if (currentAudioLang === lang && isPlaying[lang]) {
         audioRef.current.pause();
         setIsPlaying(prev => ({ ...prev, [lang]: false }));
-        setCurrentAudio(null); // Deja de marcarlo como actual
-    } else { // Nuevo audio o el mismo pero pausado
-        const newAudio = new Audio(url);
-        audioRef.current = newAudio;
-        audioRef.current.play()
-            .then(() => {
-                setIsPlaying({ espanol: false, nahuatl: false, [lang]: true }); // Solo este audio sonando
-                setCurrentAudio(lang);
-            })
-            .catch(error => console.error("Error al reproducir audio:", error));
+        return;
+      } else {
+        audioRef.current.pause();
+      }
+    }
 
-        audioRef.current.onended = () => {
-            setIsPlaying(prev => ({ ...prev, [lang]: false }));
-            setCurrentAudio(null);
-        };
-        audioRef.current.onerror = () => {
-            alert("Error al cargar el audio. Por favor, revisa la URL o tu conexión.");
-            setIsPlaying(prev => ({ ...prev, [lang]: false }));
-            setCurrentAudio(null);
-        };
+    if (currentAudioLang === lang && audioRef.current && audioRef.current.src === url && audioRef.current.paused) {
+      audioRef.current.play()
+        .then(() => setIsPlaying({ espanol: false, nahuatl: false, english: false, [lang]: true }))
+        .catch(error => console.error("Error al reanudar audio:", error));
+    } else {
+      const newAudio = new Audio(url);
+      audioRef.current = newAudio;
+      newAudio.play()
+        .then(() => {
+          setIsPlaying({ espanol: false, nahuatl: false, english: false, [lang]: true });
+          setCurrentAudioLang(lang);
+        })
+        .catch(error => console.error("Error al reproducir audio:", error));
+
+      newAudio.onended = () => {
+        setIsPlaying(prev => ({ ...prev, [lang]: false }));
+        if (currentAudioLang === lang) setCurrentAudioLang(null);
+      };
+      newAudio.onerror = () => {
+        alert("Error al cargar el audio. Por favor, revisa la URL o tu conexión.");
+        setIsPlaying(prev => ({ ...prev, [lang]: false }));
+        if (currentAudioLang === lang) setCurrentAudioLang(null);
+      };
     }
   };
-  
-  // Limpiar audio al desmontar o cambiar devocional
+
   useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showAudioOptions && audioButtonRef.current && !audioButtonRef.current.contains(event.target)) {
+        setShowAudioOptions(false);
+        if (audioRef.current) {
+          audioRef.current.pause();
+          setIsPlaying({ espanol: false, nahuatl: false });
+          setCurrentAudioLang(null);
+        }
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
     return () => {
+      if (typeof window !== 'undefined') {
+        document.removeEventListener('mousedown', handleClickOutside);
+      }
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current = null;
       }
     };
-  }, [devocional]);
-
+  }, [showAudioOptions, devocional]);
 
   if (!devocional) {
     return (
@@ -139,12 +163,12 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
     );
   }
 
-  const hasAudio = devocional.audioEspañolUrl || devocional.audioNahuatlUrl;
+  const hasAnyAudio = devocional.audioEspanolUrl || devocional.audioNahuatlUrl || devocional.audioEnglishUrl;
 
   return (
     <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto p-4 sm:p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg"
          style={{ maxWidth: '95vw' }}>
-      <div className="flex items-start mb-6"> {/* items-start para alinear el botón de recarga con la parte superior */}
+      <div className="flex items-start mb-6">
         <img src="/icon.jpg" alt="Logo Voces de Esperanza" className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg mr-4 shadow" />
         <div className="flex-grow">
           <div className="flex items-center justify-between">
@@ -171,37 +195,60 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
       </div>
 
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 flex-grow pr-2">
             {devocional.titulo}
         </h1>
-        {hasAudio && (
-            <div className="relative ml-3">
+        {hasAnyAudio && (
+            <div className="relative ml-2" ref={audioButtonRef}>
                 <button
                     onClick={toggleAudioOptions}
-                    className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`p-2 rounded-full transition focus:outline-none focus:ring-2 focus:ring-blue-500
+                                ${showAudioOptions ? 'bg-blue-100 dark:bg-blue-700' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                    aria-haspopup="true"
+                    aria-expanded={showAudioOptions}
                     aria-label="Escuchar devocional"
                     title="Escuchar devocional"
                 >
                     <SpeakerWaveIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 </button>
                 {showAudioOptions && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-xl z-20 py-1 transition-all duration-150 ease-out origin-top-right transform scale-95 opacity-0 group-focus-within:scale-100 group-focus-within:opacity-100 animate-fade-in-sm">
-                        {devocional.audioEspañolUrl && (
+                    <div 
+                        className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-700 rounded-md shadow-xl z-20 py-1 
+                                   origin-top-right ring-1 ring-black ring-opacity-5 focus:outline-none
+                                   transform transition-all duration-150 ease-out 
+                                   opacity-100 scale-100"
+                        role="menu" aria-orientation="vertical" aria-labelledby="audio-options-button"
+                    >
+                        {devocional.audioEspanolUrl && (
                             <button
-                                onClick={() => playAudio('espanol', devocional.audioEspañolUrl)}
-                                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center gap-2"
+                                onClick={() => handleAudioPlay('espanol', devocional.audioEspanolUrl)}
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between"
+                                role="menuitem"
                             >
-                                {isPlaying.espanol ? <PauseIcon className="w-4 h-4" /> : <PlayIcon className="w-4 h-4" />}
-                                Español
+                                <span>Español</span>
+                                {currentAudioLang === 'espanol' && isPlaying.espanol ? <PauseIcon className="w-5 h-5 text-blue-500" /> : <PlayIcon className="w-5 h-5 text-gray-400" />}
                             </button>
                         )}
                         {devocional.audioNahuatlUrl && (
                             <button
-                                onClick={() => playAudio('nahuatl', devocional.audioNahuatlUrl)}
-                                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center gap-2"
+                                onClick={() => handleAudioPlay('nahuatl', devocional.audioNahuatlUrl)}
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between"
+                                role="menuitem"
                             >
-                                {isPlaying.nahuatl ? <PauseIcon className="w-4 h-4" /> : <PlayIcon className="w-4 h-4" />}
-                                Náhuatl
+                                <span>Náhuatl</span>
+                                {currentAudioLang === 'nahuatl' && isPlaying.nahuatl ? <PauseIcon className="w-5 h-5 text-blue-500" /> : <PlayIcon className="w-5 h-5 text-gray-400" />}
+                            </button>
+                        )}
+                        {devocional.audioEnglishUrl && (
+                            <button
+                                onClick={() => handleAudioPlay('english', devocional.audioEnglishUrl)}
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between"
+                                role="menuitem"
+                            >
+                                <span>English</span>
+                                {currentAudioLang === 'english' && isPlaying.english
+                                    ? <PauseIcon className="w-5 h-5 text-blue-500" />
+                                    : <PlayIcon className="w-5 h-5 text-gray-400" />}
                             </button>
                         )}
                     </div>
