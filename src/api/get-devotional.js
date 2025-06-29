@@ -1,6 +1,6 @@
 // src/api/get-devotional.js
 
-const WEB_APP_URL = process.env.GOOGLE_SCRIPT_WEB_APP_URL;
+const WEB_APP_URL = process.env.GATSBY_GOOGLE_SCRIPT_WEB_APP_URL;
 
 export default async function handler(req, res) {
   if (!WEB_APP_URL) {
