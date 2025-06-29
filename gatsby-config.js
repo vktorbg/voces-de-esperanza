@@ -2,7 +2,8 @@
 
 require("dotenv").config();
 
-const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS);
+// Ya no necesitamos las credenciales aquí, se usarán en las API functions
+// const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS);
 
 /**
  * @type {import('gatsby').GatsbyConfig}
@@ -14,14 +15,9 @@ module.exports = {
   },
   plugins: [
     `gatsby-plugin-postcss`,
-    {
-      resolve: `gatsby-source-google-spreadsheet`,
-      options: {
-        spreadsheetId: process.env.GOOGLE_SHEET_ID,
-        worksheetTitle: `Hoja1`,
-        credentials,
-      },
-    },
+    // --- IMPORTANTE ---
+    // Se han ELIMINADO los plugins 'gatsby-source-google-spreadsheet'
+    // porque ahora obtenemos los datos de forma dinámica con API Functions.
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
@@ -61,14 +57,13 @@ module.exports = {
           `/404.html`,
           `/offline-plugin-app-shell-fallback/`,
         ],
-        // output: `/sitemap.xml`,
       },
     },
     {
       resolve: `gatsby-plugin-google-gtag`,
       options: {
         trackingIds: [
-          "G-45L02H1E57", // Reemplaza esto con tu ID real de GA4
+          "G-45L02H1E57",
         ],
         respectDNT: true,
         exclude: ["/preview/**", "/do-not-track/"],
