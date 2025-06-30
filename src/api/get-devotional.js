@@ -16,12 +16,16 @@ export default async function handler(req, res) {
     const data = await response.json();
     const allDevotionals = data.devotionals || [];
 
-    // Find today's devotional
-    const todayDate = new Date();
-    const year = todayDate.getFullYear();
-    const month = String(todayDate.getMonth() + 1).padStart(2, '0');
-    const day = String(todayDate.getDate()).padStart(2, '0');
-    const hoy = `${year}-${month}-${day}`;
+   // Código nuevo y corregido
+const timeZone = 'America/Bogota'; // UTC-5 estable
+const now = new Date();
+const formatter = new Intl.DateTimeFormat('en-CA', {
+  timeZone,
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+const hoy = formatter.format(now);
 
     const devocional = allDevotionals.find(d => {
       if (!d.fecha) return false;
