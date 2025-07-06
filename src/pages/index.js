@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "gatsby"; // Importación necesaria para el nuevo botón
 import { useAudioPlayer } from "../components/AudioPlayer";
 import InstallPrompt from "../components/InstallPrompt";
+import IOSInstallPrompt from "../components/IOSInstallPrompt"; 
 
 // --- Iconos ---
 const BookOpenIcon = (props) => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}> <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /> </svg> );
@@ -142,16 +143,37 @@ const IndexPage = () => {
 
   return (
     <>
+      {/* 
+        Ambos componentes de prompt se renderizan aquí.
+        Su lógica interna se encarga de decidir si deben mostrarse o no.
+        InstallPrompt -> Para Chrome/Android
+        IOSInstallPrompt -> Para Safari en iPhone/iPad
+      */}
       <InstallPrompt />
+      <IOSInstallPrompt />
+      
       {isLoading && <LoadingBar />}
-      {isLoading ? ( <DevotionalSkeleton /> ) : ( <DevotionalView devocional={devocional} onWhatsAppClick={() => setShowWhatsAppBox(v => !v)} /> )}
+
+      {isLoading ? ( 
+        <DevotionalSkeleton /> 
+      ) : ( 
+        <DevotionalView 
+          devocional={devocional} 
+          onWhatsAppClick={() => setShowWhatsAppBox(v => !v)} 
+        /> 
+      )}
       
       {showWhatsAppBox && (
         <div className="fixed inset-0 bg-black/40 z-[60] flex items-center justify-center" onClick={() => setShowWhatsAppBox(false)}>
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-xl p-5 w-[90vw] max-w-xs animate-fade-in flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
             <div className="mb-3 text-center font-semibold text-gray-800 dark:text-gray-100">¿Tienes alguna duda?<br /><span className="text-sm text-gray-600 dark:text-gray-300">¡Contáctanos por WhatsApp!</span></div>
             <div className="flex flex-col gap-3 w-full">
-              {contacts.map((c) => ( <a key={c.name} href={`https://wa.me/${c.phone}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-green-50 dark:bg-green-900/40 hover:bg-green-100 dark:hover:bg-green-800/70 rounded-lg px-3 py-2 transition w-full"> <span className="font-medium text-gray-800 dark:text-gray-100">{c.name}</span> <WhatsAppIcon className="w-6 h-6 text-green-600 ml-auto" /> </a> ))}
+              {contacts.map((c) => ( 
+                <a key={c.name} href={`https://wa.me/${c.phone}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-green-50 dark:bg-green-900/40 hover:bg-green-100 dark:hover:bg-green-800/70 rounded-lg px-3 py-2 transition w-full"> 
+                  <span className="font-medium text-gray-800 dark:text-gray-100">{c.name}</span> 
+                  <WhatsAppIcon className="w-6 h-6 text-green-600 ml-auto" /> 
+                </a> 
+              ))}
             </div>
             <button className="mt-4 w-full text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition" onClick={() => setShowWhatsAppBox(false)}>Cerrar</button>
           </div>
