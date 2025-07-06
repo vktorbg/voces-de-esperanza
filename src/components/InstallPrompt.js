@@ -51,7 +51,7 @@ const InstallPrompt = () => {
   return (
     <div className="fixed bottom-20 sm:bottom-24 left-1/2 -translate-x-1/2 w-[95vw] max-w-md z-[70] animate-fade-in-up">
       <div className="bg-blue-600 text-white rounded-xl shadow-2xl p-4 flex items-center gap-4">
-        <img src="/images/icon.jpg" alt="Logo" className="w-12 h-12 rounded-lg flex-shrink-0" />
+        <img src="/icon.jpg" alt="Logo" className="w-12 h-12 rounded-lg flex-shrink-0" />
         <div className="flex-grow">
           <p className="font-bold text-base">Instala Voces de Esperanza</p>
           <p className="text-sm opacity-90">Acceso rápido y notificaciones diarias.</p>
