@@ -17,7 +17,7 @@ module.exports = {
       resolve: `gatsby-plugin-manifest`,
       options: {
         name: `Voces de Esperanza`,
-        short_name: `Voces`, // Un nombre más corto para el ícono
+        short_name: `VDE`, // Un nombre más corto para el ícono
         start_url: `/`,
         background_color: `#f3f4f6`, // Un gris claro para el splash screen
         theme_color: `#2563eb`,   // Un color azul para la barra de título del navegador
