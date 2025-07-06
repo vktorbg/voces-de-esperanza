@@ -46,7 +46,13 @@ const IOSInstallPrompt = () => {
                 alt="Compartir"
                 className="w-5 h-5 inline-block mx-1 align-middle dark:invert" 
             /> 
-            y luego elige **"agregar al inicio"**.
+            y luego elige "Agregar al Inicio" 
+            <img 
+                src="https://img.icons8.com/material-outlined/24/plus-2-math--v1.png"
+                alt="Agregar al Inicio"
+                className="w-5 h-5 inline-block mx-1 align-middle dark:invert"
+            /> 
+            .
         </p>
 
         <button
