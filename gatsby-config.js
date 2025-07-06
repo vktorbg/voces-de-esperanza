@@ -2,9 +2,6 @@
 
 require("dotenv").config();
 
-// Ya no necesitamos las credenciales aquí, se usarán en las API functions
-// const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS);
-
 /**
  * @type {import('gatsby').GatsbyConfig}
  */
@@ -15,17 +12,15 @@ module.exports = {
   },
   plugins: [
     `gatsby-plugin-postcss`,
-    // --- IMPORTANTE ---
-    // Se han ELIMINADO los plugins 'gatsby-source-google-spreadsheet'
-    // porque ahora obtenemos los datos de forma dinámica con API Functions.
+    
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Devocionales`,
-        short_name: `Devocionales`,
+        name: `Voces de Esperanza`,
+        short_name: `Voces`, // Un nombre más corto para el ícono
         start_url: `/`,
-        background_color: `#ffffff`,
-        theme_color: `#4b5563`,
+        background_color: `#f3f4f6`, // Un gris claro para el splash screen
+        theme_color: `#2563eb`,   // Un color azul para la barra de título del navegador
         display: `standalone`,
         icon: `src/images/icon.jpg`,
       },
@@ -56,6 +51,11 @@ module.exports = {
           `/404/`,
           `/404.html`,
           `/offline-plugin-app-shell-fallback/`,
+          // Excluimos las nuevas páginas de visor de PDF si las tienes
+          `/recursos/manual-del-estudiante-react-pdf/`,
+          `/recursos/manual-del-maestro-react-pdf/`,
+          `/recursos/estudio-libertad-emocional-react-pdf/`,
+          `/recursos/claves-consejeria-matrimonial-react-pdf/`,
         ],
       },
     },
