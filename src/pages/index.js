@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "gatsby"; // Importación necesaria para el nuevo botón
+import { useTranslation } from "react-i18next";
 import { useAudioPlayer } from "../components/AudioPlayer";
 import InstallPrompt from "../components/InstallPrompt";
 import IOSInstallPrompt from "../components/IOSInstallPrompt"; 
@@ -17,6 +18,7 @@ const LoadingBar = () => ( <div className="fixed top-0 left-0 right-0 h-1 bg-blu
 const DevotionalSkeleton = () => ( <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto p-4 sm:p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg animate-pulse" style={{ maxWidth: '95vw' }}> <div className="flex items-start mb-6"> <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg mr-4 bg-gray-200 dark:bg-gray-700"></div> <div className="flex-grow pt-2"> <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div> <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div> </div> </div> <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-5/6 mb-6"></div> <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg"> <div className="h-5 bg-gray-200 dark:bg-gray-600 rounded w-1/3 mb-2"></div> <div className="h-6 bg-gray-200 dark:bg-gray-600 rounded w-3/4"></div> </div> <div className="space-y-6"> <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div> <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div> <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div> </div> </div> );
 
 const DevotionalView = ({ devocional, onWhatsAppClick }) => {
+  const { t } = useTranslation();
   const { playTrack } = useAudioPlayer();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -30,13 +32,13 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
   }, []);
 
   if (!devocional) {
-    return ( <div className="flex flex-col items-center justify-center flex-grow text-center p-8 max-w-2xl mx-auto"> <BookOpenIcon className="w-16 h-16 text-gray-400 dark:text-gray-500 mb-4" /> <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Sin devocional para hoy</h2> <p className="text-gray-500 dark:text-gray-400">Por favor, revisa más tarde.</p> </div> );
+    return ( <div className="flex flex-col items-center justify-center flex-grow text-center p-8 max-w-2xl mx-auto"> <BookOpenIcon className="w-16 h-16 text-gray-400 dark:text-gray-500 mb-4" /> <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">{t('no_devotional_title')}</h2> <p className="text-gray-500 dark:text-gray-400">{t('no_devotional_message')}</p> </div> );
   }
 
   const availableAudios = [
-    { lang: 'Español', url: devocional.audioEspanolUrl },
-    { lang: 'Náhuatl', url: devocional.audioNahuatlUrl },
-    { lang: 'English', url: devocional.audioEnglishUrl },
+    { lang: t('language_spanish'), url: devocional.audioEspanolUrl },
+    { lang: t('language_nahuatl'), url: devocional.audioNahuatlUrl },
+    { lang: t('language_english'), url: devocional.audioEnglishUrl },
   ].filter(audio => audio.url);
 
   const handlePlay = (audio) => {
@@ -48,16 +50,16 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
     <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto px-2" style={{ maxWidth: '95vw' }}>
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
         <div className="flex items-start mb-6">
-          <img src="/icon.jpg" alt="Logo Voces de Esperanza" className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg mr-4 shadow flex-shrink-0" />
+          <img src="/icon.jpg" alt={t('logo_alt')} className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg mr-4 shadow flex-shrink-0" />
           <div className="flex-grow">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-blue-600 dark:text-blue-400 uppercase font-semibold tracking-wider">VOCES DE ESPERANZA</span>
+              <span className="text-xs text-blue-600 dark:text-blue-400 uppercase font-semibold tracking-wider">{t('app_name')}</span>
               {/* --- SE ELIMINA EL BOTÓN DE HISTORIAL DE AQUÍ --- */}
-              <button onClick={() => window.location.reload()} title="Recargar Devocional" className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition flex-shrink-0" aria-label="Recargar Devocional">
+              <button onClick={() => window.location.reload()} title={t('reload_devotional')} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition flex-shrink-0" aria-label={t('reload_devotional')}>
                 <ReloadIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
               </button>
             </div>
-            <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">Devocional del día</div>
+            <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">{t('daily_devotional')}</div>
             <div className="text-sm text-gray-500 dark:text-gray-400"> {new Date(devocional.fecha).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })} </div>
           </div>
         </div>
@@ -66,7 +68,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 break-words"> 🌟 {devocional.titulo} </h1>
           {availableAudios.length > 0 && (
             <div className="relative flex-shrink-0" ref={menuRef}>
-              <button onClick={() => setMenuOpen(!menuOpen)} className={`p-2 rounded-full transition focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-blue-500 ${menuOpen ? 'bg-blue-100 dark:bg-blue-700' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`} aria-label="Escuchar devocional" title="Escuchar devocional">
+              <button onClick={() => setMenuOpen(!menuOpen)} className={`p-2 rounded-full transition focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-blue-500 ${menuOpen ? 'bg-blue-100 dark:bg-blue-700' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`} aria-label={t('listen_devotional')} title={t('listen_devotional')}>
                 <SpeakerWaveIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </button>
               {menuOpen && (
@@ -81,33 +83,33 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
         </div>
 
         <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-          <div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-1"><span role="img" aria-label="book emoji" className="mr-2">📖</span> Versículo Clave:</div>
+          <div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-1"><span role="img" aria-label="book emoji" className="mr-2">📖</span> {t('key_verse')}:</div>
           <div className="text-blue-600 dark:text-blue-400 uppercase font-semibold text-md sm:text-lg">{devocional.versiculo}</div>
           <div className="text-gray-600 dark:text-gray-300 mt-1">{devocional.cita}</div>
         </div>
         
         <div className="space-y-6">
-          {devocional.reflexion && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="pray emoji" className="mr-2">🙏</span> Reflexión:</div><p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{devocional.reflexion}</p></div>}
-          {devocional.pregunta && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="thinking face emoji" className="mr-2">🤔</span> Pregunta:</div><p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{devocional.pregunta}</p></div>}
-          {devocional.aplicacion && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="fire emoji" className="mr-2">🔥</span> Aplicación:</div><p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{devocional.aplicacion}</p></div>}
+          {devocional.reflexion && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="pray emoji" className="mr-2">🙏</span> {t('reflection')}:</div><p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{devocional.reflexion}</p></div>}
+          {devocional.pregunta && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="thinking face emoji" className="mr-2">🤔</span> {t('question')}:</div><p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{devocional.pregunta}</p></div>}
+          {devocional.aplicacion && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="fire emoji" className="mr-2">🔥</span> {t('application')}:</div><p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{devocional.aplicacion}</p></div>}
         </div>
 
         {devocional.copytext && (
           // --- SECCIÓN DE BOTONES MODIFICADA ---
           <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center gap-4">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={async () => { const textToShare = `${devocional.copytext}\n \n${window.location.href}`; if (navigator.share) { try { await navigator.share({ title: devocional.titulo, text: textToShare }); } catch (err) {} } else { navigator.clipboard.writeText(textToShare).then(() => alert("¡Texto copiado!")); }}}>
-              <img src="https://img.icons8.com/material-outlined/48/FFFFFF/share.png" alt="Compartir" className="w-5 h-5 mr-1" style={{ display: "inline-block", verticalAlign: "middle" }} />
-              Compartir Devocional
+            <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={async () => { const textToShare = `${devocional.copytext}\n \n${window.location.href}`; if (navigator.share) { try { await navigator.share({ title: devocional.titulo, text: textToShare }); } catch (err) {} } else { navigator.clipboard.writeText(textToShare).then(() => alert(t('text_copied'))); }}}>
+              <img src="https://img.icons8.com/material-outlined/48/FFFFFF/share.png" alt={t('share')} className="w-5 h-5 mr-1" style={{ display: "inline-block", verticalAlign: "middle" }} />
+              {t('share_devotional')}
             </button>
             {/* --- NUEVO BOTÓN DE HISTORIAL --- */}
             <Link to="/historial/" className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
-                <img src="https://img.icons8.com/color/96/calendar--v1.png" alt="Historial" className="w-5 h-5 mr-1 dark:invert" style={{ display: "inline-block", verticalAlign: "middle" }} />
-                Ver devocionales anteriores
+                <img src="https://img.icons8.com/color/96/calendar--v1.png" alt={t('history')} className="w-5 h-5 mr-1 dark:invert" style={{ display: "inline-block", verticalAlign: "middle" }} />
+                {t('view_previous_devotionals')}
             </Link>
-            <button className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={onWhatsAppClick} type="button" aria-label="Escríbenos por WhatsApp">
+            <button className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={onWhatsAppClick} type="button" aria-label={t('whatsapp_contact')}>
               <WhatsAppIcon />
-              <span className="hidden sm:inline">¿Tienes alguna duda? Escríbenos</span>
-              <span className="inline sm:hidden">Escríbenos</span>
+              <span className="hidden sm:inline">{t('whatsapp_long')}</span>
+              <span className="inline sm:hidden">{t('whatsapp_short')}</span>
             </button>
           </div>
         )}
@@ -118,6 +120,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
 
 
 const IndexPage = () => {
+  const { t } = useTranslation();
   const [devocional, setDevocional] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showWhatsAppBox, setShowWhatsAppBox] = useState(false);
@@ -166,7 +169,7 @@ const IndexPage = () => {
       {showWhatsAppBox && (
         <div className="fixed inset-0 bg-black/40 z-[60] flex items-center justify-center" onClick={() => setShowWhatsAppBox(false)}>
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-xl p-5 w-[90vw] max-w-xs animate-fade-in flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
-            <div className="mb-3 text-center font-semibold text-gray-800 dark:text-gray-100">¿Tienes alguna duda?<br /><span className="text-sm text-gray-600 dark:text-gray-300">¡Contáctanos por WhatsApp!</span></div>
+            <div className="mb-3 text-center font-semibold text-gray-800 dark:text-gray-100">{t('whatsapp_modal_title')}<br /><span className="text-sm text-gray-600 dark:text-gray-300">{t('whatsapp_modal_subtitle')}</span></div>
             <div className="flex flex-col gap-3 w-full">
               {contacts.map((c) => ( 
                 <a key={c.name} href={`https://wa.me/${c.phone}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-green-50 dark:bg-green-900/40 hover:bg-green-100 dark:hover:bg-green-800/70 rounded-lg px-3 py-2 transition w-full"> 
@@ -175,7 +178,7 @@ const IndexPage = () => {
                 </a> 
               ))}
             </div>
-            <button className="mt-4 w-full text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition" onClick={() => setShowWhatsAppBox(false)}>Cerrar</button>
+            <button className="mt-4 w-full text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition" onClick={() => setShowWhatsAppBox(false)}>{t('close')}</button>
           </div>
         </div>
       )}

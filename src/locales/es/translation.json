@@ -1,0 +1,186 @@
+{
+  "app_name": "VOCES DE ESPERANZA",
+  "daily_devotional": "Devocional del día",
+  "no_devotional_title": "Sin devocional para hoy",
+  "no_devotional_message": "Por favor, revisa más tarde.",
+  "language_spanish": "Español",
+  "language_nahuatl": "Náhuatl",
+  "language_english": "English",
+  "logo_alt": "Logo Voces de Esperanza",
+  "reload_devotional": "Recargar Devocional",
+  "listen_devotional": "Escuchar devocional",
+  "key_verse": "Versículo Clave",
+  "reflection": "Reflexión",
+  "question": "Pregunta",
+  "application": "Aplicación",
+  "text_copied": "¡Texto copiado!",
+  "share": "Compartir",
+  "share_devotional": "Compartir Devocional",
+  "view_previous_devotionals": "Ver devocionales anteriores",
+  "whatsapp_contact": "Escríbenos por WhatsApp",
+  "whatsapp_long": "¿Tienes alguna duda? Escríbenos",
+  "whatsapp_short": "Escríbenos",
+  "whatsapp_modal_title": "¿Tienes alguna duda?",
+  "whatsapp_modal_subtitle": "¡Contáctanos por WhatsApp!",
+  "close": "Cerrar",
+  
+  "about_banner_alt": "Quiénes Somos banner background",
+  "about_title": "Quiénes Somos",
+  "about_subtitle": "Conoce el corazón y la misión detrás de Voces de Esperanza.",
+  "about_description_1": "es un proyecto conjunto entre",
+  "about_ayuda_para_vivir": "Ayuda para Vivir",
+  "about_description_2": "y nuestro",
+  "about_training_team": "Equipo de Capacitación",
+  "about_description_3": "Este proyecto ofrece capacitación en discipulado y liderazgo en las siguientes áreas ministeriales bíblicas:",
+  "about_area_1": "Desarrollo de Liderazgo",
+  "about_area_2": "El Seminario de Semillas",
+  "about_area_3": "y",
+  "about_area_4": "Discipulado Enfocado",
+  "about_ayuda_description": "es un ministerio de consejería bíblica enfocado en ayudar a las personas a usar herramientas bíblicas para encontrar libertad y crecimiento espiritual. Christopher Chantres y su esposa dirigen este ministerio en Puebla, México.",
+  "about_team_intro": "Nuestro",
+  "about_team_composed": "está compuesto por",
+  "about_role_director": "Director",
+  "about_role_counselors": "Consejeros",
+  "about_role_pastor": "Pastor",
+  "about_role_tutor": "Tutor",
+  "about_role_pastora": "Pastora",
+  "about_role_technical_director": "Director técnico",
+  "about_connect_title": "¡Conéctate con nosotros!",
+  "about_whatsapp": "WhatsApp",
+  "about_email": "Correo",
+  
+  "resources_link_copied": "Enlace copiado al portapapeles: ",
+  "resources_options": "Opciones",
+  "resources_read": "Leer",
+  "resources_download": "Descargar",
+  "resources_share": "Compartir",
+  "resources_shared_success": "Compartido con éxito",
+  "resources_preview": "Preview",
+  "resources_banner_alt": "Recursos banner background",
+  "resources_title": "Recursos",
+  "resources_subtitle": "Materiales y guías para fortalecer tu crecimiento espiritual y habilidades de liderazgo.",
+  "resources_leadership": "Liderazgo",
+  "resources_student_manual": "Manual del Estudiante",
+  "resources_teacher_manual": "Manual del Maestro",
+  "resources_discipleship": "Discipulado",
+  "resources_emotional_freedom": "Estudio Libertad Emocional",
+  "resources_marriage_counseling": "Claves Consejería Matrimonial",
+  "resources_seminar": "Seminario",
+  "resources_seminar_coming_soon": "Próximamente materiales y guías para el seminario.",
+  
+  "videos_no_videos": "No hay videos disponibles",
+  "videos_check_later": "Por favor, revisa más tarde.",
+  "videos_banner_alt": "Video banner background",
+  "videos_title": "Nuestros Videos",
+  "videos_subtitle": "Contenido inspirador en videos cortos. ¡Esperanza y sabiduría para tu día!",
+  "videos_visit_channel": "Visita y Sigue Nuestro Canal",
+  "videos_dont_miss": "¡No te pierdas nuestros últimos videos!",
+  "videos_loading": "Cargando videos...",
+  
+  "history_today": "Hoy",
+  "history_yesterday": "Ayer",
+  "history_error_title": "Error al cargar los datos",
+  "history_error_message": "No pudimos obtener los devocionales.",
+  "history_retry": "Reintentar",
+  "history_no_devotional": "Sin devocional para este día.",
+  "history_try_another_date": "Prueba con otra fecha.",
+  "history_back_to_home": "Volver al Inicio",
+  "history_title": "Historial",
+  "history_go_to_today": "Ir a Hoy",
+  
+  "navigation": {
+    "devotionals": "Devocionales",
+    "videos": "Videos",
+    "about": "Quiénes somos",
+    "resources": "Recursos",
+    "history": "Historial"
+  },
+  "common": {
+    "back": "Volver",
+    "backToHome": "Volver al Inicio",
+    "backToResources": "Volver a Recursos",
+    "read": "Leer",
+    "download": "Descargar",
+    "share": "Compartir",
+    "listen": "Escuchar",
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "loading": "Cargando...",
+    "error": "Error",
+    "comingSoon": "Próximamente",
+    "noContent": "No hay contenido disponible"
+  },
+  "devotional": {
+    "title": "Devocionales",
+    "keyVerse": "Versículo Clave",
+    "application": "Aplicación",
+    "noDevotional": "Sin devocional para hoy",
+    "checkLater": "Por favor, revisa más tarde",
+    "listenDevotional": "Escuchar devocional",
+    "shareDevotional": "Compartir Devocional",
+    "writeWhatsApp": "Escríbenos por WhatsApp"
+  },
+  "videos": {
+    "title": "Videos",
+    "ourVideos": "Nuestros Videos",
+    "description": "Contenido inspirador en videos cortos. ¡Esperanza y sabiduría para tu día!",
+    "noVideos": "No hay videos disponibles",
+    "latestVideos": "¡No te pierdas nuestros últimos videos!"
+  },
+  "about": {
+    "title": "Quiénes Somos",
+    "description": "Conoce más sobre nuestra misión, visión y el equipo que hace posible Voces de Esperanza.",
+    "connectWithUs": "¡Conéctate con nosotros!",
+    "whatsapp": "WhatsApp",
+    "email": "Correo"
+  },
+  "resources": {
+    "title": "Recursos",
+    "description": "Materiales y guías para fortalecer tu crecimiento espiritual y habilidades de liderazgo.",
+    "leadership": "Liderazgo",
+    "discipleship": "Discipulado",
+    "seminar": "Seminario",
+    "studentManual": "Manual del Estudiante",
+    "teacherManual": "Manual del Maestro",
+    "emotionalFreedomStudy": "Estudio Libertad Emocional",
+    "marriageCounselingKeys": "Claves Consejería Matrimonial",
+    "seminarDescription": "Próximamente materiales y guías para el seminario."
+  },
+  "history": {
+    "title": "Historial",
+    "goToToday": "Ir a Hoy"
+  },
+  "actions": {
+    "shareWith": "Compartir con",
+    "shareSuccess": "Compartido con éxito",
+    "shareError": "Error al compartir",
+    "copyLink": "Copiar enlace",
+    "linkCopied": "Enlace copiado al portapapeles"
+  },
+  "dates": {
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "monthNames": [
+      "enero", "febrero", "marzo", "abril", "mayo", "junio",
+      "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+    ],
+    "dayNames": [
+      "domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"
+    ]
+  },
+  "accessibility": {
+    "listenDevotional": "Escuchar devocional",
+    "backToHome": "Volver al Inicio",
+    "goToToday": "Ir a Hoy",
+    "shareDevotional": "Compartir devocional",
+    "writeWhatsApp": "Escríbenos por WhatsApp"
+  },
+  "sections": {
+    "banner": {
+      "devotionals": "Devocionales diarios para alimentar tu espíritu",
+      "videos": "Contenido inspirador en videos cortos. ¡Esperanza y sabiduría para tu día!",
+      "about": "Conoce más sobre nuestra misión, visión y el equipo que hace posible Voces de Esperanza.",
+      "resources": "Materiales y guías para fortalecer tu crecimiento espiritual y habilidades de liderazgo."
+    }
+  }
+}

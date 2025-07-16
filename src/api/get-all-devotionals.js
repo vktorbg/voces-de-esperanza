@@ -11,8 +11,14 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Read the lang parameter from query
+    const { lang } = req.query;
+    
+    // Construct URL with lang parameter
+    const url = lang ? `${WEB_APP_URL}?lang=${lang}` : WEB_APP_URL;
+    
     // 2. Hacemos la llamada fetch a la Web App, igual que en get-devotional.js
-    const response = await fetch(WEB_APP_URL);
+    const response = await fetch(url);
     if (!response.ok) {
       // Si la llamada falla, lanzamos un error.
       throw new Error(`Failed to fetch from Google Script: ${response.status} ${response.statusText}`);

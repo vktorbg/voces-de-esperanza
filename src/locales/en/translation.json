@@ -1,0 +1,186 @@
+{
+  "app_name": "VOICES OF HOPE",
+  "daily_devotional": "Daily Devotional",
+  "no_devotional_title": "No devotional for today",
+  "no_devotional_message": "Please check back later.",
+  "language_spanish": "Spanish",
+  "language_nahuatl": "Nahuatl",
+  "language_english": "English",
+  "logo_alt": "Voices of Hope Logo",
+  "reload_devotional": "Reload Devotional",
+  "listen_devotional": "Listen to devotional",
+  "key_verse": "Key Verse",
+  "reflection": "Reflection",
+  "question": "Question",
+  "application": "Application",
+  "text_copied": "Text copied!",
+  "share": "Share",
+  "share_devotional": "Share Devotional",
+  "view_previous_devotionals": "View previous devotionals",
+  "whatsapp_contact": "Write us on WhatsApp",
+  "whatsapp_long": "Do you have any questions? Write us",
+  "whatsapp_short": "Write us",
+  "whatsapp_modal_title": "Do you have any questions?",
+  "whatsapp_modal_subtitle": "Contact us on WhatsApp!",
+  "close": "Close",
+  
+  "about_banner_alt": "About Us banner background",
+  "about_title": "About Us",
+  "about_subtitle": "Learn about the heart and mission behind Voices of Hope.",
+  "about_description_1": "is a joint project between",
+  "about_ayuda_para_vivir": "Help to Live",
+  "about_description_2": "and our",
+  "about_training_team": "Training Team",
+  "about_description_3": "This project offers discipleship and leadership training in the following biblical ministry areas:",
+  "about_area_1": "Leadership Development",
+  "about_area_2": "The Seeds Seminar",
+  "about_area_3": "and",
+  "about_area_4": "Focused Discipleship",
+  "about_ayuda_description": "is a biblical counseling ministry focused on helping people use biblical tools to find freedom and spiritual growth. Christopher Chantres and his wife lead this ministry in Puebla, Mexico.",
+  "about_team_intro": "Our",
+  "about_team_composed": "is composed of",
+  "about_role_director": "Director",
+  "about_role_counselors": "Counselors",
+  "about_role_pastor": "Pastor",
+  "about_role_tutor": "Tutor",
+  "about_role_pastora": "Pastor",
+  "about_role_technical_director": "Technical Director",
+  "about_connect_title": "Connect with us!",
+  "about_whatsapp": "WhatsApp",
+  "about_email": "Email",
+  
+  "resources_link_copied": "Link copied to clipboard: ",
+  "resources_options": "Options",
+  "resources_read": "Read",
+  "resources_download": "Download",
+  "resources_share": "Share",
+  "resources_shared_success": "Successfully shared",
+  "resources_preview": "Preview",
+  "resources_banner_alt": "Resources banner background",
+  "resources_title": "Resources",
+  "resources_subtitle": "Materials and guides to strengthen your spiritual growth and leadership skills.",
+  "resources_leadership": "Leadership",
+  "resources_student_manual": "Student Manual",
+  "resources_teacher_manual": "Teacher Manual",
+  "resources_discipleship": "Discipleship",
+  "resources_emotional_freedom": "Emotional Freedom Study",
+  "resources_marriage_counseling": "Marriage Counseling Keys",
+  "resources_seminar": "Seminar",
+  "resources_seminar_coming_soon": "Seminar materials and guides coming soon.",
+  
+  "videos_no_videos": "No videos available",
+  "videos_check_later": "Please check back later.",
+  "videos_banner_alt": "Video banner background",
+  "videos_title": "Our Videos",
+  "videos_subtitle": "Inspiring content in short videos. Hope and wisdom for your day!",
+  "videos_visit_channel": "Visit and Follow Our Channel",
+  "videos_dont_miss": "Don't miss our latest videos!",
+  "videos_loading": "Loading videos...",
+  
+  "history_today": "Today",
+  "history_yesterday": "Yesterday",
+  "history_error_title": "Error loading data",
+  "history_error_message": "We couldn't get the devotionals.",
+  "history_retry": "Retry",
+  "history_no_devotional": "No devotional for this day.",
+  "history_try_another_date": "Try another date.",
+  "history_back_to_home": "Back to Home",
+  "history_title": "History",
+  "history_go_to_today": "Go to Today",
+  
+  "navigation": {
+    "devotionals": "Devotionals",
+    "videos": "Videos",
+    "about": "About Us",
+    "resources": "Resources",
+    "history": "History"
+  },
+  "common": {
+    "back": "Back",
+    "backToHome": "Back to Home",
+    "backToResources": "Back to Resources",
+    "read": "Read",
+    "download": "Download",
+    "share": "Share",
+    "listen": "Listen",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "loading": "Loading...",
+    "error": "Error",
+    "comingSoon": "Coming Soon",
+    "noContent": "No content available"
+  },
+  "devotional": {
+    "title": "Devotionals",
+    "keyVerse": "Key Verse",
+    "application": "Application",
+    "noDevotional": "No devotional for today",
+    "checkLater": "Please check back later",
+    "listenDevotional": "Listen to devotional",
+    "shareDevotional": "Share Devotional",
+    "writeWhatsApp": "Write to us on WhatsApp"
+  },
+  "videos": {
+    "title": "Videos",
+    "ourVideos": "Our Videos",
+    "description": "Inspiring content in short videos. Hope and wisdom for your day!",
+    "noVideos": "No videos available",
+    "latestVideos": "Don't miss our latest videos!"
+  },
+  "about": {
+    "title": "About Us",
+    "description": "Learn more about our mission, vision and the team that makes Voices of Hope possible.",
+    "connectWithUs": "Connect with us!",
+    "whatsapp": "WhatsApp",
+    "email": "Email"
+  },
+  "resources": {
+    "title": "Resources",
+    "description": "Materials and guides to strengthen your spiritual growth and leadership skills.",
+    "leadership": "Leadership",
+    "discipleship": "Discipleship",
+    "seminar": "Seminar",
+    "studentManual": "Student Manual",
+    "teacherManual": "Teacher Manual",
+    "emotionalFreedomStudy": "Emotional Freedom Study",
+    "marriageCounselingKeys": "Marriage Counseling Keys",
+    "seminarDescription": "Coming soon materials and guides for the seminar."
+  },
+  "history": {
+    "title": "History",
+    "goToToday": "Go to Today"
+  },
+  "actions": {
+    "shareWith": "Share with",
+    "shareSuccess": "Successfully shared",
+    "shareError": "Error sharing",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied to clipboard"
+  },
+  "dates": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "monthNames": [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ],
+    "dayNames": [
+      "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+    ]
+  },
+  "accessibility": {
+    "listenDevotional": "Listen to devotional",
+    "backToHome": "Back to Home",
+    "goToToday": "Go to Today",
+    "shareDevotional": "Share devotional",
+    "writeWhatsApp": "Write to us on WhatsApp"
+  },
+  "sections": {
+    "banner": {
+      "devotionals": "Daily devotionals to nourish your spirit",
+      "videos": "Inspiring content in short videos. Hope and wisdom for your day!",
+      "about": "Learn more about our mission, vision and the team that makes Voices of Hope possible.",
+      "resources": "Materials and guides to strengthen your spiritual growth and leadership skills."
+    }
+  }
+}
