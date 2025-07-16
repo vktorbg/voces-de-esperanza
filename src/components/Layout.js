@@ -3,6 +3,7 @@
 import React from 'react';
 import { Link } from 'gatsby';
 import { useAudioPlayer, PlayerUI } from './AudioPlayer';
+import { useLanguage } from './LanguageProvider';
 
 // Icons needed for the Nav bar
 const BookOpenIcon = (props) => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}> <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /> </svg> );
@@ -13,7 +14,13 @@ const DocumentTextIcon = (props) => ( <svg xmlns="http://www.w3.org/2000/svg" fi
 
 export default function Layout({ children }) {
   const { track } = useAudioPlayer();
-  const navItems = [ { name: "Devocionales", path: "/", icon: BookOpenIcon }, { name: "Videos", path: "/videos/", icon: PlayCircleIcon }, { name: "Quiénes somos", path: "/quienes-somos/", icon: UsersIcon }, { name: "Recursos", path: "/recursos/", icon: DocumentTextIcon } ];
+  const { t } = useLanguage();
+  const navItems = [ 
+    { name: t('navigation.devotionals'), path: "/", icon: BookOpenIcon }, 
+    { name: t('navigation.videos'), path: "/videos/", icon: PlayCircleIcon }, 
+    { name: t('navigation.about'), path: "/quienes-somos/", icon: UsersIcon }, 
+    { name: t('navigation.resources'), path: "/recursos/", icon: DocumentTextIcon } 
+  ];
 
   // Calculate the necessary padding for the bottom of the main content
   const navHeight = 'pb-[57px] sm:pb-[65px]';

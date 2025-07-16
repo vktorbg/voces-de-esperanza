@@ -1,11 +1,16 @@
 // gatsby-ssr.js
 import React from 'react';
 import { AudioPlayerProvider } from './src/components/AudioPlayer';
+import LanguageProvider from './src/components/LanguageProvider';
 import Layout from './src/components/Layout';
 
 // Wraps the entire app with the Audio Context
 export const wrapRootElement = ({ element }) => {
-  return <AudioPlayerProvider>{element}</AudioPlayerProvider>;
+  return (
+    <LanguageProvider>
+      <AudioPlayerProvider>{element}</AudioPlayerProvider>
+    </LanguageProvider>
+  );
 };
 
 // Wraps every page with the Layout component
