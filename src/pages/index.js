@@ -47,22 +47,33 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
     setMenuOpen(false);
   };
   
-  // Función para armar el texto a compartir
+  // Función mejorada para armar el texto a compartir
   function getShareText(devocional, t, i18n) {
     const isSpanish = i18n.language === 'es';
     const url = isSpanish ? 'https://voces-de-esperanza.com' : 'https://voices-of-hope.com';
-    return [
-      `🌟 ${devocional.titulo}`,
-      `📅 ${new Date(devocional.fecha).toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}`,
-      `📖 ${devocional.versiculo} (${devocional.cita})`,
-      devocional.reflexion ? `🙏 ${typeof devocional.reflexion === 'object' ? '' : devocional.reflexion}` : '',
-      devocional.pregunta ? `🤔 ${devocional.pregunta}` : '',
-      devocional.aplicacion ? `🔥 ${devocional.aplicacion}` : '',
-      '',
+    // Formatear fecha con día de la semana
+    const fechaObj = new Date(devocional.fecha);
+    const opcionesFecha = isSpanish
+      ? { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }
+      : { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+    const fechaFormateada = fechaObj.toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', opcionesFecha);
+    // Obtener reflexión como texto plano si es objeto
+    let reflexionTexto = '';
+    if (devocional.reflexion) {
+      if (typeof devocional.reflexion === 'object' && devocional.reflexion.content) {
+        // Extraer texto plano de Contentful rich text
+        reflexionTexto = devocional.reflexion.content.map(c => c.content?.map(cc => cc.value).join(' ')).join('\n');
+      } else {
+        reflexionTexto = devocional.reflexion;
+      }
+    }
+    // Formato: versículo y cita en línea aparte, cita en itálicas Markdown
+    const citaItalica = devocional.cita ? `\n_${devocional.cita}_` : '';
+    return (
       isSpanish
-        ? 'Te invitamos a visitar nuestra página: ' + url
-        : 'We invite you to visit our website: ' + url
-    ].filter(Boolean).join('\n\n');
+        ? `¡Buenos días!\n\n${fechaFormateada}\n\n🌟 ${devocional.titulo}\n\n📖 Versículo Clave:\n${devocional.versiculo}${citaItalica}\n\n🙏 Reflexión:\n${reflexionTexto}\n\n🤔 Pregunta:\n${devocional.pregunta || ''}\n\n🔥 Aplicación:\n${devocional.aplicacion || ''}\n\nTe invitamos a visitar nuestra página: ${url}`
+        : `Good morning!\n\n${fechaFormateada}\n\n🌟 ${devocional.titulo}\n\n📖 Key Verse:\n${devocional.versiculo}${citaItalica}\n\n🙏 Reflection:\n${reflexionTexto}\n\n🤔 Question:\n${devocional.pregunta || ''}\n\n🔥 Application:\n${devocional.aplicacion || ''}\n\nWe invite you to visit our website: ${url}`
+    );
   }
 
   // Validación y formateo seguro de la fecha
