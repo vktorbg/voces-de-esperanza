@@ -1,7 +1,7 @@
 // File: voces-de-esperanza/src/pages/historial.js
 
-import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { Link } from "gatsby";
+import React, { useState, useMemo, useRef } from "react";
+import { Link, graphql } from "gatsby";
 import { useTranslation } from "react-i18next";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -41,6 +41,19 @@ const DateNavigator = ({ currentDate, onPrev, onNext, onOpenCalendar, isNextDisa
 };
 const DevotionalCard = ({ devotional }) => {
     const { t } = useTranslation();
+    // Si la reflexión es un objeto Contentful rich text, renderizar correctamente
+    let reflexionContent = null;
+    if (devotional.reflexion) {
+        if (typeof devotional.reflexion === 'object' && devotional.reflexion.nodeType === 'document') {
+            // Importar documentToReactComponents
+            // (Ya está importado en index.js, pero aquí lo requerimos)
+            // eslint-disable-next-line
+            const { documentToReactComponents } = require('@contentful/rich-text-react-renderer');
+            reflexionContent = documentToReactComponents(devotional.reflexion);
+        } else {
+            reflexionContent = devotional.reflexion;
+        }
+    }
     return (
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 sm:p-6 animate-fade-in w-full">
             <div className="text-sm text-gray-500 dark:text-gray-400 mb-2 font-medium">
@@ -53,7 +66,7 @@ const DevotionalCard = ({ devotional }) => {
                 <div className="text-gray-600 dark:text-gray-300 mt-1">{devotional.cita}</div>
             </div>
             <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-                {devotional.reflexion && <p><strong>{t('reflection')}:</strong> {devotional.reflexion}</p>}
+                {reflexionContent && <p><strong>{t('reflection')}:</strong> {reflexionContent}</p>}
                 {devotional.pregunta && <p><strong>{t('question')}:</strong> {devotional.pregunta}</p>}
                 {devotional.aplicacion && <p><strong>{t('application')}:</strong> {devotional.aplicacion}</p>}
             </div>
@@ -76,42 +89,66 @@ const ErrorState = ({ onRetry }) => {
 };
 
 // --- Página Principal ---
-const HistorialPage = () => {
-    const { t } = useTranslation();
-    const [devotionals, setDevotionals] = useState(new Map());
+const HistorialPage = ({ data }) => {
+    const { t, i18n } = useTranslation();
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [isCalendarOpen, setCalendarOpen] = useState(false);
     const calendarPopupRef = useRef(null);
+    // DEBUG LOGS
+    console.log('selectedDate:', selectedDate);
+    // devotionalsMap se inicializa más abajo, así que el log va después
 
-    const fetchAllDevotionals = useCallback(async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            const response = await fetch('/api/get-all-devotionals');
-            if (!response.ok) throw new Error('Network response was not ok');
-            const data = await response.json();
-            const devotionalMap = new Map(data.map(d => [format(new Date(d.fecha), 'yyyy-MM-dd'), d]));
-            setDevotionals(devotionalMap);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
+    // --- Lógica de filtrado igual que index.js ---
+    const getLocale = () => {
+        if (typeof window !== "undefined" && window.location.hostname.includes("voices-of-hope")) {
+            return "en-US";
         }
-    }, []);
+        return "es-MX";
+    };
+    const locale = getLocale();
 
-    useEffect(() => { fetchAllDevotionals(); }, [fetchAllDevotionals]);
-    
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (calendarPopupRef.current && !calendarPopupRef.current.contains(event.target)) {
-                setCalendarOpen(false);
+    // Función para limpiar el título
+    const cleanTitle = (title) => title.replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/i, '');
+
+    // Mapeo de devocionales por fecha y idioma
+    const devotionalsMap = useMemo(() => {
+        const map = new Map();
+        data.allContentfulDevotional.nodes.forEach(node => {
+            if (!node.date) return;
+            if (node.node_locale !== locale) return;
+            const key = node.date; // formato YYYY-MM-DD
+            map.set(key, {
+                titulo: cleanTitle(node.title),
+                fecha: node.date,
+                versiculo: node.bibleVerse,
+                cita: node.quote,
+                reflexion: node.reflection?.raw ? JSON.parse(node.reflection.raw) : node.reflection,
+                pregunta: node.question?.question,
+                aplicacion: node.application?.application,
+            });
+        });
+        return map;
+    }, [data, locale]);
+    console.log('devotionalsMap:', Array.from(devotionalsMap.entries()));
+
+    // Devocional seleccionado por fecha
+    const selectedDevotional = useMemo(() => {
+        console.log('selectedDate key:', format(selectedDate, 'yyyy-MM-dd'));
+        const key = format(selectedDate, 'yyyy-MM-dd');
+        if (devotionalsMap.has(key)) {
+            return devotionalsMap.get(key);
+        } else {
+            // Buscar el devocional más reciente ANTERIOR o IGUAL a la fecha seleccionada
+            // Ordenar las fechas descendente y tomar la primera <= key
+            const dates = Array.from(devotionalsMap.keys()).sort((a, b) => b.localeCompare(a));
+            for (let date of dates) {
+                if (date <= key) {
+                    return devotionalsMap.get(date);
+                }
             }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+            return null;
+        }
+    }, [devotionalsMap, selectedDate]);
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -119,11 +156,9 @@ const HistorialPage = () => {
     };
 
     const isNextDayDisabled = useMemo(() => isToday(selectedDate) || selectedDate > new Date(), [selectedDate]);
-    const selectedDevotional = useMemo(() => devotionals.get(format(selectedDate, 'yyyy-MM-dd')), [devotionals, selectedDate]);
-    
+
     const renderContent = () => {
-        if (isLoading) return <FullScreenLoader />;
-        if (error) return <ErrorState onRetry={fetchAllDevotionals} />;
+        console.log('selectedDevotional:', selectedDevotional);
         return selectedDevotional ? (
             <DevotionalCard devotional={selectedDevotional} />
         ) : (
@@ -138,45 +173,35 @@ const HistorialPage = () => {
         <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
             <main className="flex flex-col flex-grow items-center pt-4 sm:pt-6 pb-24 sm:pb-28 px-4">
                 <div className="w-full max-w-md sm:max-w-2xl mx-auto flex flex-col items-center flex-grow">
-                    
                     <div className="relative w-full text-center mb-6">
                         <Link to="/" title={t('history_back_to_home')} className="absolute left-0 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
                             <ArrowLeftIcon className="w-6 h-6 text-gray-600 dark:text-gray-300"/>
                         </Link>
                         <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">{t('history_title')}</h1>
                     </div>
-
                     <div className="w-full my-4 flex items-center justify-center gap-2">
                         <div className="flex-grow">
                             <DateNavigator
                                 currentDate={selectedDate}
                                 onPrev={() => setSelectedDate(subDays(selectedDate, 1))}
                                 onNext={() => setSelectedDate(addDays(selectedDate, 1))}
-                                isNextDisabled={isNextDayDisabled}
+                                isNextDisabled={false}
                                 onOpenCalendar={() => setCalendarOpen(true)}
                             />
                         </div>
-                        {/* --- CAMBIO PRINCIPAL AQUÍ --- */}
-                        <button onClick={() => setSelectedDate(new Date())} disabled={isToday(selectedDate)} title={t('history_go_to_today')} className="flex-shrink-0 p-2.5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition disabled:opacity-30 disabled:cursor-not-allowed">
-                            {/* Se usa una etiqueta <img> en lugar de un SVG */}
-                            <img src="https://img.icons8.com/color/96/today.png" alt={t('history_today')} className="w-6 h-6"/>
-                        </button>
                     </div>
-                    
                     <div className="flex-grow w-full mt-4">{renderContent()}</div>
                 </div>
             </main>
-
             {isCalendarOpen && (
                 <div className="calendar-popup-overlay animate-fade-in">
                     <div ref={calendarPopupRef} className="calendar-popup-content animate-slide-in-up">
                         <Calendar
                             onChange={handleDateChange}
                             value={selectedDate}
-                            maxDate={new Date()}
                             locale="es-ES"
                             tileContent={({ date, view }) => {
-                                if (view === 'month' && devotionals.has(format(date, 'yyyy-MM-dd'))) {
+                                if (view === 'month' && devotionalsMap.has(format(date, 'yyyy-MM-dd'))) {
                                     return <div className="devotional-dot"></div>;
                                 }
                             }}
@@ -189,3 +214,44 @@ const HistorialPage = () => {
 };
 
 export default HistorialPage;
+
+export const query = graphql`
+  query HistorialDevotionalsQuery {
+    allContentfulDevotional(
+      sort: { fields: [date], order: DESC }
+      limit: 366
+    ) {
+      nodes {
+        title
+        date
+        bibleVerse
+        quote
+        reflection {
+          raw
+        }
+        question {
+          question
+        }
+        application {
+          application
+        }
+        audioEspanol {
+          file {
+            url
+          }
+        }
+        audioNahuatl {
+          file {
+            url
+          }
+        }
+        audioEnglish {
+          file {
+            url
+          }
+        }
+        node_locale
+      }
+    }
+  }
+`;
