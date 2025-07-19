@@ -39,7 +39,7 @@ const DateNavigator = ({ currentDate, onPrev, onNext, onOpenCalendar, isNextDisa
         </div>
     );
 };
-const DevotionalCard = ({ devotional }) => {
+const DevotionalCard = ({ devotional, displayDate }) => {
     const { t } = useTranslation();
     // Si la reflexión es un objeto Contentful rich text, renderizar correctamente
     let reflexionContent = null;
@@ -57,7 +57,7 @@ const DevotionalCard = ({ devotional }) => {
     return (
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 sm:p-6 animate-fade-in w-full">
             <div className="text-sm text-gray-500 dark:text-gray-400 mb-2 font-medium">
-                {format(new Date(devotional.fecha), "EEEE, d 'de' LLLL 'de' yyyy", { locale: es, timeZone: 'UTC' })}
+                {format(new Date(displayDate), "EEEE, d 'de' LLLL 'de' yyyy", { locale: es })}
             </div>
             <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">🌟 {devotional.titulo}</h2>
             <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-700">
@@ -160,7 +160,7 @@ const HistorialPage = ({ data }) => {
     const renderContent = () => {
         console.log('selectedDevotional:', selectedDevotional);
         return selectedDevotional ? (
-            <DevotionalCard devotional={selectedDevotional} />
+            <DevotionalCard devotional={selectedDevotional} displayDate={selectedDate} />
         ) : (
             <div className="text-center mt-6 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
                 <p className="font-semibold text-gray-700 dark:text-gray-200">{t('history_no_devotional')}</p>

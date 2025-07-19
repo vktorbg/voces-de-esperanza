@@ -5,10 +5,13 @@ require("dotenv").config();
 /**
  * @type {import('gatsby').GatsbyConfig}
  */
+// Detectar si es build en inglés por variable de entorno
+const isEnglish = process.env.SITE_ENGLISH_BUILD === 'true';
+
 module.exports = {
   siteMetadata: {
-    title: `Voces de Esperanza`,
-    siteUrl: `https://www.voces-de-esperanza.com`,
+    title: isEnglish ? `Voices of Hope` : `Voces de Esperanza`,
+    siteUrl: isEnglish ? `https://www.voices-of-hope.com` : `https://www.voces-de-esperanza.com`,
   },
   plugins: [
     `gatsby-plugin-postcss`,
@@ -20,17 +23,16 @@ module.exports = {
         accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
       },
     },
-    
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Voces de Esperanza`,
-        short_name: `VDE`, // Un nombre más corto para el ícono
+        name: isEnglish ? `Voices of Hope` : `Voces de Esperanza`,
+        short_name: isEnglish ? `VOH` : `VDE`,
         start_url: `/`,
-        background_color: `#f3f4f6`, // Un gris claro para el splash screen
-        theme_color: `#2563eb`,   // Un color azul para la barra de título del navegador
+        background_color: `#f3f4f6`,
+        theme_color: `#2563eb`,
         display: `standalone`,
-        icon: `src/images/icon.jpg`,
+        icon: isEnglish ? `src/images/icon2.jpg` : `src/images/icon.jpg`,
       },
     },
     `gatsby-plugin-offline`,
@@ -59,7 +61,6 @@ module.exports = {
           `/404/`,
           `/404.html`,
           `/offline-plugin-app-shell-fallback/`,
-          // Excluimos las nuevas páginas de visor de PDF si las tienes
           `/recursos/manual-del-estudiante-react-pdf/`,
           `/recursos/manual-del-maestro-react-pdf/`,
           `/recursos/estudio-libertad-emocional-react-pdf/`,
