@@ -50,7 +50,7 @@ export const onRenderBody = ({ setHeadComponents }) => {
       src="https://cdn.onesignal.com/sdks/OneSignalSDK.js"
       async=""
     />,
-    // 2. Inicializa OneSignal con tu App ID
+    // 2. Inicializa OneSignal con tu App ID y muestra el prompt de suscripción
     <script
       key="onesignal-init"
       dangerouslySetInnerHTML={{
@@ -60,6 +60,7 @@ export const onRenderBody = ({ setHeadComponents }) => {
             OneSignal.init({
               appId: "${ONE_SIGNAL_APP_ID}",
             });
+            OneSignal.showSlidedownPrompt();
           });
         `,
       }}
