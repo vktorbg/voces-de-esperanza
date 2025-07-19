@@ -32,6 +32,9 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Selección de ícono según dominio
+  const iconSrc = (typeof window !== "undefined" && window.location.hostname.includes("voices-of-hope")) ? "/icon2.jpg" : "/icon.jpg";
+
   if (!devocional) {
     return ( <div className="flex flex-col items-center justify-center flex-grow text-center p-8 max-w-2xl mx-auto"> <BookOpenIcon className="w-16 h-16 text-gray-400 dark:text-gray-500 mb-4" /> <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">{t('no_devotional_title')}</h2> <p className="text-gray-500 dark:text-gray-400">{t('no_devotional_message')}</p> </div> );
   }
@@ -89,7 +92,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
     <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto px-2" style={{ maxWidth: '95vw' }}>
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
         <div className="flex items-start mb-6">
-          <img src="/icon.jpg" alt={t('logo_alt')} className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg mr-4 shadow flex-shrink-0" />
+          <img src={iconSrc} alt={t('logo_alt')} className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg mr-4 shadow flex-shrink-0" />
           <div className="flex-grow">
             <div className="flex items-center justify-between">
               <span className="text-xs text-blue-600 dark:text-blue-400 uppercase font-semibold tracking-wider">{t('app_name')}</span>

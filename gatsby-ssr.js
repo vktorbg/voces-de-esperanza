@@ -30,6 +30,20 @@ export const onRenderBody = ({ setHeadComponents }) => {
   }
 
   setHeadComponents([
+    // Manifest dinámico según dominio
+    <script key="dynamic-manifest" dangerouslySetInnerHTML={{
+      __html: `
+        (function() {
+          var manifest = (window.location.hostname.includes('voices-of-hope'))
+            ? '/manifest-en.webmanifest'
+            : '/manifest-es.webmanifest';
+          var link = document.createElement('link');
+          link.rel = 'manifest';
+          link.href = manifest;
+          document.head.appendChild(link);
+        })();
+      `
+    }} />,
     // 1. Carga el script SDK de OneSignal
     <script
       key="onesignal-sdk"
