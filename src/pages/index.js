@@ -136,26 +136,6 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
             {t('share_devotional')}
           </button>
 
-          {/* This entire block will only render on the client, preventing hydration errors */}
-          {isClient && (
-            <>
-              {/* Show subscribe button for non-iOS devices */}
-              {!isIOS && (
-                <button onClick={handleSubscribeClick} className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
-                  <img src="https://img.icons8.com/emoji/48/bell-emoji.png" alt={t('subscribe')} className="w-5 h-5 mr-1" />
-                  {t('subscribe_to_notifications')}
-                </button>
-              )}
-              {/* Show 'Add to Home Screen' prompt for iOS devices that are not installed PWAs */}
-              {isIOS && !isStandalone && (
-                <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg w-full sm:w-auto">
-                  <p className="font-semibold text-gray-800 dark:text-gray-100">{t('get_the_app')}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">{t('add_to_home_screen_prompt')}</p>
-                </div>
-              )}
-            </>
-          )}
-
           <Link to="/historial/" className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
             <img src="https://img.icons8.com/color/96/calendar--v1.png" alt={t('history')} className="w-5 h-5 mr-1 dark:invert" style={{ display: "inline-block", verticalAlign: "middle" }} />
             {t('view_previous_devotionals')}
@@ -166,6 +146,22 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
             <span className="hidden sm:inline">{t('whatsapp_long')}</span>
             <span className="inline sm:hidden">{t('whatsapp_short')}</span>
           </button>
+
+          {/* Botón de Suscribir para Android/Desktop */}
+          {isClient && !isIOS && (
+            <button onClick={handleSubscribeClick} className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
+              <img src="https://img.icons8.com/emoji/48/bell-emoji.png" alt={t('subscribe')} className="w-5 h-5 mr-1" />
+              {t('subscribe_to_notifications')}
+            </button>
+          )}
+
+          {/* Mensaje para iOS al final */}
+          {isClient && isIOS && !isStandalone && (
+            <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg w-full sm:w-auto mt-2">
+              <p className="font-semibold text-gray-800 dark:text-gray-100">{t('get_the_app')}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">{t('add_to_home_screen_prompt')}</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
