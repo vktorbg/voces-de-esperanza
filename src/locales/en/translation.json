@@ -93,6 +93,7 @@
   "subscribe_to_notifications": "Subscribe for Updates",
   "get_the_app": "Get the App!",
   "add_to_home_screen_prompt": "For notifications, add this site to your home screen: tap Share, then 'Add to Home Screen'.",
+  "notifications_unavailable": "Notifications are currently unavailable on your device.",
   
   "navigation": {
     "devotionals": "Devotionals",

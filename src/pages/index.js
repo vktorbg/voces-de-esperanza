@@ -42,9 +42,11 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
 
   // Function to trigger OneSignal subscription prompt
   const handleSubscribeClick = () => {
-    if (window.OneSignal) {
+    if (window.OneSignal && typeof window.OneSignal.push === 'function') {
       window.OneSignal.push(() => {
-        window.OneSignal.showSlidedownPrompt();
+        if (typeof window.OneSignal.showSlidedownPrompt === 'function') {
+          window.OneSignal.showSlidedownPrompt();
+        }
       });
     }
   };
@@ -183,12 +185,18 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
           {/* --- WRAP THE ENTIRE CLIENT-SIDE BLOCK --- */}
           {hasMounted && (
             <>
-              {/* This button shows for Android/Desktop */}
-              {!isIOS && (
+              {/* This button shows for Android/Desktop, only if OneSignal is available */}
+              {!isIOS && window.OneSignal ? (
                 <button onClick={handleSubscribeClick} className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
                   <img src="https://img.icons8.com/emoji/48/bell-emoji.png" alt={t('subscribe')} className="w-5 h-5 mr-1" />
                   {t('subscribe_to_notifications')}
                 </button>
+              ) : null}
+              {/* Fallback message if notifications unavailable */}
+              {!isIOS && !window.OneSignal && (
+                <div className="text-center p-2 text-sm text-gray-500 dark:text-gray-400">
+                  {t('notifications_unavailable')}
+                </div>
               )}
               {/* This message shows for iOS */}
               {isIOS && !isStandalone && (

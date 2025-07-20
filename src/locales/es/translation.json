@@ -93,6 +93,7 @@
   "subscribe_to_notifications": "Suscribirse a notificaciones",
   "get_the_app": "¡Instala la App!",
   "add_to_home_screen_prompt": "Para recibir notificaciones, agrega este sitio a tu pantalla de inicio: toca Compartir y luego 'Agregar a pantalla de inicio'.",
+  "notifications_unavailable": "Las notificaciones no están disponibles en tu dispositivo.",
   
   "navigation": {
     "devotionals": "Devocionales",
