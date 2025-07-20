@@ -23,6 +23,26 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
   const { playTrack } = useAudioPlayer();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  // --- iOS and Standalone detection ---
+  const [isIOS, setIsIOS] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
+
+  useEffect(() => {
+    // This code only runs on the client.
+    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setIsStandalone(true);
+    }
+  }, []);
+
+  // Function to trigger OneSignal subscription prompt
+  const handleSubscribeClick = () => {
+    if (window.OneSignal) {
+      window.OneSignal.push(() => {
+        OneSignal.showSlidedownPrompt();
+      });
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -147,25 +167,41 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
           {devocional.aplicacion && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="fire emoji" className="mr-2">🔥</span> {t('application')}:</div><p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{devocional.aplicacion}</p></div>}
         </div>
 
-        {(
-          // --- SECCIÓN DE BOTONES MODIFICADA ---
-          <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center gap-4">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={async () => { const textToShare = getShareText(devocional, t, i18n); if (navigator.share) { try { await navigator.share({ title: devocional.titulo, text: textToShare }); } catch (err) {} } else { navigator.clipboard.writeText(textToShare).then(() => alert(t('text_copied'))); }}}>
-              <img src="https://img.icons8.com/material-outlined/48/FFFFFF/share.png" alt={t('share')} className="w-5 h-5 mr-1" style={{ display: "inline-block", verticalAlign: "middle" }} />
-              {t('share_devotional')}
+        {/* --- CONDICIONAL BOTONES SEGÚN DISPOSITIVO --- */}
+        <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center gap-4">
+          {/* Share Button (existing) */}
+          <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={async () => { const textToShare = getShareText(devocional, t, i18n); if (navigator.share) { try { await navigator.share({ title: devocional.titulo, text: textToShare }); } catch (err) {} } else { navigator.clipboard.writeText(textToShare).then(() => alert(t('text_copied'))); }}}>
+            <img src="https://img.icons8.com/material-outlined/48/FFFFFF/share.png" alt={t('share')} className="w-5 h-5 mr-1" style={{ display: "inline-block", verticalAlign: "middle" }} />
+            {t('share_devotional')}
+          </button>
+
+          {/* --- NEW CONDITIONAL NOTIFICATION BUTTON --- */}
+          {!isIOS && (
+            <button onClick={handleSubscribeClick} className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
+              <img src="https://img.icons8.com/material-outlined/48/FFFFFF/bell.png" alt={t('subscribe')} className="w-5 h-5 mr-1" />
+              {t('subscribe_to_notifications')}
             </button>
-            {/* --- NUEVO BOTÓN DE HISTORIAL --- */}
-            <Link to="/historial/" className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
-                <img src="https://img.icons8.com/color/96/calendar--v1.png" alt={t('history')} className="w-5 h-5 mr-1 dark:invert" style={{ display: "inline-block", verticalAlign: "middle" }} />
-                {t('view_previous_devotionals')}
-            </Link>
-            <button className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={onWhatsAppClick} type="button" aria-label={t('whatsapp_contact')}>
-              <WhatsAppIcon />
-              <span className="hidden sm:inline">{t('whatsapp_long')}</span>
-              <span className="inline sm:hidden">{t('whatsapp_short')}</span>
-            </button>
-          </div>
-        )}
+          )}
+          {isIOS && !isStandalone && (
+            <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg w-full sm:w-auto">
+              <p className="font-semibold text-gray-800 dark:text-gray-100">{t('get_the_app')}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">{t('add_to_home_screen_prompt')}</p>
+            </div>
+          )}
+
+          {/* History Button (existing) */}
+          <Link to="/historial/" className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
+            <img src="https://img.icons8.com/color/96/calendar--v1.png" alt={t('history')} className="w-5 h-5 mr-1 dark:invert" style={{ display: "inline-block", verticalAlign: "middle" }} />
+            {t('view_previous_devotionals')}
+          </Link>
+
+          {/* WhatsApp Button (existing) */}
+          <button className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={onWhatsAppClick} type="button" aria-label={t('whatsapp_contact')}>
+            <WhatsAppIcon />
+            <span className="hidden sm:inline">{t('whatsapp_long')}</span>
+            <span className="inline sm:hidden">{t('whatsapp_short')}</span>
+          </button>
+        </div>
       </div>
     </div>
   );

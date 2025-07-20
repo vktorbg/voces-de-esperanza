@@ -46,7 +46,6 @@ export const onRenderBody = ({ setHeadComponents }) => {
             OneSignal.init({
               appId: "${ONE_SIGNAL_APP_ID}",
             });
-            OneSignal.showSlidedownPrompt();
           });
         `,
       }}
