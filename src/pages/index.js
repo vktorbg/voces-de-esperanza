@@ -23,12 +23,13 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
   const { playTrack } = useAudioPlayer();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
-  // --- iOS and Standalone detection ---
+  // --- iOS and Standalone detection with hydration fix ---
+  const [hasMounted, setHasMounted] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    // This code only runs on the client.
+    setHasMounted(true); // This will be true only on the client
     setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsStandalone(true);
@@ -39,7 +40,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
   const handleSubscribeClick = () => {
     if (window.OneSignal) {
       window.OneSignal.push(() => {
-        OneSignal.showSlidedownPrompt();
+        window.OneSignal.showSlidedownPrompt();
       });
     }
   };
@@ -176,17 +177,21 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
           </button>
 
           {/* --- NEW CONDITIONAL NOTIFICATION BUTTON --- */}
-          {!isIOS && (
-            <button onClick={handleSubscribeClick} className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
-              <img src="https://img.icons8.com/material-outlined/48/FFFFFF/bell.png" alt={t('subscribe')} className="w-5 h-5 mr-1" />
-              {t('subscribe_to_notifications')}
-            </button>
-          )}
-          {isIOS && !isStandalone && (
-            <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg w-full sm:w-auto">
-              <p className="font-semibold text-gray-800 dark:text-gray-100">{t('get_the_app')}</p>
-              <p className="text-sm text-gray-600 dark:text-gray-300">{t('add_to_home_screen_prompt')}</p>
-            </div>
+          {hasMounted && (
+            <>
+              {!isIOS && (
+                <button onClick={handleSubscribeClick} className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
+                  <img src="https://img.icons8.com/emoji/48/bell-emoji.png" alt={t('subscribe')} className="w-5 h-5 mr-1" />
+                  {t('subscribe_to_notifications')}
+                </button>
+              )}
+              {isIOS && !isStandalone && (
+                <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg w-full sm:w-auto">
+                  <p className="font-semibold text-gray-800 dark:text-gray-100">{t('get_the_app')}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">{t('add_to_home_screen_prompt')}</p>
+                </div>
+              )}
+            </>
           )}
 
           {/* History Button (existing) */}
