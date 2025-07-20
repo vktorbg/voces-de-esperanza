@@ -23,18 +23,22 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
   const { playTrack } = useAudioPlayer();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
-  // --- iOS and Standalone detection with hydration fix ---
+  // --- hasMounted state for hydration fix ---
   const [hasMounted, setHasMounted] = useState(false);
+  // --- Device detection states ---
   const [isIOS, setIsIOS] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
-
   useEffect(() => {
-    setHasMounted(true); // This will be true only on the client
-    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsStandalone(true);
-    }
+    setHasMounted(true);
+    // Device detection logic
+    const userAgent = typeof window !== 'undefined' ? window.navigator.userAgent : '';
+    setIsIOS(/iPad|iPhone|iPod/.test(userAgent));
+    setIsStandalone(
+      typeof window !== 'undefined' &&
+      (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)
+    );
   }, []);
+  // ...existing code...
 
   // Function to trigger OneSignal subscription prompt
   const handleSubscribeClick = () => {
@@ -176,15 +180,17 @@ const DevotionalView = ({ devocional, onWhatsAppClick }) => {
             {t('share_devotional')}
           </button>
 
-          {/* --- NEW CONDITIONAL NOTIFICATION BUTTON --- */}
+          {/* --- WRAP THE ENTIRE CLIENT-SIDE BLOCK --- */}
           {hasMounted && (
             <>
+              {/* This button shows for Android/Desktop */}
               {!isIOS && (
                 <button onClick={handleSubscribeClick} className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
                   <img src="https://img.icons8.com/emoji/48/bell-emoji.png" alt={t('subscribe')} className="w-5 h-5 mr-1" />
                   {t('subscribe_to_notifications')}
                 </button>
               )}
+              {/* This message shows for iOS */}
               {isIOS && !isStandalone && (
                 <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg w-full sm:w-auto">
                   <p className="font-semibold text-gray-800 dark:text-gray-100">{t('get_the_app')}</p>
@@ -222,6 +228,7 @@ const getLocale = () => {
 
 const IndexPage = ({ data }) => {
   const { t } = useTranslation();
+  const [devocional, setDevocional] = useState(null);
   const [showWhatsAppBox, setShowWhatsAppBox] = useState(false);
   const contacts = [
     { name: "Christopher", phone: "522462945809", photo: "/chris.png" },
@@ -229,48 +236,44 @@ const IndexPage = ({ data }) => {
     { name: "Bernabé", phone: "522331181457" }
   ];
 
-  // Filtra el devocional por idioma y fecha actual
-  const locale = getLocale();
-  // Obtener la fecha local del usuario en formato YYYY-MM-DD
-  const today = new Date();
-  const pad = (n) => n.toString().padStart(2, '0');
-  const todayLocalStr = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
-  // Buscar devocional para hoy y idioma, ignorando zona horaria de Contentful
-        let devotionalTextNode = data.allContentfulDevotional.nodes.find(
-          (node) => {
-            if (node.node_locale !== locale) return false;
-            if (!node.date) return false;
-            const [year, month, day] = node.date.split('-');
-            const nodeDateLocal = `${year}-${month}-${day}`;
-            return nodeDateLocal === todayLocalStr;
-          }
-        );
-        // Si no hay devocional para hoy, buscar el más reciente en ese idioma
-        if (!devotionalTextNode) {
-          devotionalTextNode = data.allContentfulDevotional.nodes.find(
-            (node) => node.node_locale === locale
-          );
-        }
-        // Buscar todos los nodos del día actual (sin importar locale) para obtener los audios
-        const todayNodes = data.allContentfulDevotional.nodes.filter(
-          (node) => {
-            if (!node.date) return false;
-            const [year, month, day] = node.date.split('-');
-            const nodeDateLocal = `${year}-${month}-${day}`;
-            return nodeDateLocal === todayLocalStr;
-          }
-        );
-        // Obtener los audios disponibles de todos los nodos del día actual
-        const audioEspanolUrl = todayNodes.map(n => n.audioEspanol?.file?.url || n.audioEspanol?.url).find(Boolean) || null;
-        const audioNahuatlUrl = todayNodes.map(n => n.audioNahuatl?.file?.url || n.audioNahuatl?.url).find(Boolean) || null;
-        const audioEnglishUrl = todayNodes.map(n => n.audioEnglish?.file?.url || n.audioEnglish?.url).find(Boolean) || null;
-  if (devotionalTextNode) {
-    console.log('DevotionalTextNode:', devotionalTextNode);
-  }
-  const devocional = devotionalTextNode
-    ? {
-        // Elimina la fecha del título si está presente (ejemplo: "2025-07-17 - Título")
-        titulo: devotionalTextNode.title.replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/i, ''),
+  useEffect(() => {
+    const locale = getLocale();
+    const today = new Date();
+    const pad = (n) => n.toString().padStart(2, '0');
+    const todayLocalStr = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
+
+    let devotionalTextNode = data.allContentfulDevotional.nodes.find(
+      (node) => {
+        if (node.node_locale !== locale) return false;
+        if (!node.date) return false;
+        const [year, month, day] = node.date.split('-');
+        const nodeDateLocal = `${year}-${month}-${day}`;
+        return nodeDateLocal === todayLocalStr;
+      }
+    );
+
+    if (!devotionalTextNode) {
+      devotionalTextNode = data.allContentfulDevotional.nodes.find(
+        (node) => node.node_locale === locale
+      );
+    }
+
+    const todayNodes = data.allContentfulDevotional.nodes.filter(
+      (node) => {
+        if (!node.date) return false;
+        const [year, month, day] = node.date.split('-');
+        const nodeDateLocal = `${year}-${month}-${day}`;
+        return nodeDateLocal === todayLocalStr;
+      }
+    );
+
+    const audioEspanolUrl = todayNodes.map(n => n.audioEspanol?.file?.url || n.audioEspanol?.url).find(Boolean) || null;
+    const audioNahuatlUrl = todayNodes.map(n => n.audioNahuatl?.file?.url || n.audioNahuatl?.url).find(Boolean) || null;
+    const audioEnglishUrl = todayNodes.map(n => n.audioEnglish?.file?.url || n.audioEnglish?.url).find(Boolean) || null;
+
+    if (devotionalTextNode) {
+      const finalDevotional = {
+        titulo: devotionalTextNode.title.replace(/^d{4}-d{2}-d{2}\s*-\s*/i, ''),
         fecha: devotionalTextNode.date,
         versiculo: devotionalTextNode.bibleVerse,
         cita: devotionalTextNode.quote,
@@ -279,11 +282,13 @@ const IndexPage = ({ data }) => {
           : devotionalTextNode.reflection,
         pregunta: devotionalTextNode.question?.question,
         aplicacion: devotionalTextNode.application?.application,
-         audioEspanolUrl,
-         audioNahuatlUrl,
-         audioEnglishUrl,
-      }
-    : null;
+        audioEspanolUrl,
+        audioNahuatlUrl,
+        audioEnglishUrl,
+      };
+      setDevocional(finalDevotional);
+    }
+  }, [data]);
 
   return (
     <>
