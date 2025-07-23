@@ -220,10 +220,51 @@ const RecursosView = () => {
         <section className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md p-6 transition-shadow duration-300">
           <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center flex items-center justify-center gap-2">
             <DocumentTextIcon className="w-7 h-7 text-indigo-600 dark:text-indigo-300" />
-            {t('resources_seminar')}
+            Seminario y Cursos Online
           </h3>
-          <div className="text-center text-gray-500 dark:text-gray-400">
-            {t('resources_seminar_coming_soon')}
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Tarjeta Nueva Vida en Cristo */}
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow p-4 flex flex-col items-center gap-3 transition hover:shadow-lg w-full">
+              <img
+                src="https://nuevavidaencristo.org/wp-content/uploads/cropped-Escuela-ObreroFiel-nuevavidaencristo.png"
+                alt="Nueva Vida en Cristo logo"
+                className="w-32 h-32 object-contain rounded mb-2 shadow bg-white"
+                style={{ background: '#fff' }}
+              />
+              <h4 className="text-base font-semibold text-gray-700 dark:text-gray-200 text-center mb-1">Nueva Vida en Cristo</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300 text-center mb-2">
+                Descubre los materiales de discipulado <b>"Nueva Vida en Cristo"</b> en español. Son estudios bíblicos gratuitos, descargables y listos para usar en tu iglesia, grupo pequeño o de manera personal. ¡Empieza tu crecimiento espiritual hoy!
+              </p>
+              <a
+                href="https://nuevavidaencristo.org/producto/espanol/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded transition text-sm shadow flex items-center gap-2"
+              >
+                <BookOpenIcon className="w-4 h-4" /> Ir a Nueva Vida en Cristo
+              </a>
+            </div>
+            {/* Tarjeta DTS */}
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow p-4 flex flex-col items-center gap-3 transition hover:shadow-lg w-full">
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBxgKQ0jMPArT7zzZEcP1Mjpw3C6ewkFhgbg&s"
+                alt="DTS Cursos logo"
+                className="w-32 h-32 object-contain rounded mb-2 shadow bg-white"
+                style={{ background: '#fff' }}
+              />
+              <h4 className="text-base font-semibold text-gray-700 dark:text-gray-200 text-center mb-1">Cursos gratuitos DTS</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300 text-center mb-2">
+                Accede a <b>cursos bíblicos gratuitos</b> en video, disponibles en cualquier momento. Regístrate, aprende a tu ritmo y recibe un certificado al finalizar. ¡Aprovecha estos recursos para profundizar en la Palabra!
+              </p>
+              <a
+                href="https://cursos.dts.edu/collections"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded transition text-sm shadow flex items-center gap-2"
+              >
+                <BookOpenIcon className="w-4 h-4" /> Ir a Cursos DTS
+              </a>
+            </div>
           </div>
         </section>
       </div>

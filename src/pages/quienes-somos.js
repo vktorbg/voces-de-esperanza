@@ -73,6 +73,10 @@ const QuienesSomosView = () => {
                 <a href="https://wa.me/522462945809" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 block sm:inline mt-1 sm:mt-0">
                   +52 246 294 5809
                 </a>
+                <span className="mx-2 hidden sm:inline text-gray-400 dark:text-gray-500">|</span>
+                <a href="https://wa.me/522331181457" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 block sm:inline mt-1 sm:mt-0">
+                  +52 233 118 1457
+                </a>
               </div>
               <div className="text-gray-700 dark:text-gray-300">
                 <strong className="block sm:inline mb-1 sm:mb-0">{t('about_email')}:</strong>

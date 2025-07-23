@@ -71,7 +71,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
     } else {
       reflexionTexto = devocional.reflexion;
     }
-    const citaItalica = devocional.cita ? `\n_${devocional.cita}_` : '';
+    const citaItalica = devocional.cita ? `\n${devocional.cita}` : '';
     return ( isSpanish ? `¡Buenos días!\n\n${fechaFormateada}\n\n🌟 ${devocional.titulo}\n\n📖 Versículo Clave:\n${devocional.versiculo}${citaItalica}\n\n🙏 Reflexión:\n${reflexionTexto}\n\n🤔 Pregunta:\n${devocional.pregunta || ''}\n\n🔥 Aplicación:\n${devocional.aplicacion || ''}\n\nTe invitamos a visitar nuestra página: ${url}` : `Good morning!\n\n${fechaFormateada}\n\n🌟 ${devocional.titulo}\n\n📖 Key Verse:\n${devocional.versiculo}${citaItalica}\n\n🙏 Reflection:\n${reflexionTexto}\n\n🤔 Question:\n${devocional.pregunta || ''}\n\n🔥 Application:\n${devocional.aplicacion || ''}\n\nWe invite you to visit our website: ${url}` );
   }
 
