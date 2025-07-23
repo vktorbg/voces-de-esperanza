@@ -46,7 +46,7 @@ export default function Layout({ children }) {
 
       <footer className="fixed bottom-0 left-0 right-0 z-40">
         <PlayerUI />
-        <nav className="w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-top-lg">
+        <nav className="w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-top-lg pb-6 sm:pb-0">
           <div className="flex justify-around max-w-md mx-auto">
             {navItems.map((item) => {
               const Icon = item.icon;
