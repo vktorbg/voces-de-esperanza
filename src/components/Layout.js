@@ -16,25 +16,33 @@ const DocumentTextIcon = (props) => ( <svg xmlns="http://www.w3.org/2000/svg" fi
 export default function Layout({ children }) {
   const { track } = useAudioPlayer();
   const { t } = useLanguage();
-  const hasMounted = useHasMounted(); // <-- 2. USE THE HOOK
+  const hasMounted = useHasMounted();
+  const [isPWA, setIsPWA] = React.useState(false);
 
-  // 3. IF NOT MOUNTED, RENDER A SIMPLE PLACEHOLDER TO MATCH THE SERVER
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+      setIsPWA(!!standalone);
+    }
+  }, []);
+
   if (!hasMounted) {
     return <div className="bg-gray-100 dark:bg-gray-900 min-h-screen" />;
   }
 
-  // --- ALL LOGIC BELOW THIS POINT ONLY RUNS ON THE CLIENT ---
-  
-  const navItems = [ 
-    { name: t('navigation.devotionals'), path: "/", icon: BookOpenIcon }, 
-    { name: t('navigation.videos'), path: "/videos/", icon: PlayCircleIcon }, 
-    { name: t('navigation.about'), path: "/quienes-somos/", icon: UsersIcon }, 
-    { name: t('navigation.resources'), path: "/recursos/", icon: DocumentTextIcon } 
+  const navItems = [
+    { name: t('navigation.devotionals'), path: "/", icon: BookOpenIcon },
+    { name: t('navigation.videos'), path: "/videos/", icon: PlayCircleIcon },
+    { name: t('navigation.about'), path: "/quienes-somos/", icon: UsersIcon },
+    { name: t('navigation.resources'), path: "/recursos/", icon: DocumentTextIcon }
   ];
 
   const navHeight = 'pb-[57px] sm:pb-[65px]';
   const playerHeight = 'pb-[145px] sm:pb-[153px]';
   const mainPaddingBottom = track ? playerHeight : navHeight;
+
+  // Padding para nav sólo si es PWA
+  const navPadding = isPWA ? 'pb-6' : '';
 
   return (
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
@@ -46,7 +54,7 @@ export default function Layout({ children }) {
 
       <footer className="fixed bottom-0 left-0 right-0 z-40">
         <PlayerUI />
-        <nav className="w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-top-lg pb-6 sm:pb-0">
+        <nav className={`w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-top-lg ${navPadding}`}>
           <div className="flex justify-around max-w-md mx-auto">
             {navItems.map((item) => {
               const Icon = item.icon;

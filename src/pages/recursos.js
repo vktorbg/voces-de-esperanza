@@ -170,7 +170,7 @@ const RecursosView = () => {
             <BookOpenIcon className="w-7 h-7 text-green-600 dark:text-green-300" />
             {t('resources_leadership')}
           </h3>
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="flex overflow-x-auto space-x-6 pb-4 pl-2 -mb-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
             <DocCard
               title={t('resources_student_manual')}
               previewImg={previewEstudiante}
@@ -187,6 +187,7 @@ const RecursosView = () => {
               compartirHref={maestroUrl}
               compartirLabel={t('resources_teacher_manual')}
             />
+            <div className="flex-shrink-0 w-1"></div>
           </div>
         </section>
 
@@ -196,7 +197,7 @@ const RecursosView = () => {
             <BookOpenIcon className="w-7 h-7 text-green-600 dark:text-green-300" />
             {t('resources_discipleship')}
           </h3>
-          <div className="grid gap-6 max-w-md mx-auto">
+          <div className="flex overflow-x-auto space-x-6 pb-4 pl-2 -mb-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
             <DocCard
               title={t('resources_emotional_freedom')}
               previewImg={previewLibertad}
@@ -213,6 +214,15 @@ const RecursosView = () => {
               compartirHref={clavesConsejeriaUrl}
               compartirLabel={t('resources_marriage_counseling')}
             />
+              <DocCard
+                title="Guía bíblica sobre la decisión del matrimonio"
+                previewImg="/pdfs/preview-guia-biblica-matrimonio.png"
+                leerTo="/recursos/guia-biblica-decision-matrimonio-react-pdf/"
+                descargarHref="/pdfs/Guia-biblica-sobre-la-decision-del-matrimonio.pdf"
+                compartirHref="/pdfs/Guia-biblica-sobre-la-decision-del-matrimonio.pdf"
+                compartirLabel="Guía bíblica sobre la decisión del matrimonio"
+              />
+            <div className="flex-shrink-0 w-1"></div>
           </div>
         </section>
 
@@ -222,18 +232,18 @@ const RecursosView = () => {
             <DocumentTextIcon className="w-7 h-7 text-indigo-600 dark:text-indigo-300" />
             Seminario y Cursos Online
           </h3>
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="flex overflow-x-auto space-x-4 pb-4 pl-2 -mb-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
             {/* Tarjeta Nueva Vida en Cristo */}
-            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow p-4 flex flex-col items-center gap-3 transition hover:shadow-lg w-full">
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow p-3 sm:p-4 flex flex-col items-center gap-2 sm:gap-3 transition hover:shadow-lg w-full min-w-[220px] max-w-[260px] sm:min-w-[320px] sm:max-w-xs">
               <img
                 src="https://nuevavidaencristo.org/wp-content/uploads/cropped-Escuela-ObreroFiel-nuevavidaencristo.png"
                 alt="Nueva Vida en Cristo logo"
-                className="w-32 h-32 object-contain rounded mb-2 shadow bg-white"
+                className="w-28 h-28 sm:w-32 sm:h-32 object-contain rounded mb-2 shadow bg-white"
                 style={{ background: '#fff' }}
               />
               <h4 className="text-base font-semibold text-gray-700 dark:text-gray-200 text-center mb-1">Nueva Vida en Cristo</h4>
               <p className="text-sm text-gray-600 dark:text-gray-300 text-center mb-2">
-                Descubre los materiales de discipulado <b>"Nueva Vida en Cristo"</b> en español. Son estudios bíblicos gratuitos, descargables y listos para usar en tu iglesia, grupo pequeño o de manera personal. ¡Empieza tu crecimiento espiritual hoy!
+                Descubre los materiales de discipulado <b>"Nueva Vida en Cristo"</b> en español. Son estudios bíblicos gratuitos, descargables y listos para usar en tu iglesia, grupo pequeño o de manera personal.
               </p>
               <a
                 href="https://nuevavidaencristo.org/producto/espanol/"
@@ -241,20 +251,22 @@ const RecursosView = () => {
                 rel="noopener noreferrer"
                 className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded transition text-sm shadow flex items-center gap-2"
               >
-                <BookOpenIcon className="w-4 h-4" /> Ir a Nueva Vida en Cristo
+                <BookOpenIcon className="w-4 h-4" /> Ir a NVC
               </a>
             </div>
+            {/* Separador visual */}
+            <div className="hidden sm:block h-24 border-l border-gray-300 dark:border-gray-700 mx-2"></div>
             {/* Tarjeta DTS */}
-            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow p-4 flex flex-col items-center gap-3 transition hover:shadow-lg w-full">
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow p-3 sm:p-4 flex flex-col items-center gap-2 sm:gap-3 transition hover:shadow-lg w-full min-w-[220px] max-w-[260px] sm:min-w-[320px] sm:max-w-xs">
               <img
                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBxgKQ0jMPArT7zzZEcP1Mjpw3C6ewkFhgbg&s"
                 alt="DTS Cursos logo"
-                className="w-32 h-32 object-contain rounded mb-2 shadow bg-white"
+                className="w-28 h-28 sm:w-32 sm:h-32 object-contain rounded mb-2 shadow bg-white"
                 style={{ background: '#fff' }}
               />
               <h4 className="text-base font-semibold text-gray-700 dark:text-gray-200 text-center mb-1">Cursos gratuitos DTS</h4>
               <p className="text-sm text-gray-600 dark:text-gray-300 text-center mb-2">
-                Accede a <b>cursos bíblicos gratuitos</b> en video, disponibles en cualquier momento. Regístrate, aprende a tu ritmo y recibe un certificado al finalizar. ¡Aprovecha estos recursos para profundizar en la Palabra!
+                Accede a <b>cursos bíblicos gratuitos</b> en video, disponibles en cualquier momento. Regístrate, aprende a tu ritmo y recibe un certificado al finalizar.
               </p>
               <a
                 href="https://cursos.dts.edu/collections"
@@ -265,6 +277,7 @@ const RecursosView = () => {
                 <BookOpenIcon className="w-4 h-4" /> Ir a Cursos DTS
               </a>
             </div>
+            <div className="flex-shrink-0 w-1"></div>
           </div>
         </section>
       </div>
