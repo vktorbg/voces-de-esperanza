@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { format, addDays, subDays, isToday } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { es, enUS } from 'date-fns/locale';
 
 // --- Iconos ---
 // (Todos los SVGs que sí funcionan bien se mantienen)
@@ -18,12 +18,15 @@ const ChevronRightIcon = (props) => (<svg xmlns="http://www.w3.org/2000/svg" fil
 
 // --- COMPONENTES DE UI ---
 const DateNavigator = ({ currentDate, onPrev, onNext, onOpenCalendar, isNextDisabled }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const formattedDate = useMemo(() => {
+        const isEnglish = (typeof window !== 'undefined' && window.location.hostname.includes('voices-of-hope')) || i18n.language === 'en';
+        const locale = isEnglish ? enUS : es;
+        const pattern = isEnglish ? "EEEE, MMMM d" : "EEEE, d 'de' LLLL";
         if (isToday(currentDate)) return t('history_today');
         if (isToday(addDays(currentDate, 1))) return t('history_yesterday');
-        return format(currentDate, "EEEE, d 'de' LLLL", { locale: es });
-    }, [currentDate, t]);
+        return format(currentDate, pattern, { locale });
+    }, [currentDate, t, i18n]);
 
     return (
         <div className="bg-white dark:bg-gray-800 p-2 rounded-2xl shadow-lg flex items-center justify-between w-full max-w-xs mx-auto border border-gray-200 dark:border-gray-700">
@@ -40,7 +43,7 @@ const DateNavigator = ({ currentDate, onPrev, onNext, onOpenCalendar, isNextDisa
     );
 };
 const DevotionalCard = ({ devotional, displayDate }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     // Si la reflexión es un objeto Contentful rich text, renderizar correctamente
     let reflexionContent = null;
     if (devotional.reflexion) {
@@ -54,10 +57,13 @@ const DevotionalCard = ({ devotional, displayDate }) => {
             reflexionContent = devotional.reflexion;
         }
     }
+    const isEnglish = (typeof window !== 'undefined' && window.location.hostname.includes('voices-of-hope')) || i18n.language === 'en';
+    const locale = isEnglish ? enUS : es;
+    const pattern = isEnglish ? "EEEE, MMMM d, yyyy" : "EEEE, d 'de' LLLL 'de' yyyy";
     return (
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 sm:p-6 animate-fade-in w-full">
             <div className="text-sm text-gray-500 dark:text-gray-400 mb-2 font-medium">
-                {format(new Date(displayDate), "EEEE, d 'de' LLLL 'de' yyyy", { locale: es })}
+                {format(new Date(displayDate), pattern, { locale })}
             </div>
             <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">🌟 {devotional.titulo}</h2>
             <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-700">
@@ -199,7 +205,7 @@ const HistorialPage = ({ data }) => {
                         <Calendar
                             onChange={handleDateChange}
                             value={selectedDate}
-                            locale="es-ES"
+                            locale={(typeof window !== 'undefined' && window.location.hostname.includes('voices-of-hope')) || i18n.language === 'en' ? 'en-US' : 'es-ES'}
                             tileContent={({ date, view }) => {
                                 if (view === 'month' && devotionalsMap.has(format(date, 'yyyy-MM-dd'))) {
                                     return <div className="devotional-dot"></div>;

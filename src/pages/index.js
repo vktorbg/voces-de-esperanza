@@ -79,7 +79,10 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
   if (devocional.fecha) {
     const fecha = new Date(devocional.fecha);
     if (!isNaN(fecha.getTime())) {
-      fechaFormateada = fecha.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+  // Choose locale based on current language/domain so English site shows English dates
+  const isEnglishSite = isClient && typeof window !== 'undefined' && window.location.hostname.includes('voices-of-hope');
+  const localeForDate = (i18n.language === 'en' || isEnglishSite) ? 'en-US' : 'es-ES';
+  fechaFormateada = fecha.toLocaleDateString(localeForDate, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
     }
   }
 
