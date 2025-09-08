@@ -1,16 +1,8 @@
 // File: voces-de-esperanza/src/pages/quienes-somos.js
 
 import React from "react";
+import { Link } from "gatsby";
 import { useTranslation } from "react-i18next";
-
-// --- Icon Components (Heroicons - outline style) ---
-// Needed for QuienesSomosView
-const UsersIcon = (props) => ( // This icon is used by QuienesSomosView
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-  </svg>
-);
-// --- End Icon Components ---
 
 
 const QuienesSomosView = () => {
@@ -27,7 +19,11 @@ const QuienesSomosView = () => {
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center text-center p-4">
-          <UsersIcon className="w-16 h-16 sm:w-20 sm:h-20 text-white mb-2 sm:mb-3 opacity-90" />
+          <img 
+            src="/icon.jpg" 
+            alt="Icon" 
+            className="w-16 h-16 sm:w-20 sm:h-20 mb-2 sm:mb-3 opacity-90 rounded-lg object-cover"
+          />
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-1 sm:mb-2 shadow-sm">{t('about_title')}</h2>
           <p className="text-sm sm:text-base text-gray-200 max-w-md">{t('about_subtitle')}</p>
         </div>
@@ -86,6 +82,17 @@ const QuienesSomosView = () => {
               </div>
             </div>
           </div>
+
+          {/* Privacy Policy Link */}
+          <div className="mt-6 text-center text-sm">
+            <Link 
+              to="/politica-de-privacidad/" 
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white hover:underline transition-colors"
+            >
+              {t('about_privacy_policy')}
+            </Link>
+          </div>
+
         </div>
       </div>
     </div>

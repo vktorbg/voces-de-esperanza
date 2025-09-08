@@ -5,6 +5,7 @@ import { Link } from 'gatsby';
 import { useAudioPlayer, PlayerUI } from './AudioPlayer';
 import { useLanguage } from './LanguageProvider';
 import { useHasMounted } from './hooks/useHasMounted'; // <-- 1. IMPORT THE HOOK
+import Seo from './Seo'; // <-- 2. IMPORT SEO COMPONENT
 
 // Icons
 const BookOpenIcon = (props) => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}> <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /> </svg> );
@@ -46,6 +47,9 @@ export default function Layout({ children }) {
 
   return (
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
+      {/* Add SEO component for metadata on all pages */}
+      <Seo />
+      
       <main className={`transition-all duration-300 ${mainPaddingBottom}`}>
         <div className="pt-4 sm:pt-6">
           {children}

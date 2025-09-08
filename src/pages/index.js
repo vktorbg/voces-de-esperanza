@@ -135,12 +135,12 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
 
         <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center gap-4">
           <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={async () => { const textToShare = getShareText(devocional, t, i18n); if (isClient && navigator.share) { try { await navigator.share({ title: devocional.titulo, text: textToShare }); } catch (err) {} } else if (isClient) { navigator.clipboard.writeText(textToShare).then(() => alert(t('text_copied'))); }}}>
-            <img src="https://img.icons8.com/material-outlined/48/FFFFFF/share.png" alt={t('share')} className="w-5 h-5 mr-1" style={{ display: "inline-block", verticalAlign: "middle" }} />
+            <img src="/icons/share.png" alt={t('share')} className="w-5 h-5 mr-1" style={{ display: "inline-block", verticalAlign: "middle" }} />
             {t('share_devotional')}
           </button>
 
           <Link to="/historial/" className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
-            <img src="https://img.icons8.com/color/96/calendar--v1.png" alt={t('history')} className="w-5 h-5 mr-1 dark:invert" style={{ display: "inline-block", verticalAlign: "middle" }} />
+            <img src="/icons/calendar.png" alt={t('history')} className="w-5 h-5 mr-1 dark:invert" style={{ display: "inline-block", verticalAlign: "middle" }} />
             {t('view_previous_devotionals')}
           </Link>
 
@@ -153,7 +153,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
           {/* Botón de Suscribir para Android/Desktop */}
           {isClient && !isIOS && (
             <button onClick={handleSubscribeClick} className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
-              <img src="https://img.icons8.com/emoji/48/bell-emoji.png" alt={t('subscribe')} className="w-5 h-5 mr-1" />
+              <img src="/icons/bell.png" alt={t('subscribe')} className="w-5 h-5 mr-1" />
               {t('subscribe_to_notifications')}
             </button>
           )}
