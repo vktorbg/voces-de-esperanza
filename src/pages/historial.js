@@ -60,6 +60,34 @@ const DevotionalCard = ({ devotional, displayDate }) => {
     const isEnglish = (typeof window !== 'undefined' && window.location.hostname.includes('voices-of-hope')) || i18n.language === 'en';
     const locale = isEnglish ? enUS : es;
     const pattern = isEnglish ? "EEEE, MMMM d, yyyy" : "EEEE, d 'de' LLLL 'de' yyyy";
+
+    // Función para generar el texto de compartir
+    function getShareText(devotional, t, i18n, displayDate) {
+        const isSpanish = i18n.language === 'es' && !(typeof window !== 'undefined' && window.location.hostname.includes('voices-of-hope'));
+        const url = isSpanish ? 'https://voces-de-esperanza.com' : 'https://voices-of-hope.com';
+        const fechaObj = new Date(displayDate);
+        const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+        const fechaFormateada = fechaObj.toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', opcionesFecha);
+        
+        let reflexionTexto = '';
+        if (devotional.reflexion && typeof devotional.reflexion === 'object') {
+            if (devotional.reflexion.content) {
+                reflexionTexto = devotional.reflexion.content.map(c => c.content?.map(cc => cc.value).join(' ')).join('\n');
+            } else if (typeof reflexionContent === 'string') {
+                reflexionTexto = reflexionContent;
+            }
+        } else {
+            reflexionTexto = devotional.reflexion || '';
+        }
+        
+        const citaItalica = devotional.cita ? `\n${devotional.cita}` : '';
+        
+        return (
+            isSpanish ?
+            `¡Buenos días!\n\n${fechaFormateada}\n\n🌟 ${devotional.titulo}\n\n📖 Versículo Clave:\n${devotional.versiculo}${citaItalica}\n\n🙏 Reflexión:\n${reflexionTexto}\n\n🤔 Pregunta:\n${devotional.pregunta || ''}\n\n🔥 Aplicación:\n${devotional.aplicacion || ''}\n\nTe invitamos a visitar nuestra página: ${url}` :
+            `Good morning!\n\n${fechaFormateada}\n\n🌟 ${devotional.titulo}\n\n📖 Key Verse:\n${devotional.versiculo}${citaItalica}\n\n🙏 Reflection:\n${reflexionTexto}\n\n🤔 Question:\n${devotional.pregunta || ''}\n\n🔥 Application:\n${devotional.aplicacion || ''}\n\nWe invite you to visit our website: ${url}`
+        );
+    }
     return (
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 sm:p-6 animate-fade-in w-full">
             <div className="text-sm text-gray-500 dark:text-gray-400 mb-2 font-medium">
@@ -75,6 +103,38 @@ const DevotionalCard = ({ devotional, displayDate }) => {
                 {reflexionContent && <p><strong>{t('reflection')}:</strong> {reflexionContent}</p>}
                 {devotional.pregunta && <p><strong>{t('question')}:</strong> {devotional.pregunta}</p>}
                 {devotional.aplicacion && <p><strong>{t('application')}:</strong> {devotional.aplicacion}</p>}
+            </div>
+            
+            {/* Botón de compartir */}
+            <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-center">
+                <button 
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2"
+                    onClick={async () => {
+                        const textToShare = getShareText(devotional, t, i18n, displayDate);
+                        if (typeof window !== 'undefined' && navigator.share) {
+                            try {
+                                await navigator.share({
+                                    title: devotional.titulo,
+                                    text: textToShare
+                                });
+                            } catch (err) {
+                                // User cancelled or share failed
+                            }
+                        } else if (typeof window !== 'undefined') {
+                            navigator.clipboard.writeText(textToShare).then(() => {
+                                alert(t('text_copied'));
+                            });
+                        }
+                    }}
+                >
+                    <img 
+                        src="/icons/share.png" 
+                        alt={t('share')} 
+                        className="w-5 h-5 mr-1" 
+                        style={{ display: "inline-block", verticalAlign: "middle" }}
+                    />
+                    {t('share_devotional')}
+                </button>
             </div>
         </div>
     );
