@@ -183,6 +183,12 @@
     "shareDevotional": "Compartir devocional",
     "writeWhatsApp": "Escríbenos por WhatsApp"
   },
+  "offline_mode": "Modo Sin Conexión",
+  "offline_message": "Mostrando el último devocional guardado. Conéctate a internet para obtener contenido actualizado.",
+  "offline_history_message": "Mostrando devocionales guardados. Conéctate a internet para obtener contenido actualizado.",
+  "no_connection": "Sin Conexión",
+  "need_internet_first_time": "Necesitas conexión a internet la primera vez para descargar los devocionales.",
+  "need_internet_history": "Necesitas conexión a internet la primera vez para descargar el historial de devocionales.",
   "sections": {
     "banner": {
       "devotionals": "Devocionales diarios para alimentar tu espíritu",

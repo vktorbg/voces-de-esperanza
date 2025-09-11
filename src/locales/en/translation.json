@@ -183,6 +183,12 @@
     "shareDevotional": "Share devotional",
     "writeWhatsApp": "Write to us on WhatsApp"
   },
+  "offline_mode": "Offline Mode",
+  "offline_message": "Showing the last saved devotional. Connect to the internet to get updated content.",
+  "offline_history_message": "Showing saved devotionals. Connect to the internet to get updated content.",
+  "no_connection": "No Connection",
+  "need_internet_first_time": "You need an internet connection the first time to download devotionals.",
+  "need_internet_history": "You need an internet connection the first time to download devotional history.",
   "sections": {
     "banner": {
       "devotionals": "Daily devotionals to nourish your spirit",

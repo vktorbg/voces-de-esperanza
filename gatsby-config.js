@@ -9,6 +9,7 @@ require("dotenv").config();
 const isEnglish = process.env.SITE_ENGLISH_BUILD === 'true';
 
 module.exports = {
+  pathPrefix: `/`,
   siteMetadata: {
     title: isEnglish ? `Voices of Hope` : `Voces de Esperanza`,
     siteUrl: isEnglish ? `https://www.voices-of-hope.com` : `https://www.voces-de-esperanza.com`,

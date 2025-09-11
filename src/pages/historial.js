@@ -1,12 +1,16 @@
 // File: voces-de-esperanza/src/pages/historial.js
 
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Link, graphql } from "gatsby";
 import { useTranslation } from "react-i18next";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { format, addDays, subDays, isToday } from 'date-fns';
 import { es, enUS } from 'date-fns/locale';
+import { Preferences } from '@capacitor/preferences';
+import { Network } from '@capacitor/network';
+import { Capacitor } from '@capacitor/core';
+import { Share } from '@capacitor/share';
 
 // --- Iconos ---
 // (Todos los SVGs que sí funcionan bien se mantienen)
@@ -111,19 +115,30 @@ const DevotionalCard = ({ devotional, displayDate }) => {
                     className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2"
                     onClick={async () => {
                         const textToShare = getShareText(devotional, t, i18n, displayDate);
-                        if (typeof window !== 'undefined' && navigator.share) {
-                            try {
-                                await navigator.share({
-                                    title: devotional.titulo,
-                                    text: textToShare
-                                });
-                            } catch (err) {
-                                // User cancelled or share failed
-                            }
-                        } else if (typeof window !== 'undefined') {
-                            navigator.clipboard.writeText(textToShare).then(() => {
-                                alert(t('text_copied'));
+                        
+                        // Intenta usar el Share nativo primero
+                        try {
+                            await Share.share({
+                                title: devotional.titulo,
+                                text: textToShare,
+                                dialogTitle: t('share_devotional'),
                             });
+                        } catch (error) {
+                            // Si falla (ej. en web sin soporte), usa el método antiguo
+                            if (typeof window !== 'undefined' && navigator.share) {
+                                try {
+                                    await navigator.share({
+                                        title: devotional.titulo,
+                                        text: textToShare
+                                    });
+                                } catch (err) {
+                                    // User cancelled or share failed
+                                }
+                            } else if (typeof window !== 'undefined') {
+                                navigator.clipboard.writeText(textToShare).then(() => {
+                                    alert(t('text_copied'));
+                                });
+                            }
                         }
                     }}
                 >
@@ -140,6 +155,39 @@ const DevotionalCard = ({ devotional, displayDate }) => {
     );
 };
 const FullScreenLoader = () => (<div className="flex-grow flex items-center justify-center"><div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div></div>);
+
+const OfflineHistoryMessage = ({ t }) => (
+    <div className="w-full mb-4">
+        <div className="bg-orange-50 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-700 rounded-xl p-4 mb-4">
+            <div className="flex items-center mb-2">
+                <div className="w-6 h-6 bg-orange-100 dark:bg-orange-800 rounded-full flex items-center justify-center mr-2">
+                    <span className="text-orange-600 dark:text-orange-400 text-sm">📴</span>
+                </div>
+                <h3 className="font-semibold text-orange-800 dark:text-orange-200 text-sm">{t('offline_mode') || 'Modo Sin Conexión'}</h3>
+            </div>
+            <p className="text-orange-700 dark:text-orange-300 text-xs">
+                {t('offline_history_message') || 'Mostrando devocionales guardados. Conéctate a internet para obtener contenido actualizado.'}
+            </p>
+        </div>
+    </div>
+);
+
+const NoHistoryMessage = ({ t }) => (
+    <div className="w-full">
+        <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-xl p-4">
+            <div className="flex items-center mb-2">
+                <div className="w-6 h-6 bg-yellow-100 dark:bg-yellow-800 rounded-full flex items-center justify-center mr-2">
+                    <span className="text-yellow-600 dark:text-yellow-400 text-sm">⚠️</span>
+                </div>
+                <h3 className="font-semibold text-yellow-800 dark:text-yellow-200 text-sm">{t('no_connection') || 'Sin Conexión'}</h3>
+            </div>
+            <p className="text-yellow-700 dark:text-yellow-300 text-xs">
+                {t('need_internet_history') || 'Necesitas conexión a internet la primera vez para descargar el historial de devocionales.'}
+            </p>
+        </div>
+    </div>
+);
+
 const ErrorState = ({ onRetry }) => {
     const { t } = useTranslation();
     return (
@@ -159,10 +207,80 @@ const HistorialPage = ({ data }) => {
     const { t, i18n } = useTranslation();
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [isCalendarOpen, setCalendarOpen] = useState(false);
+    const [allDevotionals, setAllDevotionals] = useState([]);
+    const [isOffline, setIsOffline] = useState(false);
+    const [loading, setLoading] = useState(true);
     const calendarPopupRef = useRef(null);
     // DEBUG LOGS
     console.log('selectedDate:', selectedDate);
     // devotionalsMap se inicializa más abajo, así que el log va después
+
+    // --- Efecto para cargar datos con funcionalidad offline ---
+    useEffect(() => {
+        const loadHistory = async () => {
+            setLoading(true);
+            
+            try {
+                // La detección de red solo funciona en plataformas nativas
+                if (Capacitor.isNativePlatform()) {
+                    const status = await Network.getStatus();
+
+                    if (status.connected) {
+                        // --- MODO ONLINE ---
+                        setIsOffline(false);
+                        // Los datos vienen de la query de Gatsby
+                        const onlineDevotionals = data?.allContentfulDevotional?.nodes || [];
+                        setAllDevotionals(onlineDevotionals);
+
+                        // Guarda toda la lista en caché para uso offline
+                        if (onlineDevotionals.length > 0) {
+                            await Preferences.set({
+                                key: 'devotionalHistory',
+                                value: JSON.stringify(onlineDevotionals)
+                            });
+                            
+                            // También guarda la fecha de caché
+                            await Preferences.set({
+                                key: 'devotionalHistoryCacheDate',
+                                value: new Date().toISOString()
+                            });
+                        }
+                    } else {
+                        // --- MODO OFFLINE ---
+                        setIsOffline(true);
+                        const { value } = await Preferences.get({ key: 'devotionalHistory' });
+                        if (value) {
+                            setAllDevotionals(JSON.parse(value));
+                        } else {
+                            // No hay historial en caché
+                            setAllDevotionals([]);
+                        }
+                    }
+                } else {
+                    // --- MODO WEB ---
+                    setIsOffline(false);
+                    setAllDevotionals(data?.allContentfulDevotional?.nodes || []);
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+                // En caso de error, intenta cargar desde cache
+                try {
+                    const { value } = await Preferences.get({ key: 'devotionalHistory' });
+                    if (value) {
+                        setAllDevotionals(JSON.parse(value));
+                        setIsOffline(true);
+                    }
+                } catch (cacheError) {
+                    console.error('Error loading from cache:', cacheError);
+                    setAllDevotionals([]);
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadHistory();
+    }, [data]);
 
     // --- Lógica de filtrado igual que index.js ---
     const getLocale = () => {
@@ -179,7 +297,8 @@ const HistorialPage = ({ data }) => {
     // Mapeo de devocionales por fecha y idioma
     const devotionalsMap = useMemo(() => {
         const map = new Map();
-        data.allContentfulDevotional.nodes.forEach(node => {
+        // ¡Usa el estado allDevotionals en lugar de data!
+        allDevotionals.forEach(node => {
             if (!node.date) return;
             if (node.node_locale !== locale) return;
             const key = node.date; // formato YYYY-MM-DD
@@ -194,7 +313,7 @@ const HistorialPage = ({ data }) => {
             });
         });
         return map;
-    }, [data, locale]);
+    }, [allDevotionals, locale]); // Depende del estado allDevotionals
     console.log('devotionalsMap:', Array.from(devotionalsMap.entries()));
 
     // Devocional seleccionado por fecha
@@ -225,6 +344,15 @@ const HistorialPage = ({ data }) => {
 
     const renderContent = () => {
         console.log('selectedDevotional:', selectedDevotional);
+        
+        if (loading) {
+            return <FullScreenLoader />;
+        }
+        
+        if (allDevotionals.length === 0 && isOffline) {
+            return <NoHistoryMessage t={t} />;
+        }
+        
         return selectedDevotional ? (
             <DevotionalCard devotional={selectedDevotional} displayDate={selectedDate} />
         ) : (
@@ -245,17 +373,24 @@ const HistorialPage = ({ data }) => {
                         </Link>
                         <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">{t('history_title')}</h1>
                     </div>
-                    <div className="w-full my-4 flex items-center justify-center gap-2">
-                        <div className="flex-grow">
-                            <DateNavigator
-                                currentDate={selectedDate}
-                                onPrev={() => setSelectedDate(subDays(selectedDate, 1))}
-                                onNext={() => setSelectedDate(addDays(selectedDate, 1))}
-                                isNextDisabled={false}
-                                onOpenCalendar={() => setCalendarOpen(true)}
-                            />
+                    
+                    {/* Mensaje de offline si corresponde */}
+                    {isOffline && allDevotionals.length > 0 && <OfflineHistoryMessage t={t} />}
+                    
+                    {!loading && (
+                        <div className="w-full my-4 flex items-center justify-center gap-2">
+                            <div className="flex-grow">
+                                <DateNavigator
+                                    currentDate={selectedDate}
+                                    onPrev={() => setSelectedDate(subDays(selectedDate, 1))}
+                                    onNext={() => setSelectedDate(addDays(selectedDate, 1))}
+                                    isNextDisabled={false}
+                                    onOpenCalendar={() => setCalendarOpen(true)}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
+                    
                     <div className="flex-grow w-full mt-4">{renderContent()}</div>
                 </div>
             </main>

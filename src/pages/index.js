@@ -8,6 +8,10 @@ import { useTranslation } from "react-i18next";
 import { useAudioPlayer } from "../components/AudioPlayer";
 import InstallPrompt from "../components/InstallPrompt";
 import IOSInstallPrompt from "../components/IOSInstallPrompt";
+import { Share } from '@capacitor/share';
+import { Preferences } from '@capacitor/preferences';
+import { Network } from '@capacitor/network';
+import { Capacitor } from '@capacitor/core';
 
 // --- Icons (No changes here) ---
 const BookOpenIcon = (props) => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}> <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 006 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /> </svg> );
@@ -17,6 +21,38 @@ const ReloadIcon = (props) => ( <svg xmlns="http://www.w3.org/2000/svg" fill="no
 
 // --- Skeletons and Loaders (No changes here) ---
 const DevotionalSkeleton = () => ( <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto p-4 sm:p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg animate-pulse" style={{ maxWidth: '95vw' }}> <div className="flex items-start mb-6"> <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg mr-4 bg-gray-200 dark:bg-gray-700"></div> <div className="flex-grow pt-2"> <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div> <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div> </div> </div> <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-5/6 mb-6"></div> <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg"> <div className="h-5 bg-gray-200 dark:bg-gray-600 rounded w-1/3 mb-2"></div> <div className="h-6 bg-gray-200 dark:bg-gray-600 rounded w-3/4"></div> </div> <div className="space-y-6"> <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div> <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div> <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div> </div> </div> );
+
+const OfflineMessage = ({ t }) => (
+  <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto px-2" style={{ maxWidth: '95vw' }}>
+    <div className="bg-orange-50 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-700 rounded-xl p-4 sm:p-6 mb-4">
+      <div className="flex items-center mb-3">
+        <div className="w-8 h-8 bg-orange-100 dark:bg-orange-800 rounded-full flex items-center justify-center mr-3">
+          <span className="text-orange-600 dark:text-orange-400">📴</span>
+        </div>
+        <h3 className="font-semibold text-orange-800 dark:text-orange-200">{t('offline_mode') || 'Modo Sin Conexión'}</h3>
+      </div>
+      <p className="text-orange-700 dark:text-orange-300 text-sm">
+        {t('offline_message') || 'Mostrando el último devocional guardado. Conéctate a internet para obtener contenido actualizado.'}
+      </p>
+    </div>
+  </div>
+);
+
+const NoDevotionalMessage = ({ t }) => (
+  <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto px-2" style={{ maxWidth: '95vw' }}>
+    <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-xl p-4 sm:p-6">
+      <div className="flex items-center mb-3">
+        <div className="w-8 h-8 bg-yellow-100 dark:bg-yellow-800 rounded-full flex items-center justify-center mr-3">
+          <span className="text-yellow-600 dark:text-yellow-400">⚠️</span>
+        </div>
+        <h3 className="font-semibold text-yellow-800 dark:text-yellow-200">{t('no_connection') || 'Sin Conexión'}</h3>
+      </div>
+      <p className="text-yellow-700 dark:text-yellow-300 text-sm">
+        {t('need_internet_first_time') || 'Necesitas conexión a internet la primera vez para descargar los devocionales.'}
+      </p>
+    </div>
+  </div>
+);
 
 // DevotionalView Component - Simplified to be more "dumb"
 const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
@@ -134,7 +170,27 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
         </div>
 
         <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center gap-4">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={async () => { const textToShare = getShareText(devocional, t, i18n); if (isClient && navigator.share) { try { await navigator.share({ title: devocional.titulo, text: textToShare }); } catch (err) {} } else if (isClient) { navigator.clipboard.writeText(textToShare).then(() => alert(t('text_copied'))); }}}>
+          <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={async () => { 
+            const textToShare = getShareText(devocional, t, i18n); 
+            
+            // Intenta usar el Share nativo primero
+            try {
+              await Share.share({
+                title: devocional.titulo,
+                text: textToShare,
+                dialogTitle: t('share_devotional'),
+              });
+            } catch (error) {
+              // Si falla (ej. en web sin soporte), usa el método antiguo
+              if (isClient && navigator.share) { 
+                try { 
+                  await navigator.share({ title: devocional.titulo, text: textToShare }); 
+                } catch (err) {} 
+              } else if (isClient) { 
+                navigator.clipboard.writeText(textToShare).then(() => alert(t('text_copied'))); 
+              }
+            }
+          }}>
             <img src="/icons/share.png" alt={t('share')} className="w-5 h-5 mr-1" style={{ display: "inline-block", verticalAlign: "middle" }} />
             {t('share_devotional')}
           </button>
@@ -176,6 +232,9 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
 const IndexPage = ({ data }) => {
   const { t } = useTranslation();
   const [showWhatsAppBox, setShowWhatsAppBox] = useState(false);
+  const [devocional, setDevocional] = useState(null);
+  const [isOffline, setIsOffline] = useState(false);
+  const [loading, setLoading] = useState(true);
   
   // THIS IS THE SINGLE SOURCE OF TRUTH FOR HYDRATION
   const [isClient, setIsClient] = useState(false);
@@ -183,65 +242,139 @@ const IndexPage = ({ data }) => {
     setIsClient(true);
   }, []);
 
+  // Función para construir el devocional desde los datos de GraphQL
+  const buildDevotionalFromData = (data) => {
+    const getLocale = () => {
+      return typeof window !== 'undefined' && window.location.hostname.includes("voices-of-hope") ? "en-US" : "es-MX";
+    };
+
+    const locale = getLocale();
+    const today = new Date();
+    const pad = (n) => n.toString().padStart(2, '0');
+    const todayLocalStr = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
+
+    let devotionalTextNode = data.allContentfulDevotional.nodes.find(
+      (node) => {
+        if (node.node_locale !== locale) return false;
+        if (!node.date) return false;
+        const [year, month, day] = node.date.split('-');
+        return `${year}-${month}-${day}` === todayLocalStr;
+      }
+    );
+
+    if (!devotionalTextNode) {
+      devotionalTextNode = data.allContentfulDevotional.nodes.find(
+        (node) => node.node_locale === locale
+      );
+    }
+
+    const todayNodes = data.allContentfulDevotional.nodes.filter(
+      (node) => {
+        if (!node.date) return false;
+        const [year, month, day] = node.date.split('-');
+        return `${year}-${month}-${day}` === todayLocalStr;
+      }
+    );
+
+    const audioEspanolUrl = todayNodes.map(n => n.audioEspanol?.file?.url).find(Boolean) || null;
+    const audioNahuatlUrl = todayNodes.map(n => n.audioNahuatl?.file?.url).find(Boolean) || null;
+    const audioEnglishUrl = todayNodes.map(n => n.audioEnglish?.file?.url).find(Boolean) || null;
+    
+    return devotionalTextNode
+      ? {
+          titulo: devotionalTextNode.title.replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/, ''),
+          fecha: devotionalTextNode.date,
+          versiculo: devotionalTextNode.bibleVerse,
+          cita: devotionalTextNode.quote,
+          reflexion: devotionalTextNode.reflection?.raw ? JSON.parse(devotionalTextNode.reflection.raw) : devotionalTextNode.reflection,
+          pregunta: devotionalTextNode.question?.question,
+          aplicacion: devotionalTextNode.application?.application,
+          audioEspanolUrl,
+          audioNahuatlUrl,
+          audioEnglishUrl,
+        }
+      : null;
+  };
+
+  // Efecto principal para cargar el devocional
+  useEffect(() => {
+    const loadDevotional = async () => {
+      if (!isClient || !data) return;
+
+      setLoading(true);
+
+      try {
+        // La detección de red solo funciona en plataformas nativas
+        if (Capacitor.isNativePlatform()) {
+          const status = await Network.getStatus();
+
+          if (status.connected) {
+            // --- MODO ONLINE ---
+            setIsOffline(false);
+            // Carga desde GraphQL y guarda en caché
+            const latestDevotional = buildDevotionalFromData(data);
+            setDevocional(latestDevotional);
+
+            if (latestDevotional) {
+              // Guarda en Preferences para uso offline
+              await Preferences.set({
+                key: 'latestDevotional',
+                value: JSON.stringify(latestDevotional),
+              });
+              
+              // También guarda la fecha para saber cuándo fue guardado
+              await Preferences.set({
+                key: 'devotionalCacheDate',
+                value: new Date().toISOString(),
+              });
+            }
+          } else {
+            // --- MODO OFFLINE ---
+            setIsOffline(true);
+            // Carga desde Preferences
+            const { value } = await Preferences.get({ key: 'latestDevotional' });
+            if (value) {
+              setDevocional(JSON.parse(value));
+            } else {
+              // Si no hay nada en caché, devocional seguirá siendo null
+              setDevocional(null);
+            }
+          }
+        } else {
+          // --- MODO WEB (navegador) ---
+          // Simplemente carga los datos como normalmente
+          setIsOffline(false);
+          const latestDevotional = buildDevotionalFromData(data);
+          setDevocional(latestDevotional);
+        }
+      } catch (error) {
+        console.error('Error loading devotional:', error);
+        // En caso de error, intenta cargar desde cache
+        try {
+          const { value } = await Preferences.get({ key: 'latestDevotional' });
+          if (value) {
+            setDevocional(JSON.parse(value));
+            setIsOffline(true);
+          }
+        } catch (cacheError) {
+          console.error('Error loading from cache:', cacheError);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDevotional();
+  }, [isClient, data]); // Depende de isClient y data para recargar si los datos de GraphQL cambian
+
   // If we're on the server or during the first client render, show the skeleton.
   // This guarantees the server and client match, fixing all hydration errors.
-  if (!isClient) {
+  if (!isClient || loading) {
     return <DevotionalSkeleton />;
   }
 
   // --- All logic below this point only runs on the client ---
   
-  const getLocale = () => {
-    return window.location.hostname.includes("voices-of-hope") ? "en-US" : "es-MX";
-  };
-
-  const locale = getLocale();
-  const today = new Date();
-  const pad = (n) => n.toString().padStart(2, '0');
-  const todayLocalStr = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
-
-  let devotionalTextNode = data.allContentfulDevotional.nodes.find(
-    (node) => {
-      if (node.node_locale !== locale) return false;
-      if (!node.date) return false;
-      const [year, month, day] = node.date.split('-');
-      return `${year}-${month}-${day}` === todayLocalStr;
-    }
-  );
-
-  if (!devotionalTextNode) {
-    devotionalTextNode = data.allContentfulDevotional.nodes.find(
-      (node) => node.node_locale === locale
-    );
-  }
-
-  const todayNodes = data.allContentfulDevotional.nodes.filter(
-    (node) => {
-      if (!node.date) return false;
-      const [year, month, day] = node.date.split('-');
-      return `${year}-${month}-${day}` === todayLocalStr;
-    }
-  );
-
-  const audioEspanolUrl = todayNodes.map(n => n.audioEspanol?.file?.url).find(Boolean) || null;
-  const audioNahuatlUrl = todayNodes.map(n => n.audioNahuatl?.file?.url).find(Boolean) || null;
-  const audioEnglishUrl = todayNodes.map(n => n.audioEnglish?.file?.url).find(Boolean) || null;
-  
-  const devocional = devotionalTextNode
-    ? {
-        titulo: devotionalTextNode.title.replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/, ''),
-        fecha: devotionalTextNode.date,
-        versiculo: devotionalTextNode.bibleVerse,
-        cita: devotionalTextNode.quote,
-        reflexion: devotionalTextNode.reflection?.raw ? JSON.parse(devotionalTextNode.reflection.raw) : devotionalTextNode.reflection,
-        pregunta: devotionalTextNode.question?.question,
-        aplicacion: devotionalTextNode.application?.application,
-        audioEspanolUrl,
-        audioNahuatlUrl,
-        audioEnglishUrl,
-      }
-    : null;
-
   const contacts = [
     { name: "Christopher", phone: "522462945809", photo: "/chris.png" },
     { name: "Felipe", phone: "522223614495", photo: "/phil.png" },
@@ -253,6 +386,8 @@ const IndexPage = ({ data }) => {
     <>
       <InstallPrompt />
       <IOSInstallPrompt />
+      {isOffline && devocional && <OfflineMessage t={t} />}
+      {!devocional && isOffline && <NoDevotionalMessage t={t} />}
       {devocional ? (
         <DevotionalView
           devocional={devocional}
@@ -260,7 +395,7 @@ const IndexPage = ({ data }) => {
           isClient={true} // Pass the client status down
         />
       ) : (
-        <DevotionalSkeleton />
+        !isOffline && <DevotionalSkeleton />
       )}
       {showWhatsAppBox && (
         <div className="fixed inset-0 bg-black/40 z-[60] flex items-center justify-center" onClick={() => setShowWhatsAppBox(false)}>
