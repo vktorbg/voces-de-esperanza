@@ -42,7 +42,7 @@ workflows:
     artifacts:
       - android/app/build/outputs/**/*.apk
 
-  # --- WORKFLOW PARA iOS (VERSIÓN FINAL CON LOGIN EXPLÍCITO) ---
+  # --- WORKFLOW PARA iOS (VERSIÓN FINAL SIMPLIFICADA) ---
   ios-build:
     name: VDE iOS Build
     instance_type: mac_mini_m1
@@ -50,11 +50,11 @@ workflows:
       app_store_connect: VDE_AppStoreConnect
     environment:
       groups:
-        - app_store_connect_credentials
         - contentful_credentials
       vars:
-        XCODE_TEAM_ID: AKKP464BSH
-        XCODE_BUNDLE_ID: com.vocesdeesperanza.app
+        XCODE_WORKSPACE: "App.xcworkspace" 
+        XCODE_SCHEME: "App"
+        BUNDLE_ID: "com.vocesdeesperanza.app"
     scripts:
       - name: Instalar dependencias
         script: | 
@@ -69,32 +69,13 @@ workflows:
         script: | 
           npx cap sync ios
           npx cap update ios
-          
-      # --- PASO CRUCIAL Y NUEVO: INICIAR SESIÓN Y DESCARGAR PERFILES ---
-      - name: Activar Sesión y Descargar Perfiles de Firma
-        script: |
-          app-store-connect fetch-signing-files "$XCODE_BUNDLE_ID" --type IOS_APP_STORE --create
-
-      - name: Construir y archivar la app con xcodebuild
+      - name: Construir y firmar IPA
         script: | 
-          set -ex
-          cd ios/App
-          xcodebuild archive \
-            -workspace "App.xcworkspace" \
-            -scheme "App" \
-            -archivePath "$CM_BUILD_DIR/App.xcarchive" \
-            -allowProvisioningUpdates \
-            DEVELOPMENT_TEAM="$XCODE_TEAM_ID"
-            
-      - name: Exportar el .ipa desde el archivo
-        script: |
-          set -ex
-          xcodebuild -exportArchive \
-            -archivePath "$CM_BUILD_DIR/App.xcarchive" \
-            -exportPath "$CM_OUTPUT_DIR" \
-            -exportOptionsPlist "$CM_BUILD_DIR/export_options.plist"
+          xcode-project build-ipa \
+            --workspace "ios/App/$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
     artifacts:
-      - $CM_OUTPUT_DIR/*.ipa
+      - build/ios/ipa/*.ipa
     publishing:
       app_store_connect:
         api_key: $CM_API_KEY
