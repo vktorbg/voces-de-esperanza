@@ -76,11 +76,22 @@ workflows:
         script: |
           set -ex
           echo $CERTIFICATE_P12_BASE64 | base64 --decode > /tmp/certificate.p12
+          
+          # Create keychain with a simpler path
+          KEYCHAIN_PATH="$HOME/Library/Keychains/temp.keychain"
+          KEYCHAIN_PASSWORD="temp_password_123"
+          
           security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
           security set-keychain-settings -t 3600 -l "$KEYCHAIN_PATH"
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-          security import /tmp/certificate.p12 -k "$KEYCHAIN_PATH" -P "$P12_PASSWORD" -A
-          security list-keychains -d user -s "$KEYCHAIN_PATH"
+          security import /tmp/certificate.p12 -k "$KEYCHAIN_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH" $(security list-keychains -d user | sed s/\"//g)
+          
+          # Export for later use
+          echo "export KEYCHAIN_PATH=\"$KEYCHAIN_PATH\"" >> $CM_ENV
+          echo "export KEYCHAIN_PASSWORD=\"$KEYCHAIN_PASSWORD\"" >> $CM_ENV
+          
           PROFILE_PATH=~/Library/MobileDevice/Provisioning\ Profiles
           mkdir -p "$PROFILE_PATH"
           echo $PROVISIONING_PROFILE_BASE64 | base64 --decode > "$PROFILE_PATH/VDE_AppStore_Profile.mobileprovision"
@@ -88,6 +99,9 @@ workflows:
       - name: Construir y Archivar (Firma Dirigida por SDK)
         script: | 
           set -ex
+          # Source the environment to get keychain variables
+          source $CM_ENV
+          
           # First, properly configure the App target for manual signing using sed
           # Find and replace CODE_SIGN_STYLE = Automatic with Manual for the App target
           sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' ios/App/App.xcodeproj/project.pbxproj
@@ -95,6 +109,9 @@ workflows:
           # Also set the provisioning profile for the App target
           sed -i '' '/CODE_SIGN_STYLE = Manual;/a\
                 PROVISIONING_PROFILE_SPECIFIER = "VDE AppStore Profile";' ios/App/App.xcodeproj/project.pbxproj
+          
+          # Unlock keychain before building
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
           
           # Now build with the configured settings
           xcodebuild archive \
@@ -104,7 +121,7 @@ workflows:
             -configuration Release \
             DEVELOPMENT_TEAM="$XCODE_TEAM_ID" \
             CODE_SIGN_IDENTITY="Apple Distribution" \
-            OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH"
+            OTHER_CODE_SIGN_FLAGS="--keychain \"$KEYCHAIN_PATH\""
             
       - name: Exportar el .ipa (Modo Manual)
         script: |
