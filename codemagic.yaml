@@ -43,7 +43,7 @@ workflows:
       - android/app/build/outputs/**/*.apk
 
 
-  # --- WORKFLOW PARA iOS (VERSIÓN FINAL CON TEAM ID EXPLÍCITO) ---
+  # --- WORKFLOW PARA iOS (SECUENCIA LÓGICA COMPLETA) ---
   ios-build:
     name: VDE iOS Build
     instance_type: mac_mini_m1
@@ -53,9 +53,10 @@ workflows:
       groups:
         - app_store_connect_credentials
         - contentful_credentials
-        - ios_signing_credentials
+        - ios_signing_credentials # Contiene CERTIFICATE_P12_BASE64 y P12_PASSWORD
       vars:
         XCODE_TEAM_ID: AKKP464BSH
+        XCODE_BUNDLE_ID: com.vocesdeesperanza.app
         KEYCHAIN_PATH: $CM_KEYCHAIN_PATH
         KEYCHAIN_PASSWORD: $CM_KEYCHAIN_PASSWORD
     scripts:
@@ -72,7 +73,12 @@ workflows:
         script: | 
           npx cap sync ios
           npx cap update ios
-      - name: Configurar Llavero y Certificados
+          
+      # --- PILAR 1: ESTABLECER LA IDENTIDAD ---
+      # Usamos comandos nativos de macOS para crear un llavero e importar
+      # tu certificado Y, crucialmente, su llave privada.
+      # Después de este paso, la máquina de compilación TIENE una identidad válida.
+      - name: Configurar Llavero e Identidad de Firma
         script: |
           set -ex
           echo $CERTIFICATE_P12_BASE64 | base64 --decode > /tmp/certificate.p12
@@ -81,7 +87,19 @@ workflows:
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
           security import /tmp/certificate.p12 -k "$KEYCHAIN_PATH" -P "$P12_PASSWORD" -A
           security list-keychains -d user -s "$KEYCHAIN_PATH"
-      - name: Construir y archivar con xcodebuild
+          
+      # --- PILAR 2: OBTENER EL PERMISO ---
+      # Ahora que la identidad está establecida, usamos la API (Pilar 3)
+      # para pedirle a Apple que nos dé el permiso (Provisioning Profile).
+      # Este comando ahora SÍ funcionará.
+      - name: Descargar Perfil de Aprovisionamiento
+        script: |
+          app-store-connect fetch-signing-files "$XCODE_BUNDLE_ID" --type IOS_APP_STORE --create
+          
+      # --- CONSTRUCCIÓN: USAR LA IDENTIDAD Y EL PERMISO ---
+      # Finalmente, le decimos a xcodebuild que construya la app.
+      # Encontrará la identidad en el llavero y el permiso en el sistema de archivos.
+      - name: Construir y Archivar con xcodebuild
         script: | 
           set -ex
           xcodebuild archive \
@@ -89,7 +107,8 @@ workflows:
             -scheme "App" \
             -archivePath "$CM_BUILD_DIR/App.xcarchive" \
             -allowProvisioningUpdates \
-            DEVELOPMENT_TEAM="$XCODE_TEAM_ID" # <-- ESTA ES LA LÍNEA QUE LO ARREGLA
+            DEVELOPMENT_TEAM="$XCODE_TEAM_ID"
+            
       - name: Exportar el .ipa
         script: |
           set -ex
