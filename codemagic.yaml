@@ -43,7 +43,7 @@ workflows:
       - android/app/build/outputs/**/*.apk
 
 
-  # --- WORKFLOW PARA iOS (VERSIÓN FINAL CON DESBLOQUEO DE LLAVERO) ---
+  # --- WORKFLOW PARA iOS (VERSIÓN NATIVA FINAL) ---
   ios-build:
     name: VDE iOS Build
     instance_type: mac_mini_m1
@@ -56,9 +56,8 @@ workflows:
         - ios_signing_credentials
       vars:
         XCODE_TEAM_ID: AKKP464BSH
-        XCODE_BUNDLE_ID: com.vocesdeesperanza.app
-        # Contraseña temporal para el llavero de la compilación
-        KEYCHAIN_PASSWORD: "temp_password"
+        KEYCHAIN_PATH: $CM_KEYCHAIN_PATH
+        KEYCHAIN_PASSWORD: $CM_KEYCHAIN_PASSWORD
     scripts:
       - name: Instalar dependencias
         script: | 
@@ -73,24 +72,23 @@ workflows:
         script: | 
           npx cap sync ios
           npx cap update ios
-      - name: Instalar Certificado y Desbloquear Llavero
+      - name: Configurar Llavero y Certificados (Método Nativo)
         script: |
           set -ex
+          # Decodificar el certificado .p12
           echo $CERTIFICATE_P12_BASE64 | base64 --decode > /tmp/certificate.p12
           
-          # Inicializa el llavero CON una contraseña conocida
-          keychain initialize --password $KEYCHAIN_PASSWORD
+          # Crear un nuevo llavero temporal
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -t 3600 -l "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
           
-          # Añade los certificados
-          keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password $P12_PASSWORD
+          # Importar el certificado al nuevo llavero
+          security import /tmp/certificate.p12 -k "$KEYCHAIN_PATH" -P "$P12_PASSWORD" -A
           
-          # --- EL PASO CLAVE QUE FALTABA ---
-          # Desbloquea el llavero para que los siguientes comandos puedan usarlo
-          keychain unlock --password $KEYCHAIN_PASSWORD
+          # Establecer el nuevo llavero como el predeterminado para la búsqueda
+          security list-keychains -d user -s "$KEYCHAIN_PATH"
           
-      - name: Descargar perfiles de firma
-        script: |
-          app-store-connect fetch-signing-files "$XCODE_BUNDLE_ID" --type IOS_APP_STORE --create
       - name: Construir y archivar con xcodebuild
         script: | 
           set -ex
