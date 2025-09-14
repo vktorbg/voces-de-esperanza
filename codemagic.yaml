@@ -126,12 +126,15 @@ workflows:
       - name: Exportar el .ipa (Modo Manual)
         script: |
           set -ex
+          # Create output directory if it doesn't exist
+          mkdir -p "$CM_BUILD_DIR/output"
+          
           xcodebuild -exportArchive \
             -archivePath "$CM_BUILD_DIR/App.xcarchive" \
-            -exportPath "$CM_OUTPUT_DIR" \
+            -exportPath "$CM_BUILD_DIR/output" \
             -exportOptionsPlist "export_options.plist"
     artifacts:
-      - $CM_OUTPUT_DIR/*.ipa
+      - $CM_BUILD_DIR/output/*.ipa
     publishing:
       app_store_connect:
         api_key: $CM_API_KEY
