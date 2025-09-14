@@ -43,7 +43,7 @@ workflows:
       - android/app/build/outputs/**/*.apk
 
 
-  # --- WORKFLOW PARA iOS (VERSIÓN FINAL, SIN HERRAMIENTAS DE AYUDA) ---
+  # --- WORKFLOW PARA iOS (VERSIÓN FINAL CON AUTENTICACIÓN EXPLÍCITA) ---
   ios-build:
     name: VDE iOS Build
     instance_type: mac_mini_m1
@@ -51,9 +51,9 @@ workflows:
       app_store_connect: VDE_AppStoreConnect
     environment:
       groups:
-        - app_store_connect_credentials
+        - app_store_connect_credentials # Contiene CM_API_KEY, CM_KEY_ID, CM_ISSUER_ID
         - contentful_credentials
-        - ios_signing_credentials
+        - ios_signing_credentials     # Contiene CERTIFICATE_P12_BASE64, P12_PASSWORD
       vars:
         XCODE_TEAM_ID: AKKP464BSH
         KEYCHAIN_PATH: $CM_KEYCHAIN_PATH
@@ -81,15 +81,23 @@ workflows:
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
           security import /tmp/certificate.p12 -k "$KEYCHAIN_PATH" -P "$P12_PASSWORD" -A
           security list-keychains -d user -s "$KEYCHAIN_PATH"
-      - name: Construir y Archivar (con Firma Automática de Xcode)
+          
+      - name: Construir y Archivar (con Autenticación)
         script: | 
           set -ex
+          # --- EL PASO FINAL QUE FALTABA ---
+          # Exportamos las credenciales de la API al formato que xcodebuild entiende
+          export APP_STORE_CONNECT_API_KEY_ID=$CM_KEY_ID
+          export APP_STORE_CONNECT_API_KEY_ISSUER_ID=$CM_ISSUER_ID
+          export APP_STORE_CONNECT_API_KEY_BASE64=$CM_API_KEY
+          
           xcodebuild archive \
             -workspace "ios/App/App.xcworkspace" \
             -scheme "App" \
             -archivePath "$CM_BUILD_DIR/App.xcarchive" \
             -allowProvisioningUpdates \
             DEVELOPMENT_TEAM="$XCODE_TEAM_ID"
+            
       - name: Exportar el .ipa
         script: |
           set -ex
