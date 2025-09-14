@@ -46,7 +46,7 @@ workflows:
    # --- WORKFLOW PARA iOS (CON FIRMA MANUAL DIRIGIDA) ---
   ios-build:
     name: VDE iOS Build
-    instance_type: mac_mini_mm1
+    instance_type: mac_mini_m1
     integrations:
       app_store_connect: VDE_AppStoreConnect
     environment:
