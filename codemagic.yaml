@@ -137,7 +137,8 @@ workflows:
       - $CM_BUILD_DIR/output/*.ipa
     publishing:
       app_store_connect:
-        api_key: $CM_API_KEY
-        key_id: $CM_KEY_ID
-        issuer_id: $CM_ISSUER_ID
+        # Use the correct variable names from your environment group
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
