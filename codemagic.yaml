@@ -88,11 +88,15 @@ workflows:
       - name: Construir y Archivar (Firma Dirigida por SDK)
         script: | 
           set -ex
-          # First, modify the project settings directly for the App target only
-          /usr/libexec/PlistBuddy -c "Set :objects:*:buildSettings:CODE_SIGN_STYLE Manual" ios/App/App.xcodeproj/project.pbxproj || true
-          /usr/libexec/PlistBuddy -c "Set :objects:*:buildSettings:PROVISIONING_PROFILE_SPECIFIER VDE AppStore Profile" ios/App/App.xcodeproj/project.pbxproj || true
+          # First, properly configure the App target for manual signing using sed
+          # Find and replace CODE_SIGN_STYLE = Automatic with Manual for the App target
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' ios/App/App.xcodeproj/project.pbxproj
           
-          # Now build with simplified parameters
+          # Also set the provisioning profile for the App target
+          sed -i '' '/CODE_SIGN_STYLE = Manual;/a\
+                PROVISIONING_PROFILE_SPECIFIER = "VDE AppStore Profile";' ios/App/App.xcodeproj/project.pbxproj
+          
+          # Now build with the configured settings
           xcodebuild archive \
             -workspace "ios/App/App.xcworkspace" \
             -scheme "App" \
