@@ -47,8 +47,11 @@ workflows:
   ios-build:
     name: VDE iOS Build
     instance_type: mac_mini_m1
+    integrations:
+      app_store_connect: VDE_AppStoreConnect
     environment:
       groups:
+        - app_store_connect_credentials
         - contentful_credentials
         - ios_signing_credentials
       vars:
@@ -132,7 +135,10 @@ workflows:
             -exportOptionsPlist "export_options.plist"
     artifacts:
       - $CM_BUILD_DIR/output/*.ipa
-    # COMENTADO: Publicación automática (haremos upload manual)
-    # publishing:
-    #   app_store_connect:
-    #     submit_to_testflight: true
+    publishing:
+      app_store_connect:
+        # Usamos los nombres de variables que definiste en la UI de Codemagic
+        api_key: $CM_API_KEY
+        key_id: $CM_KEY_ID
+        issuer_id: $CM_ISSUER_ID
+        submit_to_testflight: true
