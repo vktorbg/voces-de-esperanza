@@ -42,7 +42,7 @@ workflows:
     artifacts:
       - android/app/build/outputs/**/*.apk
 
-  # --- WORKFLOW PARA iOS (VERSIÓN FINAL SIMPLIFICADA) ---
+  # --- WORKFLOW PARA iOS (VERSIÓN FINAL 2 SIMPLIFICADA) ---
   ios-build:
     name: VDE iOS Build
     instance_type: mac_mini_m1
