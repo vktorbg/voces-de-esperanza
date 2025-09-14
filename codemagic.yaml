@@ -42,7 +42,7 @@ workflows:
     artifacts:
       - android/app/build/outputs/**/*.apk
 
-  # --- WORKFLOW PARA iOS (VERSIÓN FINAL 2 SIMPLIFICADA) ---
+  # --- WORKFLOW PARA iOS (VERSIÓN NATIVA A PRUEBA DE BALAS) ---
   ios-build:
     name: VDE iOS Build
     instance_type: mac_mini_m1
@@ -50,11 +50,11 @@ workflows:
       app_store_connect: VDE_AppStoreConnect
     environment:
       groups:
+        - app_store_connect_credentials
         - contentful_credentials
       vars:
-        XCODE_WORKSPACE: "App.xcworkspace" 
-        XCODE_SCHEME: "App"
-        BUNDLE_ID: "com.vocesdeesperanza.app"
+        XCODE_TEAM_ID: AKKP464BSH
+        XCODE_BUNDLE_ID: com.vocesdeesperanza.app
     scripts:
       - name: Instalar dependencias
         script: | 
@@ -69,13 +69,27 @@ workflows:
         script: | 
           npx cap sync ios
           npx cap update ios
-      - name: Construir y firmar IPA
+      - name: Descargar perfiles de firma
+        script: |
+          app-store-connect fetch-signing-files "$XCODE_BUNDLE_ID" --type IOS_APP_STORE --create
+      - name: Construir y archivar con xcodebuild
         script: | 
-          xcode-project build-ipa \
-            --workspace "ios/App/$XCODE_WORKSPACE" \
-            --scheme "$XCODE_SCHEME"
+          set -ex
+          xcodebuild archive \
+            -workspace "ios/App/App.xcworkspace" \
+            -scheme "App" \
+            -archivePath "$CM_BUILD_DIR/App.xcarchive" \
+            -allowProvisioningUpdates \
+            DEVELOPMENT_TEAM="$XCODE_TEAM_ID"
+      - name: Exportar el .ipa
+        script: |
+          set -ex
+          xcodebuild -exportArchive \
+            -archivePath "$CM_BUILD_DIR/App.xcarchive" \
+            -exportPath "$CM_OUTPUT_DIR" \
+            -exportOptionsPlist "export_options.plist"
     artifacts:
-      - build/ios/ipa/*.ipa
+      - $CM_OUTPUT_DIR/*.ipa
     publishing:
       app_store_connect:
         api_key: $CM_API_KEY
