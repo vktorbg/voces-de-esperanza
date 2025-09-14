@@ -70,9 +70,6 @@ workflows:
         script: | 
           npx cap sync ios
           npx cap update ios
-      - name: Configurar firma de código para iOS
-        script: | 
-          xcode-project use-profiles
       - name: Construir IPA de iOS
         script: | 
           # PASO CRUCIAL: Nos movemos a la carpeta correcta de iOS
