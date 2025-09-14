@@ -4,14 +4,7 @@
 <dict>
     <key>method</key>
     <string>app-store</string>
-    <key>provisioningProfiles</key>
-    <dict>
-        <key>com.vocesdeesperanza.app</key>
-        <string>match AppStore com.vocesdeesperanza.app</string>
-    </dict>
     <key>signingStyle</key>
-    <string>manual</string>
-    <key>teamID</key>
-    <string>AKKP464BSH</string>
+    <string>automatic</string>
 </dict>
 </plist>

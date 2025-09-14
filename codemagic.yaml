@@ -42,7 +42,7 @@ workflows:
     artifacts:
       - android/app/build/outputs/**/*.apk
 
-  # --- WORKFLOW PARA iOS (VERSIÓN NATIVA A PRUEBA DE BALAS) ---
+  # --- WORKFLOW PARA iOS (VERSIÓN FINAL, AHORA SÍ) ---
   ios-build:
     name: VDE iOS Build
     instance_type: mac_mini_m1
@@ -79,8 +79,7 @@ workflows:
             -workspace "ios/App/App.xcworkspace" \
             -scheme "App" \
             -archivePath "$CM_BUILD_DIR/App.xcarchive" \
-            -allowProvisioningUpdates \
-            DEVELOPMENT_TEAM="$XCODE_TEAM_ID"
+            -allowProvisioningUpdates
       - name: Exportar el .ipa
         script: |
           set -ex
