@@ -72,10 +72,12 @@ workflows:
           npx cap update ios
       - name: Construir IPA de iOS
         script: | 
-          # PASO CRUCIAL: Nos movemos a la carpeta correcta de iOS
           cd ios/App
-          # Ahora, el comando encontrará "App.xcworkspace" sin problemas
-          xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME"
+          # Le pasamos la ruta al nuevo archivo de opciones de exportación
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME" \
+            --export-options-plist ../../export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*
