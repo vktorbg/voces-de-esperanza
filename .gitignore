@@ -3,3 +3,4 @@ node_modules/
 public
 .env
 voces-de-esperanza.keystore
+vde_distribution_certificate.p12

@@ -43,7 +43,7 @@ workflows:
       - android/app/build/outputs/**/*.apk
 
 
-  # --- WORKFLOW PARA iOS (CON PUBLICACIÓN CORREGIDA) ---
+  # --- WORKFLOW PARA iOS (VERSIÓN FINAL CON INSTALACIÓN EXPLÍCITA DE CERTIFICADO) ---
   ios-build:
     name: VDE iOS Build
     instance_type: mac_mini_m1
@@ -53,6 +53,7 @@ workflows:
       groups:
         - app_store_connect_credentials
         - contentful_credentials
+        - ios_signing_credentials # <-- NUEVO GRUPO
       vars:
         XCODE_TEAM_ID: AKKP464BSH
         XCODE_BUNDLE_ID: com.vocesdeesperanza.app
@@ -70,17 +71,15 @@ workflows:
         script: | 
           npx cap sync ios
           npx cap update ios
-      - name: Inicializar Llavero y Añadir Certificados
-        script: |
-          keychain initialize
-          keychain add-certificates
-      - name: Forzar Firma Automática en el Proyecto Xcode
+      - name: Instalar Certificado en Llavero
         script: |
           set -ex
-          PROJECT_FILE="ios/App/App.xcodeproj/project.pbxproj"
-          sed -i.bak -e 's/PROVISIONING_PROFILE_SPECIFIER = ".*";/PROVISIONING_PROFILE_SPECIFIER = "";/' "$PROJECT_FILE"
-          sed -i.bak -e 's/CODE_SIGN_STYLE = Manual;/CODE_SIGN_STYLE = Automatic;/' "$PROJECT_FILE"
-          sed -i.bak -e "s/DEVELOPMENT_TEAM = .*;/DEVELOPMENT_TEAM = $XCODE_TEAM_ID;/" "$PROJECT_FILE"
+          echo $CERTIFICATE_P12_BASE64 | base64 --decode > /tmp/certificate.p12
+          keychain initialize
+          keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password $P12_PASSWORD
+      - name: Descargar perfiles de firma
+        script: |
+          app-store-connect fetch-signing-files "$XCODE_BUNDLE_ID" --type IOS_APP_STORE --create
       - name: Construir y archivar con xcodebuild
         script: | 
           set -ex
