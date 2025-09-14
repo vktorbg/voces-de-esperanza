@@ -9,7 +9,8 @@ workflows:
     environment:
       groups:
         # Esto importa correctamente TODAS las variables que creaste en la UI
-        - keystore_credentials 
+        - keystore_credentials
+        - contentful_credentials
       vars:
         # Solo definimos las variables que no son secretas
         PACKAGE_NAME: "com.vocesdeesperanza.app"
@@ -46,7 +47,8 @@ workflows:
       app_store_connect: VDE_AppStoreConnect # Reemplaza con el nombre de tu integración
     environment:
       groups:
-        - app_store_connect_credentials 
+        - app_store_connect_credentials
+        - contentful_credentials 
       vars:
         XCODE_WORKSPACE: "App.xcworkspace" 
         XCODE_SCHEME: "App"
