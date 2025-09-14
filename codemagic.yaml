@@ -43,7 +43,7 @@ workflows:
       - android/app/build/outputs/**/*.apk
 
 
-  # --- WORKFLOW PARA iOS (VERSIÓN FINAL CON INSTALACIÓN EXPLÍCITA DE CERTIFICADO) ---
+  # --- WORKFLOW PARA iOS (VERSIÓN FINAL CON DESBLOQUEO DE LLAVERO) ---
   ios-build:
     name: VDE iOS Build
     instance_type: mac_mini_m1
@@ -53,10 +53,12 @@ workflows:
       groups:
         - app_store_connect_credentials
         - contentful_credentials
-        - ios_signing_credentials # <-- NUEVO GRUPO
+        - ios_signing_credentials
       vars:
         XCODE_TEAM_ID: AKKP464BSH
         XCODE_BUNDLE_ID: com.vocesdeesperanza.app
+        # Contraseña temporal para el llavero de la compilación
+        KEYCHAIN_PASSWORD: "temp_password"
     scripts:
       - name: Instalar dependencias
         script: | 
@@ -71,12 +73,21 @@ workflows:
         script: | 
           npx cap sync ios
           npx cap update ios
-      - name: Instalar Certificado en Llavero
+      - name: Instalar Certificado y Desbloquear Llavero
         script: |
           set -ex
           echo $CERTIFICATE_P12_BASE64 | base64 --decode > /tmp/certificate.p12
-          keychain initialize
+          
+          # Inicializa el llavero CON una contraseña conocida
+          keychain initialize --password $KEYCHAIN_PASSWORD
+          
+          # Añade los certificados
           keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password $P12_PASSWORD
+          
+          # --- EL PASO CLAVE QUE FALTABA ---
+          # Desbloquea el llavero para que los siguientes comandos puedan usarlo
+          keychain unlock --password $KEYCHAIN_PASSWORD
+          
       - name: Descargar perfiles de firma
         script: |
           app-store-connect fetch-signing-files "$XCODE_BUNDLE_ID" --type IOS_APP_STORE --create
