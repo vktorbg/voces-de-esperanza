@@ -42,7 +42,7 @@ workflows:
     artifacts:
       - android/app/build/outputs/**/*.apk
 
-  # --- WORKFLOW PARA iOS (VERSIÓN FINAL CON NOMBRE DE CERTIFICADO) ---
+  # --- WORKFLOW PARA iOS (VERSIÓN FINAL CON MODIFICACIÓN DE PROYECTO) ---
   ios-build:
     name: VDE iOS Build
     instance_type: mac_mini_m1
@@ -72,11 +72,14 @@ workflows:
       - name: Inicializar Llavero y Añadir Certificados
         script: |
           keychain initialize
-          # --- ESTA ES LA LÍNEA QUE LO ARREGLA TODO ---
-          keychain add-certificates --certificate-name "VDE Distribution (Generado por Codemagic)"
-      - name: Descargar perfiles de firma
+          keychain add-certificates
+      - name: Forzar Firma Automática en el Proyecto Xcode
         script: |
-          app-store-connect fetch-signing-files "$XCODE_BUNDLE_ID" --type IOS_APP_STORE --create
+          set -ex
+          PROJECT_FILE="ios/App/App.xcodeproj/project.pbxproj"
+          sed -i.bak -e 's/PROVISIONING_PROFILE_SPECIFIER = ".*";/PROVISIONING_PROFILE_SPECIFIER = "";/' "$PROJECT_FILE"
+          sed -i.bak -e 's/CODE_SIGN_STYLE = Manual;/CODE_SIGN_STYLE = Automatic;/' "$PROJECT_FILE"
+          sed -i.bak -e "s/DEVELOPMENT_TEAM = .*;/DEVELOPMENT_TEAM = $XCODE_TEAM_ID;/" "$PROJECT_FILE"
       - name: Construir y archivar con xcodebuild
         script: | 
           set -ex
@@ -97,6 +100,6 @@ workflows:
     publishing:
       app_store_connect:
         api_key: $CM_API_KEY
+        key_id: $CM_ISSUER_ID
         key_id: $CM_KEY_ID
-        issuer_id: $CM_ISSUER_ID
         submit_to_testflight: true
