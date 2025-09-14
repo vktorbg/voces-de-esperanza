@@ -42,20 +42,21 @@ workflows:
     artifacts:
       - android/app/build/outputs/**/*.apk
 
-  # --- WORKFLOW PARA iOS (SIN CAMBIOS, YA ESTABA BIEN) ---
+  # --- WORKFLOW PARA iOS (VERSIÓN DEFINITIVA A PRUEBA DE BALAS) ---
   ios-build:
     name: VDE iOS Build
     instance_type: mac_mini_m1
     integrations:
-      app_store_connect: VDE_AppStoreConnect # Reemplaza con el nombre de tu integración
+      app_store_connect: VDE_AppStoreConnect
     environment:
       groups:
         - app_store_connect_credentials
-        - contentful_credentials 
+        - contentful_credentials
       vars:
-        XCODE_WORKSPACE: "App.xcworkspace" 
-        XCODE_SCHEME: "App"
-        BUNDLE_ID: "com.vocesdeesperanza.app"
+        # Definimos el Team ID aquí para usarlo en los scripts
+        XCODE_TEAM_ID: AKKP464BSH
+        # Definimos el Bundle ID aquí para consistencia
+        XCODE_BUNDLE_ID: com.vocesdeesperanza.app
     scripts:
       - name: Instalar dependencias
         script: | 
@@ -70,28 +71,35 @@ workflows:
         script: | 
           npx cap sync ios
           npx cap update ios
-          
-      # --- PASO CRUCIAL QUE VUELVE ---
-      - name: Obtener perfiles de aprovisionamiento de Apple
+      - name: Construir y archivar la app con xcodebuild
         script: | 
-          xcode-project use-profiles
+          set -ex # Para que el script falle si un comando falla
           
-      - name: Construir IPA de iOS
-        script: | 
+          # Nos movemos a la carpeta del proyecto de Xcode
           cd ios/App
-          xcode-project build-ipa \
-            --workspace "$XCODE_WORKSPACE" \
-            --scheme "$XCODE_SCHEME" \
-            --export-options-plist ../../export_options.plist
+          
+          # El comando de archivado nativo
+          xcodebuild archive \
+            -workspace "App.xcworkspace" \
+            -scheme "App" \
+            -archivePath "$CM_BUILD_DIR/App.xcarchive" \
+            -allowProvisioningUpdates \
+            DEVELOPMENT_TEAM="$XCODE_TEAM_ID"
+            
+      - name: Exportar el .ipa desde el archivo
+        script: |
+          set -ex # Para que el script falle si un comando falla
+          
+          # El comando de exportación nativo
+          xcodebuild -exportArchive \
+            -archivePath "$CM_BUILD_DIR/App.xcarchive" \
+            -exportPath "$CM_OUTPUT_DIR" \
+            -exportOptionsPlist "$CM_BUILD_DIR/export_options.plist"
     artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*
+      - $CM_OUTPUT_DIR/*.ipa
     publishing:
       app_store_connect:
         api_key: $CM_API_KEY
         key_id: $CM_KEY_ID
         issuer_id: $CM_ISSUER_ID
         submit_to_testflight: true
-        beta_groups:
-          - "Amigos y Familia"
-          - "Equipo de Ministerio"
