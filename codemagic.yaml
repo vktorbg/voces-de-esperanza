@@ -34,7 +34,9 @@ workflows:
       - name: Construir AAB de Android
         script: | 
           cd android
-          # Este comando ahora encontrará el keystore que creamos en el paso anterior
+          # PASO CRUCIAL: Damos permisos de ejecución al script de Gradle
+          chmod +x ./gradlew 
+          # Ahora sí, el comando funcionará sin problemas
           ./gradlew bundleRelease 
     artifacts:
       - android/app/build/outputs/**/*.aab
