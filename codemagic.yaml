@@ -32,15 +32,15 @@ workflows:
         script: | 
           echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
           
-      - name: Construir AAB de Android
+      - name: Construir APK de Android
         script: | 
           cd android
           # PASO CRUCIAL: Damos permisos de ejecución al script de Gradle
           chmod +x ./gradlew 
           # Ahora sí, el comando funcionará sin problemas
-          ./gradlew bundleRelease 
+          ./gradlew assembleRelease 
     artifacts:
-      - android/app/build/outputs/**/*.aab
+      - android/app/build/outputs/**/*.apk
 
   # --- WORKFLOW PARA iOS (SIN CAMBIOS, YA ESTABA BIEN) ---
   ios-build:
@@ -75,6 +75,9 @@ workflows:
           xcode-project use-profiles
       - name: Construir IPA de iOS
         script: | 
+          # PASO CRUCIAL: Nos movemos a la carpeta correcta de iOS
+          cd ios/App
+          # Ahora, el comando encontrará "App.xcworkspace" sin problemas
           xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME"
     artifacts:
       - build/ios/ipa/*.ipa
