@@ -70,10 +70,15 @@ workflows:
         script: | 
           npx cap sync ios
           npx cap update ios
+          
+      # --- PASO CRUCIAL QUE VUELVE ---
+      - name: Obtener perfiles de aprovisionamiento de Apple
+        script: | 
+          xcode-project use-profiles
+          
       - name: Construir IPA de iOS
         script: | 
           cd ios/App
-          # Le pasamos la ruta al nuevo archivo de opciones de exportación
           xcode-project build-ipa \
             --workspace "$XCODE_WORKSPACE" \
             --scheme "$XCODE_SCHEME" \
