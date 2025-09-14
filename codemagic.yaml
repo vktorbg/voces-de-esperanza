@@ -43,7 +43,7 @@ workflows:
       - android/app/build/outputs/**/*.apk
 
 
-    # --- WORKFLOW PARA iOS (SECUENCIA COMPLETA Y CORRECTA) ---
+   # --- WORKFLOW PARA iOS (MÉTODO 100% MANUAL Y ROBUSTO) ---
   ios-build:
     name: VDE iOS Build
     instance_type: mac_mini_m1
@@ -53,10 +53,9 @@ workflows:
       groups:
         - app_store_connect_credentials
         - contentful_credentials
-        - ios_signing_credentials
+        - ios_signing_credentials # Contiene P12 y PROVISIONING_PROFILE
       vars:
         XCODE_TEAM_ID: AKKP464BSH
-        XCODE_BUNDLE_ID: com.vocesdeesperanza.app
         KEYCHAIN_PATH: $CM_KEYCHAIN_PATH
         KEYCHAIN_PASSWORD: $CM_KEYCHAIN_PASSWORD
     scripts:
@@ -73,9 +72,10 @@ workflows:
         script: | 
           npx cap sync ios
           npx cap update ios
-      - name: Configurar Llavero e Identidad de Firma
+      - name: Configurar Llavero y Perfil de Aprovisionamiento
         script: |
           set -ex
+          # Instalar el certificado y la llave privada en el llavero
           echo $CERTIFICATE_P12_BASE64 | base64 --decode > /tmp/certificate.p12
           security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
           security set-keychain-settings -t 3600 -l "$KEYCHAIN_PATH"
@@ -83,20 +83,24 @@ workflows:
           security import /tmp/certificate.p12 -k "$KEYCHAIN_PATH" -P "$P12_PASSWORD" -A
           security list-keychains -d user -s "$KEYCHAIN_PATH"
           
-      - name: Descargar Perfil de Aprovisionamiento
-        script: |
-          app-store-connect fetch-signing-files "$XCODE_BUNDLE_ID" --type IOS_APP_STORE --create
+          # Instalar el perfil de aprovisionamiento en la ubicación correcta
+          PROFILE_PATH=~/Library/MobileDevice/Provisioning\ Profiles
+          mkdir -p "$PROFILE_PATH"
+          echo $PROVISIONING_PROFILE_BASE64 | base64 --decode > "$PROFILE_PATH/VDE_AppStore_Profile.mobileprovision"
           
-      - name: Construir y Archivar con xcodebuild
+      - name: Construir y Archivar con xcodebuild (Modo Manual)
         script: | 
           set -ex
           xcodebuild archive \
             -workspace "ios/App/App.xcworkspace" \
             -scheme "App" \
             -archivePath "$CM_BUILD_DIR/App.xcarchive" \
-            -allowProvisioningUpdates \
-            DEVELOPMENT_TEAM="$XCODE_TEAM_ID"
-      - name: Exportar el .ipa
+            CODE_SIGN_STYLE="Manual" \
+            DEVELOPMENT_TEAM="$XCODE_TEAM_ID" \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="VDE AppStore Profile"
+            
+      - name: Exportar el .ipa (Modo Manual)
         script: |
           set -ex
           xcodebuild -exportArchive \
