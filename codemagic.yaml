@@ -42,42 +42,6 @@ workflows:
     artifacts:
       - android/app/build/outputs/**/*.apk
 
-  # codemagic.yaml
-# Workflow para compilar la app Voces de Esperanza (Gatsby + Capacitor)
-
-workflows:
-  # --- WORKFLOW PARA ANDROID ---
-  android-build:
-    name: VDE Android Build
-    instance_type: mac_mini_m1
-    environment:
-      java: 21
-      groups:
-        - keystore_credentials
-        - contentful_credentials
-      vars:
-        PACKAGE_NAME: "com.vocesdeesperanza.app"
-    scripts:
-      - name: Instalar dependencias
-        script: | 
-          npm install
-      - name: Construir el sitio Gatsby
-        script: | 
-          npm run build
-      - name: Sincronizar con Capacitor y actualizar Android
-        script: | 
-          npx cap sync android
-          npx cap update android
-      - name: Decodificar y guardar el Keystore
-        script: | 
-          echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
-      - name: Construir AAB de Android
-        script: | 
-          cd android
-          chmod +x ./gradlew 
-          ./gradlew bundleRelease 
-    artifacts:
-      - android/app/build/outputs/**/*.aab
 
   # --- WORKFLOW PARA iOS (CON PUBLICACIÓN CORREGIDA) ---
   ios-build:
