@@ -42,7 +42,7 @@ workflows:
     artifacts:
       - android/app/build/outputs/**/*.apk
 
-  # --- WORKFLOW PARA iOS (VERSIÓN FINAL CON INICIALIZACIÓN DE LLAVERO) ---
+  # --- WORKFLOW PARA iOS (VERSIÓN FINAL CON NOMBRE DE CERTIFICADO) ---
   ios-build:
     name: VDE iOS Build
     instance_type: mac_mini_m1
@@ -69,13 +69,11 @@ workflows:
         script: | 
           npx cap sync ios
           npx cap update ios
-          
-      # --- PASO CRUCIAL FALTANTE ---
       - name: Inicializar Llavero y Añadir Certificados
         script: |
           keychain initialize
-          keychain add-certificates
-
+          # --- ESTA ES LA LÍNEA QUE LO ARREGLA TODO ---
+          keychain add-certificates --certificate-name "VDE Distribution (Generado por Codemagic)"
       - name: Descargar perfiles de firma
         script: |
           app-store-connect fetch-signing-files "$XCODE_BUNDLE_ID" --type IOS_APP_STORE --create
