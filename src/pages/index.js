@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useAudioPlayer } from "../components/AudioPlayer";
 import InstallPrompt from "../components/InstallPrompt";
 import IOSInstallPrompt from "../components/IOSInstallPrompt";
-import { getCurrentLocale, isEnglishSite } from "../components/LanguageProvider";
+import { isEnglishSite } from "../components/LanguageProvider";
 import { Share } from '@capacitor/share';
 import { Preferences } from '@capacitor/preferences';
 import { Network } from '@capacitor/network';
@@ -244,7 +244,14 @@ const IndexPage = ({ data }) => {
 
   // Función para construir el devocional desde los datos de GraphQL
   const buildDevotionalFromData = (data) => {
-    const locale = getCurrentLocale();
+    // Fix: Use direct hostname detection like in historial.js
+    const getLocale = () => {
+      if (typeof window !== "undefined" && window.location.hostname.includes("voices-of-hope")) {
+        return "en-US";
+      }
+      return "es-MX";
+    };
+    const locale = getLocale();
     const today = new Date();
     const pad = (n) => n.toString().padStart(2, '0');
     const todayLocalStr = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
