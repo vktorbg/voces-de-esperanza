@@ -3,6 +3,7 @@ import { useTranslation, initReactI18next } from 'react-i18next';
 import i18n from 'i18next';
 import { Device } from '@capacitor/device';
 import { Preferences } from '@capacitor/preferences';
+import { Capacitor } from '@capacitor/core';
 
 // Import translation files
 import esTranslation from '../locales/es/translation.json';
@@ -39,10 +40,10 @@ export const LanguageProvider = ({ children }) => {
 
   useEffect(() => {
     const initializeLanguage = async () => {
-      // 1. Revisa si el usuario ya guardó una preferencia
       try {
+        // 1. PRIMERA PRIORIDAD: Preferencia guardada del usuario
         const { value: storedLang } = await Preferences.get({ key: 'language' });
-        if (storedLang) {
+        if (storedLang && (storedLang === 'en' || storedLang === 'es')) {
           i18nInstance.changeLanguage(storedLang);
           setLanguage(storedLang);
           return;
@@ -51,39 +52,40 @@ export const LanguageProvider = ({ children }) => {
         console.warn('Could not access storage for language preference.');
       }
 
-      // 2. Si no, detecta el idioma del dispositivo
-      try {
-        const langInfo = await Device.getLanguageCode();
-        const deviceLang = langInfo.value.split('-')[0]; // 'en-US' -> 'en'
-        if (deviceLang === 'en') {
+      // 2. SEGUNDA PRIORIDAD: Dominio web (solo en navegador)
+      if (typeof window !== 'undefined') {
+        const hostname = window.location.hostname;
+        
+        if (hostname.includes('voices-of-hope')) {
           i18nInstance.changeLanguage('en');
           setLanguage('en');
-        } else {
+          return;
+        } else if (hostname.includes('voces-de-esperanza')) {
           i18nInstance.changeLanguage('es');
           setLanguage('es');
-        }
-      } catch (e) {
-        // Si falla (ej. en web), revisa el dominio como fallback
-        console.warn('Could not detect device language, checking domain.');
-        
-        // Check if we're in the browser environment
-        if (typeof window !== 'undefined') {
-          const hostname = window.location.hostname;
-          
-          // Set language based on domain
-          if (hostname === 'voices-of-hope.com') {
-            i18nInstance.changeLanguage('en');
-            setLanguage('en');
-          } else {
-            i18nInstance.changeLanguage('es');
-            setLanguage('es');
-          }
-        } else {
-          // Default to Spanish if all else fails
-          i18nInstance.changeLanguage('es');
-          setLanguage('es');
+          return;
         }
       }
+
+      // 3. TERCERA PRIORIDAD: Idioma del dispositivo (solo en móvil)
+      if (Capacitor.isNativePlatform()) {
+        try {
+          const langInfo = await Device.getLanguageCode();
+          const deviceLang = langInfo.value.split('-')[0]; // 'en-US' -> 'en'
+          
+          if (deviceLang === 'en') {
+            i18nInstance.changeLanguage('en');
+            setLanguage('en');
+            return;
+          }
+        } catch (e) {
+          console.warn('Could not detect device language.');
+        }
+      }
+
+      // 4. FALLBACK: Español por defecto
+      i18nInstance.changeLanguage('es');
+      setLanguage('es');
     };
 
     initializeLanguage();
@@ -129,6 +131,24 @@ export const useLanguage = () => {
     isSpanish: context.language === 'es',
     language: context.language, // Add this for consistency
   };
+};
+
+// Centralized locale functions
+export const getCurrentLocale = () => {
+  // Get current language from localStorage (i18n stores it there)
+  if (typeof window !== 'undefined') {
+    const currentLang = localStorage.getItem('i18nextLng') || 'es';
+    return currentLang === 'en' ? 'en-US' : 'es-MX';
+  }
+  return 'es-MX'; // Default for SSR
+};
+
+export const isEnglishSite = () => {
+  if (typeof window !== 'undefined') {
+    const currentLang = localStorage.getItem('i18nextLng') || 'es';
+    return currentLang === 'en';
+  }
+  return false; // Default for SSR
 };
 
 export default LanguageProvider;

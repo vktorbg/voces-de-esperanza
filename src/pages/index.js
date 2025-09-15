@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useAudioPlayer } from "../components/AudioPlayer";
 import InstallPrompt from "../components/InstallPrompt";
 import IOSInstallPrompt from "../components/IOSInstallPrompt";
+import { getCurrentLocale, isEnglishSite } from "../components/LanguageProvider";
 import { Share } from '@capacitor/share';
 import { Preferences } from '@capacitor/preferences';
 import { Network } from '@capacitor/network';
@@ -64,7 +65,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
   // This logic is now safe because the `isClient` prop guards it.
   const isIOS = isClient && /iPad|iPhone|iPod/.test(navigator.userAgent);
   const isStandalone = isClient && (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone);
-  const iconSrc = isClient && window.location.hostname.includes("voices-of-hope") ? "/icon2.jpg" : "/icon.jpg";
+  const iconSrc = isEnglishSite() ? "/icon2.jpg" : "/icon.jpg";
 
   const handleSubscribeClick = () => {
     if (window.OneSignal) {
@@ -115,10 +116,9 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
   if (devocional.fecha) {
     const fecha = new Date(devocional.fecha);
     if (!isNaN(fecha.getTime())) {
-  // Choose locale based on current language/domain so English site shows English dates
-  const isEnglishSite = isClient && typeof window !== 'undefined' && window.location.hostname.includes('voices-of-hope');
-  const localeForDate = (i18n.language === 'en' || isEnglishSite) ? 'en-US' : 'es-ES';
-  fechaFormateada = fecha.toLocaleDateString(localeForDate, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+      // Use centralized language detection
+      const localeForDate = isEnglishSite() ? 'en-US' : 'es-ES';
+      fechaFormateada = fecha.toLocaleDateString(localeForDate, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
     }
   }
 
@@ -244,11 +244,7 @@ const IndexPage = ({ data }) => {
 
   // Función para construir el devocional desde los datos de GraphQL
   const buildDevotionalFromData = (data) => {
-    const getLocale = () => {
-      return typeof window !== 'undefined' && window.location.hostname.includes("voices-of-hope") ? "en-US" : "es-MX";
-    };
-
-    const locale = getLocale();
+    const locale = getCurrentLocale();
     const today = new Date();
     const pad = (n) => n.toString().padStart(2, '0');
     const todayLocalStr = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;

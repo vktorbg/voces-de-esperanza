@@ -11,6 +11,7 @@ import { Preferences } from '@capacitor/preferences';
 import { Network } from '@capacitor/network';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
+import { isEnglishSite, getCurrentLocale } from "../components/LanguageProvider";
 
 // --- Iconos ---
 // (Todos los SVGs que sí funcionan bien se mantienen)
@@ -24,7 +25,7 @@ const ChevronRightIcon = (props) => (<svg xmlns="http://www.w3.org/2000/svg" fil
 const DateNavigator = ({ currentDate, onPrev, onNext, onOpenCalendar, isNextDisabled }) => {
     const { t, i18n } = useTranslation();
     const formattedDate = useMemo(() => {
-        const isEnglish = (typeof window !== 'undefined' && window.location.hostname.includes('voices-of-hope')) || i18n.language === 'en';
+        const isEnglish = isEnglishSite() || i18n.language === 'en';
         const locale = isEnglish ? enUS : es;
         const pattern = isEnglish ? "EEEE, MMMM d" : "EEEE, d 'de' LLLL";
         if (isToday(currentDate)) return t('history_today');
@@ -61,13 +62,13 @@ const DevotionalCard = ({ devotional, displayDate }) => {
             reflexionContent = devotional.reflexion;
         }
     }
-    const isEnglish = (typeof window !== 'undefined' && window.location.hostname.includes('voices-of-hope')) || i18n.language === 'en';
+    const isEnglish = isEnglishSite() || i18n.language === 'en';
     const locale = isEnglish ? enUS : es;
     const pattern = isEnglish ? "EEEE, MMMM d, yyyy" : "EEEE, d 'de' LLLL 'de' yyyy";
 
     // Función para generar el texto de compartir
     function getShareText(devotional, t, i18n, displayDate) {
-        const isSpanish = i18n.language === 'es' && !(typeof window !== 'undefined' && window.location.hostname.includes('voices-of-hope'));
+        const isSpanish = i18n.language === 'es' && !isEnglishSite();
         const url = isSpanish ? 'https://voces-de-esperanza.com' : 'https://voices-of-hope.com';
         const fechaObj = new Date(displayDate);
         const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
@@ -283,13 +284,7 @@ const HistorialPage = ({ data }) => {
     }, [data]);
 
     // --- Lógica de filtrado igual que index.js ---
-    const getLocale = () => {
-        if (typeof window !== "undefined" && window.location.hostname.includes("voices-of-hope")) {
-            return "en-US";
-        }
-        return "es-MX";
-    };
-    const locale = getLocale();
+    const locale = getCurrentLocale();
 
     // Función para limpiar el título
     const cleanTitle = (title) => title.replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/i, '');
@@ -400,7 +395,7 @@ const HistorialPage = ({ data }) => {
                         <Calendar
                             onChange={handleDateChange}
                             value={selectedDate}
-                            locale={(typeof window !== 'undefined' && window.location.hostname.includes('voices-of-hope')) || i18n.language === 'en' ? 'en-US' : 'es-ES'}
+                            locale={isEnglishSite() || i18n.language === 'en' ? 'en-US' : 'es-ES'}
                             tileContent={({ date, view }) => {
                                 if (view === 'month' && devotionalsMap.has(format(date, 'yyyy-MM-dd'))) {
                                     return <div className="devotional-dot"></div>;
