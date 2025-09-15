@@ -11,7 +11,7 @@ import { Preferences } from '@capacitor/preferences';
 import { Network } from '@capacitor/network';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
-import { isEnglishSite, getCurrentLocale } from "../components/LanguageProvider";
+import { isEnglishSite } from "../components/LanguageProvider";
 
 // --- Iconos ---
 // (Todos los SVGs que sí funcionan bien se mantienen)
@@ -284,7 +284,14 @@ const HistorialPage = ({ data }) => {
     }, [data]);
 
     // --- Lógica de filtrado igual que index.js ---
-    const locale = getCurrentLocale();
+    // Fix: Use direct hostname detection for consistent locale behavior
+    const getLocale = () => {
+        if (typeof window !== "undefined" && window.location.hostname.includes("voices-of-hope")) {
+            return "en-US";
+        }
+        return "es-MX";
+    };
+    const locale = getLocale();
 
     // Función para limpiar el título
     const cleanTitle = (title) => title.replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/i, '');
