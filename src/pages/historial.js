@@ -71,9 +71,10 @@ const DevotionalCard = ({ devotional, displayDate }) => {
         const isSpanish = i18n.language === 'es';
         const url = isSpanish ? 'https://voces-de-esperanza.com' : 'https://voices-of-hope.com';
         
-        // Use the devotional date directly
-        const fechaObj = new Date(devotional.fecha);
-        const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+        // Fix timezone issues by parsing date manually
+        const [year, month, day] = devotional.fecha.split('-').map(Number);
+        const fechaObj = new Date(year, month - 1, day); // month is 0-indexed
+        const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const fechaFormateada = fechaObj.toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', opcionesFecha);
         
         let reflexionTexto = '';
