@@ -67,11 +67,11 @@ const DevotionalCard = ({ devotional, displayDate }) => {
     const pattern = isEnglish ? "EEEE, MMMM d, yyyy" : "EEEE, d 'de' LLLL 'de' yyyy";
 
     // Función para generar el texto de compartir
-    function getShareText(devotional, t, i18n, displayDate) {
-        const isSpanish = i18n.language === 'es' && !isEnglishSite();
+    function getShareText(devotional, t, i18n) {
+        const isSpanish = i18n.language === 'es';
         const url = isSpanish ? 'https://voces-de-esperanza.com' : 'https://voices-of-hope.com';
         
-        // Use the devotional date directly, not displayDate
+        // Use the devotional date directly
         const fechaObj = new Date(devotional.fecha);
         const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
         const fechaFormateada = fechaObj.toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', opcionesFecha);
@@ -117,7 +117,7 @@ const DevotionalCard = ({ devotional, displayDate }) => {
                 <button 
                     className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2"
                     onClick={async () => {
-                        const textToShare = getShareText(devotional, t, i18n, displayDate);
+                        const textToShare = getShareText(devotional, t, i18n);
                         
                         // Intenta usar el Share nativo primero
                         try {
