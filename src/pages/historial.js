@@ -70,7 +70,9 @@ const DevotionalCard = ({ devotional, displayDate }) => {
     function getShareText(devotional, t, i18n, displayDate) {
         const isSpanish = i18n.language === 'es' && !isEnglishSite();
         const url = isSpanish ? 'https://voces-de-esperanza.com' : 'https://voices-of-hope.com';
-        const fechaObj = new Date(displayDate);
+        
+        // Use the devotional date directly, not displayDate
+        const fechaObj = new Date(devotional.fecha);
         const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
         const fechaFormateada = fechaObj.toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', opcionesFecha);
         
