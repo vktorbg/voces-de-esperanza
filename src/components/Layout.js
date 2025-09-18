@@ -69,29 +69,30 @@ export default function Layout({ children }) {
 
   const navHeight = 'pb-[57px] sm:pb-[65px]';
   const playerHeight = 'pb-[145px] sm:pb-[153px]';
-  const mainPaddingBottom = track ? playerHeight : navHeight;
-
-  // Safe area classes para apps nativas
-  const safeAreaClasses = isNativeApp ? {
-    top: 'pt-safe-top',
-    bottom: 'pb-safe-bottom',
-    paddingBottom: track ? 'pb-[calc(145px+env(safe-area-inset-bottom))] sm:pb-[calc(153px+env(safe-area-inset-bottom))]' : 'pb-[calc(57px+env(safe-area-inset-bottom))] sm:pb-[calc(65px+env(safe-area-inset-bottom))]'
+  
+  // Safe area padding más conservador para apps nativas
+  const nativeSafeArea = isNativeApp ? {
+    top: 'pt-12', // ~48px para status bar
+    bottom: 'pb-8', // ~32px para home indicator
+    navPadding: 'pb-8', // padding adicional para navegación
+    playerPadding: track ? 'pb-[177px] sm:pb-[185px]' : 'pb-[89px] sm:pb-[97px]' // altura base + safe area
   } : {
     top: '',
     bottom: '',
-    paddingBottom: mainPaddingBottom
+    navPadding: '',
+    playerPadding: track ? playerHeight : navHeight
   };
 
   // Padding para nav sólo si es PWA (no nativo)
-  const navPadding = isPWA && !isNativeApp ? 'pb-6' : isNativeApp ? 'pb-safe-bottom' : '';
+  const navPadding = isPWA && !isNativeApp ? 'pb-6' : nativeSafeArea.navPadding;
 
   return (
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
       {/* Add SEO component for metadata on all pages */}
       <Seo />
       
-      <main className={`transition-all duration-300 ${safeAreaClasses.paddingBottom}`}>
-        <div className={`pt-4 sm:pt-6 ${isNativeApp ? safeAreaClasses.top : ''}`}>
+      <main className={`transition-all duration-300 ${nativeSafeArea.playerPadding}`}>
+        <div className={`pt-4 sm:pt-6 ${nativeSafeArea.top}`}>
           {children}
         </div>
       </main>

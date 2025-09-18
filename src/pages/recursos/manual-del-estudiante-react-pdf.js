@@ -100,7 +100,7 @@ const ManualDelEstudianteReactPdfPage = () => {
       {/* Header Fijo con Botón de Regreso y Título */}
       <div
         ref={headerRef}
-        className={`fixed ${isNativeApp ? 'top-safe-top' : 'top-0'} left-0 right-0 z-20 bg-gray-100 dark:bg-gray-900 py-3 shadow-md`}
+        className={`fixed ${isNativeApp ? 'top-12' : 'top-0'} left-0 right-0 z-20 bg-gray-100 dark:bg-gray-900 py-3 shadow-md`}
       >
         <div className="flex items-center justify-between max-w-xl mx-auto px-4">
           <Link
@@ -156,7 +156,7 @@ const ManualDelEstudianteReactPdfPage = () => {
       </main>
 
       {/* Barra de Navegación Inferior */}
-      <nav className={`fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-top-lg z-50 ${isNativeApp ? 'pb-safe-bottom' : ''}`}>
+      <nav className={`fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-top-lg z-50 ${isNativeApp ? 'pb-8' : ''}`}>
         <div className="flex justify-around max-w-md mx-auto">
           {navItems.map((item) => {
             const Icon = item.icon;

@@ -100,9 +100,9 @@ export const PlayerUI = () => {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
-  // Posicionamiento adaptativo según la plataforma
+  // Posicionamiento adaptativo según la plataforma - enfoque más conservador
   const bottomPosition = isNativeApp 
-    ? 'bottom-[calc(57px+env(safe-area-inset-bottom))] sm:bottom-[calc(65px+env(safe-area-inset-bottom))]'
+    ? 'bottom-[89px] sm:bottom-[97px]' // 57px + 32px safe area, 65px + 32px safe area
     : 'bottom-[57px] sm:bottom-[65px]';
 
   return (

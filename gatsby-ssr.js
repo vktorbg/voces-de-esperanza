@@ -30,6 +30,12 @@ export const onRenderBody = ({ setHeadComponents }) => {
   }
 
   setHeadComponents([
+    // Meta viewport para safe areas en apps nativas
+    <meta
+      key="viewport"
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />,
     // 1. Carga el script SDK de OneSignal
     <script
       key="onesignal-sdk"

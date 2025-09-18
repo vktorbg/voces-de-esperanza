@@ -8,15 +8,8 @@ const config: CapacitorConfig = {
     StatusBar: {
       style: 'DARK',
       backgroundColor: '#f3f4f6',
-      overlaysWebView: false
+      overlaysWebView: true
     }
-  },
-  ios: {
-    contentInset: 'automatic',
-    scrollEnabled: false
-  },
-  android: {
-    allowMixedContent: true
   }
 };
 
