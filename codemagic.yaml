@@ -15,6 +15,7 @@ workflows:
       vars:
         # Solo definimos las variables que no son secretas
         PACKAGE_NAME: "com.vocesdeesperanza.app"
+        CM_KEYSTORE_PATH: /tmp/keystore.keystore
     scripts:
       - name: Instalar dependencias
         script: | 
