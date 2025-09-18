@@ -38,11 +38,13 @@ android {
     }
 }
 
-repositories {
-    flatDir{
-        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
-    }
-}
+// repositories {
+//     flatDir{
+//         dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+//     }
+// }
+// REMOVED: flatDir configuration was referencing non-existent directories
+// The project uses google() and mavenCentral() repositories from root build.gradle
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
