@@ -33,15 +33,15 @@ workflows:
         script: | 
           echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
           
-      - name: Construir APK de Android
+      - name: Construir AAB de Android
         script: | 
           cd android
           # PASO CRUCIAL: Damos permisos de ejecución al script de Gradle
           chmod +x ./gradlew 
-          # Ahora sí, el comando funcionará sin problemas
-          ./gradlew assembleRelease 
+          # Construir Android App Bundle (AAB) en lugar de APK
+          ./gradlew bundleRelease 
     artifacts:
-      - android/app/build/outputs/**/*.apk
+      - android/app/build/outputs/**/*.aab
 
 
    # --- WORKFLOW PARA iOS (SOLUCIÓN FINAL DE CLAUDE #2) ---

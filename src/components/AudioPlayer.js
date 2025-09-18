@@ -1,5 +1,6 @@
 // src/components/AudioPlayer.js
 import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
+import { Capacitor } from '@capacitor/core';
 
 // --- Iconos para el reproductor (sin cambios) ---
 const PlayIcon = (props) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}><path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.279 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" /></svg>;
@@ -84,6 +85,13 @@ export const useAudioPlayer = () => useContext(AudioContext);
 // UI del reproductor. Ahora es un componente más simple.
 export const PlayerUI = () => {
   const { track, isPlaying, duration, currentTime, togglePlayPause, seek, closePlayer } = useAudioPlayer();
+  const [isNativeApp, setIsNativeApp] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsNativeApp(Capacitor.isNativePlatform());
+    }
+  }, []);
 
   const formatTime = (time) => {
     if (isNaN(time) || time === 0) return '0:00';
@@ -92,12 +100,13 @@ export const PlayerUI = () => {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
+  // Posicionamiento adaptativo según la plataforma
+  const bottomPosition = isNativeApp 
+    ? 'bottom-[calc(57px+env(safe-area-inset-bottom))] sm:bottom-[calc(65px+env(safe-area-inset-bottom))]'
+    : 'bottom-[57px] sm:bottom-[65px]';
+
   return (
-    // --- CAMBIO CLAVE ---
-    // Volvemos a 'fixed' pero calculamos su posición para que esté sobre la barra de navegación.
-    // Usamos 'bottom-[57px]' para móviles y 'sm:bottom-[65px]' para pantallas más grandes.
-    // La animación ahora es de opacidad y entrada desde abajo.
-    <div className={`fixed bottom-[57px] sm:bottom-[65px] left-0 right-0 z-40 px-2 sm:px-4 transition-all duration-300 ease-out ${track ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'}`}>
+    <div className={`fixed ${bottomPosition} left-0 right-0 z-40 px-2 sm:px-4 transition-all duration-300 ease-out ${track ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'}`}>
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl ring-1 ring-black/5 flex items-center gap-3 p-3">
           <img src={track?.image || "/icon.jpg"} alt="Track" className="w-12 h-12 rounded-md flex-shrink-0 object-cover" />
           <div className="flex-grow flex flex-col gap-1 min-w-0">

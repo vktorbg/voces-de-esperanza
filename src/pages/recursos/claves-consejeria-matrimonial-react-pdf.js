@@ -5,6 +5,7 @@ import { Link } from "gatsby";
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
+import { Capacitor } from '@capacitor/core';
 
 // --- Icon Components ---
 const BookOpenIcon = (props) => (

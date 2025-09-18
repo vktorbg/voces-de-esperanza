@@ -5,6 +5,7 @@ import { Link } from "gatsby";
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
+import { Capacitor } from '@capacitor/core';
 
 // --- Icon Components ---
 const BookOpenIcon = (props) => (
@@ -42,6 +43,7 @@ const ManualDelEstudianteReactPdfPage = () => {
   const contentContainerRef = useRef(null); // Renombrado para claridad
   const headerRef = useRef(null); // Ref para el header fijo
   const [headerHeight, setHeaderHeight] = useState(0);
+  const [isNativeApp, setIsNativeApp] = useState(false);
 
   const pdfPath = "/pdfs/Manual-del-Estudiante.pdf"; // Nombre exacto del archivo PDF
 
@@ -70,6 +72,11 @@ const ManualDelEstudianteReactPdfPage = () => {
 
     setPdfPageWidth();
     setFixedHeaderHeight();
+    
+    // Detectar si es app nativa
+    if (typeof window !== 'undefined') {
+      setIsNativeApp(Capacitor.isNativePlatform());
+    }
 
     window.addEventListener('resize', setPdfPageWidth);
     window.addEventListener('resize', setFixedHeaderHeight);
@@ -93,7 +100,7 @@ const ManualDelEstudianteReactPdfPage = () => {
       {/* Header Fijo con Botón de Regreso y Título */}
       <div
         ref={headerRef}
-        className="fixed top-0 left-0 right-0 z-20 bg-gray-100 dark:bg-gray-900 py-3 shadow-md"
+        className={`fixed ${isNativeApp ? 'top-safe-top' : 'top-0'} left-0 right-0 z-20 bg-gray-100 dark:bg-gray-900 py-3 shadow-md`}
       >
         <div className="flex items-center justify-between max-w-xl mx-auto px-4">
           <Link
@@ -149,7 +156,7 @@ const ManualDelEstudianteReactPdfPage = () => {
       </main>
 
       {/* Barra de Navegación Inferior */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-top-lg z-50">
+      <nav className={`fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-top-lg z-50 ${isNativeApp ? 'pb-safe-bottom' : ''}`}>
         <div className="flex justify-around max-w-md mx-auto">
           {navItems.map((item) => {
             const Icon = item.icon;

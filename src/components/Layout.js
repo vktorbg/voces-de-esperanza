@@ -21,11 +21,13 @@ export default function Layout({ children }) {
   const { t } = useLanguage();
   const hasMounted = useHasMounted();
   const [isPWA, setIsPWA] = React.useState(false);
+  const [isNativeApp, setIsNativeApp] = React.useState(false);
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
       setIsPWA(!!standalone);
+      setIsNativeApp(Capacitor.isNativePlatform());
     }
   }, []);
 
@@ -69,16 +71,27 @@ export default function Layout({ children }) {
   const playerHeight = 'pb-[145px] sm:pb-[153px]';
   const mainPaddingBottom = track ? playerHeight : navHeight;
 
-  // Padding para nav sólo si es PWA
-  const navPadding = isPWA ? 'pb-6' : '';
+  // Safe area classes para apps nativas
+  const safeAreaClasses = isNativeApp ? {
+    top: 'pt-safe-top',
+    bottom: 'pb-safe-bottom',
+    paddingBottom: track ? 'pb-[calc(145px+env(safe-area-inset-bottom))] sm:pb-[calc(153px+env(safe-area-inset-bottom))]' : 'pb-[calc(57px+env(safe-area-inset-bottom))] sm:pb-[calc(65px+env(safe-area-inset-bottom))]'
+  } : {
+    top: '',
+    bottom: '',
+    paddingBottom: mainPaddingBottom
+  };
+
+  // Padding para nav sólo si es PWA (no nativo)
+  const navPadding = isPWA && !isNativeApp ? 'pb-6' : isNativeApp ? 'pb-safe-bottom' : '';
 
   return (
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
       {/* Add SEO component for metadata on all pages */}
       <Seo />
       
-      <main className={`transition-all duration-300 ${mainPaddingBottom}`}>
-        <div className="pt-4 sm:pt-6">
+      <main className={`transition-all duration-300 ${safeAreaClasses.paddingBottom}`}>
+        <div className={`pt-4 sm:pt-6 ${isNativeApp ? safeAreaClasses.top : ''}`}>
           {children}
         </div>
       </main>
