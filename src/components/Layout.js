@@ -32,7 +32,10 @@ export default function Layout({ children }) {
     }
   }, []);
 
-  // Push Notifications Registration
+  // TODO: REACTIVAR CUANDO FIREBASE ESTÉ CONFIGURADO
+  // Push Notifications Registration - TEMPORALMENTE DESHABILITADO
+  // Para reactivar: descomentar este bloque después de añadir google-services.json
+  /*
   React.useEffect(() => {
     if (Capacitor.isNativePlatform()) {
       // Solicita permiso para notificaciones
@@ -56,6 +59,7 @@ export default function Layout({ children }) {
       });
     }
   }, []);
+  */
 
   // Hide splash screen when layout is ready
   React.useEffect(() => {
