@@ -9,6 +9,13 @@ const config: CapacitorConfig = {
       style: 'DARK',
       backgroundColor: '#f3f4f6',
       overlaysWebView: true
+    },
+    SplashScreen: {
+      launchShowDuration: 0,
+      launchAutoHide: false,
+      backgroundColor: "#FFFFFF",
+      androidSplashResourceName: "splash",
+      androidScaleType: "CENTER_CROP",
     }
   }
 };

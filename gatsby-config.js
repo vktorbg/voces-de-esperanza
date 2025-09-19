@@ -36,7 +36,30 @@ module.exports = {
         icon: isEnglish ? `src/images/icon2.jpg` : `src/images/icon.jpg`,
       },
     },
-    `gatsby-plugin-offline`,
+    {
+      resolve: `gatsby-plugin-offline`,
+      options: {
+        workboxConfig: {
+          runtimeCaching: [
+            {
+              // Google Analytics
+              urlPattern: /^https?:\/\/(www\.)?google-analytics\.com\/.*$/i,
+              handler: `NetworkOnly`,
+            },
+            {
+              // Google Tag Manager
+              urlPattern: /^https?:\/\/(www\.)?googletagmanager\.com\/.*$/i,
+              handler: `NetworkOnly`,
+            },
+            {
+              // gtag/g/collect endpoint specifically
+              urlPattern: /^https?:\/\/(www\.)?google-analytics\.com\/g\/collect.*$/i,
+              handler: `NetworkOnly`,
+            },
+          ],
+        },
+      },
+    },
     {
       resolve: `gatsby-plugin-sitemap`,
       options: {

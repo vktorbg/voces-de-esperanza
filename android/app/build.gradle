@@ -58,6 +58,9 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
+    // Firebase Cloud Messaging (FCM) - required for push notifications
+    // Add this dependency so the native FCM classes are available at runtime.
+    implementation 'com.google.firebase:firebase-messaging:23.3.0'
 }
 
 apply from: 'capacitor.build.gradle'
