@@ -9,6 +9,7 @@ import Seo from './Seo'; // <-- 2. IMPORT SEO COMPONENT
 import { PushNotifications } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
 import { SplashScreen } from '@capacitor/splash-screen';
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 // Icons
 const BookOpenIcon = (props) => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}> <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /> </svg> );
@@ -29,6 +30,13 @@ export default function Layout({ children }) {
       const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
       setIsPWA(!!standalone);
       setIsNativeApp(Capacitor.isNativePlatform());
+    }
+    if (Capacitor.isNativePlatform()) {
+      // Ajusta la apariencia de la barra de estado para que encaje con tu diseño
+      // Usa Style.Dark o Style.Light según contraste
+      StatusBar.setStyle({ style: Style.Light }).catch(() => {});
+      // En Android puedes ajustar el color de fondo de la status bar
+      StatusBar.setBackgroundColor({ color: '#f3f4f6' }).catch(() => {});
     }
   }, []);
 
@@ -81,21 +89,21 @@ export default function Layout({ children }) {
   const navHeight = 'pb-[57px] sm:pb-[65px]';
   const playerHeight = 'pb-[145px] sm:pb-[153px]';
   
-  // Safe area padding más conservador para apps nativas
+  // Safe area: use CSS environment variables on native apps instead of fixed values
+  // Tailwind bracket notation keeps these classes safe from purging
   const nativeSafeArea = isNativeApp ? {
-    top: 'pt-12', // ~48px para status bar
-    bottom: 'pb-8', // ~32px para home indicator
-    navPadding: 'pb-8', // padding adicional para navegación
-    playerPadding: track ? 'pb-[177px] sm:pb-[185px]' : 'pb-[89px] sm:pb-[97px]' // altura base + safe area
+    paddingTop: "pt-[env(safe-area-inset-top)]",
+    paddingBottom: "pb-[env(safe-area-inset-bottom)]",
+    // playerPadding keeps the calculated space for the player + safe area
+    playerPadding: track ? `pb-[177px] sm:pb-[185px] pb-[env(safe-area-inset-bottom)]` : `pb-[89px] sm:pb-[97px] pb-[env(safe-area-inset-bottom)]`
   } : {
-    top: '',
-    bottom: '',
-    navPadding: '',
+    paddingTop: '',
+    paddingBottom: '',
     playerPadding: track ? playerHeight : navHeight
   };
 
   // Padding para nav sólo si es PWA (no nativo)
-  const navPadding = isPWA && !isNativeApp ? 'pb-6' : nativeSafeArea.navPadding;
+  const navPadding = isPWA && !isNativeApp ? 'pb-6' : '';
 
   return (
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">

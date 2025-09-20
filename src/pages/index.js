@@ -85,13 +85,25 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
     return <DevotionalSkeleton />;
   }
 
+  // Wrap original audio URLs with the Netlify proxy so requests go through
+  // /.netlify/functions/audio-proxy?url=<original>
+  const wrapWithProxy = (originalUrl) => {
+    if (!originalUrl) return null;
+    try {
+      return `/.netlify/functions/audio-proxy?url=${encodeURIComponent(originalUrl)}`;
+    } catch (e) {
+      return originalUrl;
+    }
+  };
+
   const availableAudios = [
-    { lang: t('language_spanish'), url: devocional.audioEspanolUrl },
-    { lang: t('language_nahuatl'), url: devocional.audioNahuatlUrl },
-    { lang: t('language_english'), url: devocional.audioEnglishUrl },
+    { lang: t('language_spanish'), url: wrapWithProxy(devocional.audioEspanolUrl) },
+    { lang: t('language_nahuatl'), url: wrapWithProxy(devocional.audioNahuatlUrl) },
+    { lang: t('language_english'), url: wrapWithProxy(devocional.audioEnglishUrl) },
   ].filter(audio => audio.url);
 
   const handlePlay = (audio) => {
+    // audio.url is already proxied via Netlify function
     playTrack({ url: audio.url, title: `${audio.lang} - ${devocional.titulo}`, image: iconSrc });
     setMenuOpen(false);
   };

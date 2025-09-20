@@ -22,7 +22,8 @@ workflows:
           npm install
       - name: Construir el sitio Gatsby
         script: | 
-          npm run build
+          # Cambia 'npm run build' por 'npm run build:mobile'
+          npm run build:mobile
       - name: Sincronizar con Capacitor y actualizar Android
         script: | 
           npx cap sync android
@@ -68,7 +69,8 @@ workflows:
           cd ios/App && pod install
       - name: Construir el sitio Gatsby
         script: | 
-          npm run build
+          # Cambia 'npm run build' por 'npm run build:mobile'
+          npm run build:mobile
       - name: Sincronizar con Capacitor y actualizar iOS
         script: | 
           npx cap sync ios
