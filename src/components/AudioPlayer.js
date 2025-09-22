@@ -15,63 +15,131 @@ export const AudioPlayerProvider = ({ children }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const [playBlocked, setPlayBlocked] = useState(false);
   const audioRef = useRef(null);
-
+  // Create a single Audio element and attach listeners once.
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    
-    const setAudioData = () => setDuration(audio.duration);
-    const setAudioTime = () => setCurrentTime(audio.currentTime);
+    const audio = new Audio();
+    audio.preload = 'metadata';
+    audioRef.current = audio;
+
+    const setAudioData = () => setDuration(Number(audio.duration) || 0);
+    const setAudioTime = () => setCurrentTime(Number(audio.currentTime) || 0);
+    const onEnded = () => setIsPlaying(false);
+    const onPlay = () => setIsPlaying(true);
+    const onPause = () => setIsPlaying(false);
 
     audio.addEventListener('loadedmetadata', setAudioData);
     audio.addEventListener('timeupdate', setAudioTime);
-    audio.addEventListener('ended', () => setIsPlaying(false));
+    audio.addEventListener('ended', onEnded);
+    audio.addEventListener('play', onPlay);
+    audio.addEventListener('pause', onPause);
 
     return () => {
+      try {
+        audio.pause();
+      } catch (e) {
+        // ignore
+      }
+      audio.src = '';
       audio.removeEventListener('loadedmetadata', setAudioData);
       audio.removeEventListener('timeupdate', setAudioTime);
+      audio.removeEventListener('ended', onEnded);
+      audio.removeEventListener('play', onPlay);
+      audio.removeEventListener('pause', onPause);
+      audioRef.current = null;
     };
-  }, [track?.url]);
+  }, []);
 
+  // Play a track: set the src on the single audio element and attempt to play.
   const playTrack = (newTrack) => {
-    if (audioRef.current && track?.url !== newTrack.url) {
-      audioRef.current.pause();
+    if (!newTrack || !newTrack.url) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    // If switching track, reset time and set new src
+    if (audio.src !== newTrack.url) {
+      audio.pause();
+      audio.src = newTrack.url;
+      audio.load();
+      setCurrentTime(0);
+      setDuration(0);
     }
+
     setTrack(newTrack);
-    const audio = new Audio(newTrack.url);
-    audioRef.current = audio;
-    audio.play().then(() => setIsPlaying(true)).catch(console.error);
-  };
-  
-  const togglePlayPause = () => {
-    if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        setIsPlaying(true);
+        setPlayBlocked(false);
+      }).catch((err) => {
+        // Play may fail on web until user interacts (autoplay policy). Keep track state and surface the error in console.
+        console.warn('Audio play failed (user interaction required?):', err);
+        setIsPlaying(false);
+        // mark blocked so UI can prompt the user
+        setPlayBlocked(true);
+      });
     } else {
-      audioRef.current.play();
+      // Older browsers may not return a promise
+      setIsPlaying(!audio.paused);
+      setPlayBlocked(false);
     }
-    setIsPlaying(!isPlaying);
+  };
+
+  const togglePlayPause = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (!audio.src) return;
+
+    if (!audio.paused) {
+      audio.pause();
+      setIsPlaying(false);
+    } else {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          setIsPlaying(true);
+          setPlayBlocked(false);
+        }).catch((err) => {
+          console.warn('toggle play failed:', err);
+          setIsPlaying(false);
+          setPlayBlocked(true);
+        });
+      } else {
+        setIsPlaying(true);
+        setPlayBlocked(false);
+      }
+    }
   };
 
   const seek = (time) => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = Number(time);
-      setCurrentTime(Number(time));
+    const audio = audioRef.current;
+    if (audio) {
+      const t = Number(time) || 0;
+      audio.currentTime = t;
+      setCurrentTime(t);
     }
   };
-  
+
   const rewind = (seconds = 10) => {
-      seek(Math.max(0, currentTime - seconds));
-  };
-  
-  const closePlayer = () => {
-      if (audioRef.current) audioRef.current.pause();
-      setTrack(null);
-      setIsPlaying(false);
+    seek(Math.max(0, currentTime - seconds));
   };
 
-  const value = { track, isPlaying, duration, currentTime, playTrack, togglePlayPause, seek, rewind, closePlayer };
+  const closePlayer = () => {
+    const audio = audioRef.current;
+    if (audio) {
+      try { audio.pause(); } catch (e) {}
+      audio.src = '';
+    }
+    setTrack(null);
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setDuration(0);
+    setPlayBlocked(false);
+  };
+
+  const value = { track, isPlaying, duration, currentTime, playTrack, togglePlayPause, seek, rewind, closePlayer, playBlocked };
 
   return (
     <AudioContext.Provider value={value}>
@@ -85,6 +153,7 @@ export const useAudioPlayer = () => useContext(AudioContext);
 // UI del reproductor. Ahora es un componente más simple.
 export const PlayerUI = () => {
   const { track, isPlaying, duration, currentTime, togglePlayPause, seek, closePlayer } = useAudioPlayer();
+  const { playBlocked } = useAudioPlayer();
   const [isNativeApp, setIsNativeApp] = useState(false);
 
   useEffect(() => {
@@ -128,6 +197,9 @@ export const PlayerUI = () => {
             <button onClick={togglePlayPause} className="w-10 h-10 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-transform active:scale-90">
               {isPlaying ? <PauseIcon className="w-5 h-5" /> : <PlayIcon className="w-5 h-5 pl-0.5" />}
             </button>
+            {playBlocked && (
+              <div className="text-xs text-gray-600 dark:text-gray-300 ml-2">Toca reproducir para permitir audio en este navegador.</div>
+            )}
             <button onClick={closePlayer} className="w-8 h-8 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
               <XMarkIcon className="w-6 h-6" />
             </button>
