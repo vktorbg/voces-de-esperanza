@@ -86,11 +86,22 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
   }
 
   // Wrap original audio URLs with the Netlify proxy so requests go through
+  // Wrap original audio URLs with the Netlify proxy so requests go through
   // /.netlify/functions/audio-proxy?url=<original>
+  // In development we avoid the proxy unless USE_AUDIO_PROXY env var is true.
+  const shouldUseProxy = typeof process !== 'undefined' && (process.env.NODE_ENV === 'production' || process.env.USE_AUDIO_PROXY === 'true');
   const wrapWithProxy = (originalUrl) => {
     if (!originalUrl) return null;
     try {
-      return `/.netlify/functions/audio-proxy?url=${encodeURIComponent(originalUrl)}`;
+      // Normalize protocol-relative URLs starting with // to https://
+      let normalized = originalUrl;
+      if (typeof window !== 'undefined' && normalized.startsWith('//')) {
+        normalized = window.location.protocol + normalized;
+      }
+
+      if (!shouldUseProxy) return normalized;
+
+      return `/.netlify/functions/audio-proxy?url=${encodeURIComponent(normalized)}`;
     } catch (e) {
       return originalUrl;
     }

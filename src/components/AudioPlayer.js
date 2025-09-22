@@ -16,10 +16,14 @@ export const AudioPlayerProvider = ({ children }) => {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [playBlocked, setPlayBlocked] = useState(false);
+  const [audioError, setAudioError] = useState(false);
   const audioRef = useRef(null);
+  const audioObjectUrlRef = useRef(null);
   // Create a single Audio element and attach listeners once.
   useEffect(() => {
     const audio = new Audio();
+    // allow cross-origin fetching when necessary
+    try { audio.crossOrigin = 'anonymous'; } catch (e) {}
     audio.preload = 'metadata';
     audioRef.current = audio;
 
@@ -28,12 +32,28 @@ export const AudioPlayerProvider = ({ children }) => {
     const onEnded = () => setIsPlaying(false);
     const onPlay = () => setIsPlaying(true);
     const onPause = () => setIsPlaying(false);
+    const onError = () => {
+      try {
+        console.error('Audio element error', {
+          src: audio.src,
+          code: audio.error && audio.error.code,
+          message: audio.error && audio.error.message,
+          mediaError: audio.error
+        });
+      } catch (e) {
+        console.error('Audio element error (logging failed)', e);
+      }
+      setAudioError(true);
+      setIsPlaying(false);
+      setPlayBlocked(false);
+    };
 
     audio.addEventListener('loadedmetadata', setAudioData);
     audio.addEventListener('timeupdate', setAudioTime);
     audio.addEventListener('ended', onEnded);
     audio.addEventListener('play', onPlay);
     audio.addEventListener('pause', onPause);
+  audio.addEventListener('error', onError);
 
     return () => {
       try {
@@ -47,7 +67,14 @@ export const AudioPlayerProvider = ({ children }) => {
       audio.removeEventListener('ended', onEnded);
       audio.removeEventListener('play', onPlay);
       audio.removeEventListener('pause', onPause);
+      audio.removeEventListener('error', onError);
       audioRef.current = null;
+      try {
+        if (audioObjectUrlRef.current) {
+          URL.revokeObjectURL(audioObjectUrlRef.current);
+          audioObjectUrlRef.current = null;
+        }
+      } catch (e) {}
     };
   }, []);
 
@@ -57,13 +84,30 @@ export const AudioPlayerProvider = ({ children }) => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    // If switching track, reset time and set new src
-    if (audio.src !== newTrack.url) {
+    // Normalize URL so comparison works for relative vs absolute
+    let normalized = newTrack.url;
+    try {
+      if (typeof window !== 'undefined') normalized = new URL(newTrack.url, window.location.href).href;
+    } catch (e) {
+      normalized = newTrack.url;
+    }
+
+    // If switching track (compare normalized absolute URLs), reset time and set new src
+    if (audio.src !== normalized) {
       audio.pause();
-      audio.src = newTrack.url;
-      audio.load();
+      // revoke previous blob url if any
+      try {
+        if (audioObjectUrlRef.current) {
+          URL.revokeObjectURL(audioObjectUrlRef.current);
+          audioObjectUrlRef.current = null;
+        }
+      } catch (e) {}
+
+      audio.src = normalized;
+      try { audio.load(); } catch (e) {}
       setCurrentTime(0);
       setDuration(0);
+      setAudioError(false);
     }
 
     setTrack(newTrack);
@@ -73,11 +117,16 @@ export const AudioPlayerProvider = ({ children }) => {
       playPromise.then(() => {
         setIsPlaying(true);
         setPlayBlocked(false);
+        setAudioError(false);
       }).catch((err) => {
-        // Play may fail on web until user interacts (autoplay policy). Keep track state and surface the error in console.
-        console.warn('Audio play failed (user interaction required?):', err);
+        console.warn('Audio play failed (user interaction required? / not supported?):', err, 'src=', audio.src);
         setIsPlaying(false);
-        // mark blocked so UI can prompt the user
+        // If the error suggests unsupported source, try fetching as blob and play from object URL
+        const shouldTryBlob = (err && (err.name === 'NotSupportedError' || (err.message && err.message.includes('No supported source')))) || (audio.error && audio.error.code === 4);
+        if (shouldTryBlob) {
+          attemptFetchAndPlay(normalized).catch(e => console.warn('blob fallback failed', e));
+        }
+        // mark blocked so UI can prompt the user (if it's an autoplay block)
         setPlayBlocked(true);
       });
     } else {
@@ -102,7 +151,7 @@ export const AudioPlayerProvider = ({ children }) => {
           setIsPlaying(true);
           setPlayBlocked(false);
         }).catch((err) => {
-          console.warn('toggle play failed:', err);
+          console.warn('toggle play failed:', err, 'src=', audio.src);
           setIsPlaying(false);
           setPlayBlocked(true);
         });
@@ -137,9 +186,47 @@ export const AudioPlayerProvider = ({ children }) => {
     setCurrentTime(0);
     setDuration(0);
     setPlayBlocked(false);
+    setAudioError(false);
   };
 
-  const value = { track, isPlaying, duration, currentTime, playTrack, togglePlayPause, seek, rewind, closePlayer, playBlocked };
+  // Attempt to fetch audio as blob (works around some CORS/mime/redirect issues) and play via object URL
+  const attemptFetchAndPlay = async (url) => {
+    const audio = audioRef.current;
+    if (!audio) throw new Error('no-audio');
+    try {
+      const resp = await fetch(url, { mode: 'cors' });
+      if (!resp.ok) throw new Error('fetch-failed-' + resp.status);
+      const contentType = resp.headers.get('content-type') || '';
+      // optionally ensure it's audio
+      if (!contentType.includes('audio')) {
+        console.warn('Fetched content-type is not audio:', contentType);
+      }
+      const blob = await resp.blob();
+      const objectUrl = URL.createObjectURL(blob);
+
+      try {
+        // revoke previous
+        if (audioObjectUrlRef.current) {
+          URL.revokeObjectURL(audioObjectUrlRef.current);
+        }
+      } catch (e) {}
+
+      audioObjectUrlRef.current = objectUrl;
+      audio.src = objectUrl;
+      audio.load();
+      const p = audio.play();
+      if (p) await p;
+      setIsPlaying(true);
+      setAudioError(false);
+      setPlayBlocked(false);
+    } catch (err) {
+      console.warn('attemptFetchAndPlay failed for', url, err);
+      setAudioError(true);
+      throw err;
+    }
+  };
+
+  const value = { track, isPlaying, duration, currentTime, playTrack, togglePlayPause, seek, rewind, closePlayer, playBlocked, audioError };
 
   return (
     <AudioContext.Provider value={value}>
@@ -152,8 +239,7 @@ export const useAudioPlayer = () => useContext(AudioContext);
 
 // UI del reproductor. Ahora es un componente más simple.
 export const PlayerUI = () => {
-  const { track, isPlaying, duration, currentTime, togglePlayPause, seek, closePlayer } = useAudioPlayer();
-  const { playBlocked } = useAudioPlayer();
+  const { track, isPlaying, duration, currentTime, togglePlayPause, seek, closePlayer, playBlocked, audioError } = useAudioPlayer();
   const [isNativeApp, setIsNativeApp] = useState(false);
 
   useEffect(() => {
@@ -199,6 +285,9 @@ export const PlayerUI = () => {
             </button>
             {playBlocked && (
               <div className="text-xs text-gray-600 dark:text-gray-300 ml-2">Toca reproducir para permitir audio en este navegador.</div>
+            )}
+            {audioError && (
+              <div className="text-xs text-red-600 dark:text-red-400 ml-2">Error al cargar el audio.</div>
             )}
             <button onClick={closePlayer} className="w-8 h-8 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
               <XMarkIcon className="w-6 h-6" />
