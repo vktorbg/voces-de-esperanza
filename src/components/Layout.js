@@ -25,18 +25,45 @@ export default function Layout({ children }) {
   const [isPWA, setIsPWA] = React.useState(false);
   const [isNativeApp, setIsNativeApp] = React.useState(false);
 
+  // === 2. AÑADE ESTE useEffect PARA MANEJAR LA STATUS BAR ===
+  React.useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      const setStatusBarStyle = (isDark) => {
+        // Cuando es oscuro, pedimos Style.Dark para que el texto sea claro en iOS/Android
+        StatusBar.setStyle({ style: isDark ? Style.Dark : Style.Light }).catch(() => {});
+      };
+
+      // Establece el estilo inicial basado en la clase 'dark' en <html>
+      const isInitiallyDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+      setStatusBarStyle(isInitiallyDark);
+
+      // Observa cambios en la clase 'dark' del <html> para actualizar estilo en tiempo real
+      if (typeof MutationObserver !== 'undefined') {
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'class') {
+              const isNowDark = mutation.target.classList.contains('dark');
+              setStatusBarStyle(isNowDark);
+            }
+          });
+        });
+
+        observer.observe(document.documentElement, { attributes: true });
+
+        return () => observer.disconnect();
+      }
+    }
+  }, []);
+
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
       setIsPWA(!!standalone);
       setIsNativeApp(Capacitor.isNativePlatform());
     }
-    if (Capacitor.isNativePlatform()) {
-      // Ajusta la apariencia de la barra de estado para que encaje con tu diseño
-      // Usa Style.Dark o Style.Light según contraste
-      StatusBar.setStyle({ style: Style.Light }).catch(() => {});
-      // En Android puedes ajustar el color de fondo de la status bar
-      StatusBar.setBackgroundColor({ color: '#f3f4f6' }).catch(() => {});
+    // Ocultar splash screen si el plugin está disponible (evita errores en web)
+    if (Capacitor.isPluginAvailable && Capacitor.isPluginAvailable('SplashScreen')) {
+      SplashScreen.hide();
     }
   }, []);
 
@@ -69,11 +96,7 @@ export default function Layout({ children }) {
   }, []);
   */
 
-  // Hide splash screen when layout is ready
-  React.useEffect(() => {
-    // Hide the splash screen once the layout is ready
-    SplashScreen.hide();
-  }, []);
+  // ...previous code...
 
   if (!hasMounted) {
     return <div className="bg-gray-100 dark:bg-gray-900 min-h-screen" />;
@@ -116,9 +139,9 @@ export default function Layout({ children }) {
         </div>
       </main>
 
-      <footer className="fixed bottom-0 left-0 right-0 z-40">
+      <footer className="fixed bottom-0 left-0 right-0 z-50">
         <PlayerUI />
-        <nav className={`w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-top-lg ${navPadding}`}>
+        <nav className={`w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-top-lg ${isNativeApp ? 'pb-[env(safe-area-inset-bottom)]' : navPadding}`}>
           <div className="flex justify-around max-w-md mx-auto">
             {navItems.map((item) => {
               const Icon = item.icon;

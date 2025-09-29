@@ -55,7 +55,7 @@ const NoDevotionalMessage = ({ t }) => (
   </div>
 );
 
-// DevotionalView Component - Simplified to be more "dumb"
+// NUEVA DevotionalView separando encabezado fijo y contenido desplazable
 const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
   const { t, i18n } = useTranslation();
   const { playTrack } = useAudioPlayer();
@@ -85,17 +85,13 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
     return <DevotionalSkeleton />;
   }
 
-  // Wrap original audio URLs with the Netlify proxy so requests go through
-  // Wrap original audio URLs with the Netlify proxy so requests go through
-  // /.netlify/functions/audio-proxy?url=<original>
-  // In development we avoid the proxy unless USE_AUDIO_PROXY env var is true.
+  // Lógica de audio (sin cambios)
   const shouldUseProxy = typeof process !== 'undefined' &&
                          (process.env.NODE_ENV === 'production' || process.env.USE_AUDIO_PROXY === 'true') &&
                          !Capacitor.isNativePlatform();
   const wrapWithProxy = (originalUrl) => {
     if (!originalUrl) return null;
     try {
-      // Normalize protocol-relative URLs starting with // to https://
       let normalized = originalUrl;
       if (typeof window !== 'undefined' && normalized.startsWith('//')) {
         normalized = window.location.protocol + normalized;
@@ -116,11 +112,10 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
   ].filter(audio => audio.url);
 
   const handlePlay = (audio) => {
-    // audio.url is already proxied via Netlify function
     playTrack({ url: audio.url, title: `${audio.lang} - ${devocional.titulo}`, image: iconSrc });
     setMenuOpen(false);
   };
-  
+
   function getShareText(devocional, t, i18n) {
     const isSpanish = i18n.language === 'es';
     const url = isSpanish ? 'https://voces-de-esperanza.com' : 'https://voices-of-hope.com';
@@ -141,111 +136,117 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
   if (devocional.fecha) {
     const fecha = new Date(devocional.fecha);
     if (!isNaN(fecha.getTime())) {
-      // Use centralized language detection
       const localeForDate = isEnglishSite() ? 'en-US' : 'es-ES';
       fechaFormateada = fecha.toLocaleDateString(localeForDate, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
     }
   }
 
   return (
+    // Contenedor principal sin padding superior
     <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto px-2" style={{ maxWidth: '95vw' }}>
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
-        <div className="flex items-start mb-6">
-          <img src={iconSrc} alt={t('logo_alt')} className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg mr-4 shadow flex-shrink-0" />
-          <div className="flex-grow">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-blue-600 dark:text-blue-400 uppercase font-semibold tracking-wider">{t('app_name')}</span>
-              <button onClick={() => window.location.reload()} title={t('reload_devotional')} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition flex-shrink-0" aria-label={t('reload_devotional')}>
-                <ReloadIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-              </button>
+      {/* === 1. ENCABEZADO FIJO === */}
+      <div className="fixed top-0 left-0 right-0 z-30 bg-gray-100 dark:bg-gray-900 pt-[env(safe-area-inset-top)]">
+        <div className="w-full max-w-md sm:max-w-2xl mx-auto px-2" style={{ maxWidth: '95vw' }}>
+          <div className="flex items-start pt-4 sm:pt-6 pb-4">
+            <img src={isEnglishSite() ? "/icon2.jpg" : "/icon.jpg"} alt={t('logo_alt')} className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg mr-4 shadow flex-shrink-0" />
+            <div className="flex-grow">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-blue-600 dark:text-blue-400 uppercase font-semibold tracking-wider">{t('app_name')}</span>
+                <button onClick={() => window.location.reload()} title={t('reload_devotional')} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition flex-shrink-0" aria-label={t('reload_devotional')}>
+                  <ReloadIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                </button>
+              </div>
+              <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">{t('daily_devotional')}</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">{fechaFormateada}</div>
             </div>
-            <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">{t('daily_devotional')}</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">{fechaFormateada}</div>
           </div>
         </div>
-        
-        <div className="flex justify-between items-start gap-4 mb-4">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 break-words"> 🌟 {devocional.titulo} </h1>
-          {availableAudios.length > 0 && (
-            <div className="relative flex-shrink-0" ref={menuRef}>
-              <button onClick={() => setMenuOpen(!menuOpen)} className={`p-2 rounded-full transition focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-blue-500 ${menuOpen ? 'bg-blue-100 dark:bg-blue-700' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`} aria-label={t('listen_devotional')} title={t('listen_devotional')}>
-                <SpeakerWaveIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-              </button>
-              {menuOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-700 rounded-md shadow-lg z-20 ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <div className="py-1">
-                    {availableAudios.map(audio => ( <button key={audio.lang} onClick={() => handlePlay(audio)} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 transition"> {audio.lang} </button> ))}
+      </div>
+
+      {/* === 2. CONTENIDO DESPLAZABLE CON PADDING SUPERIOR PARA NO QUEDAR DETRÁS DEL ENCABEZADO === */}
+      <div className="pt-28 sm:pt-32"> {/* Este padding empuja el contenido hacia abajo */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
+          <div className="flex justify-between items-start gap-4 mb-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 break-words"> 🌟 {devocional.titulo} </h1>
+            {availableAudios.length > 0 && (
+              <div className="relative flex-shrink-0" ref={menuRef}>
+                <button onClick={() => setMenuOpen(!menuOpen)} className={`p-2 rounded-full transition focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-blue-500 ${menuOpen ? 'bg-blue-100 dark:bg-blue-700' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`} aria-label={t('listen_devotional')} title={t('listen_devotional')}>
+                  <SpeakerWaveIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                </button>
+                {menuOpen && (
+                  <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-700 rounded-md shadow-lg z-20 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="py-1">
+                      {availableAudios.map(audio => ( <button key={audio.lang} onClick={() => handlePlay(audio)} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 transition"> {audio.lang} </button> ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+                )}
+              </div>
+            )}
+          </div>
 
-        <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-          <div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-1"><span role="img" aria-label="book emoji" className="mr-2">📖</span> {t('key_verse')}:</div>
-          <div className="text-blue-600 dark:text-blue-400 uppercase font-semibold text-md sm:text-lg">{devocional.versiculo}</div>
-          <div className="text-gray-600 dark:text-gray-300 mt-1">{devocional.cita}</div>
-        </div>
-        
-        <div className="space-y-6">
-          {devocional.reflexion && ( <div> <div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"> <span role="img" aria-label="pray emoji" className="mr-2">🙏</span> {t('reflection')}: </div> <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line"> {devocional.reflexion && typeof devocional.reflexion === 'object' ? documentToReactComponents(devocional.reflexion) : devocional.reflexion} </div> </div> )}
-          {devocional.pregunta && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="thinking face emoji" className="mr-2">🤔</span> {t('question')}:</div><p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{devocional.pregunta}</p></div>}
-          {devocional.aplicacion && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="fire emoji" className="mr-2">🔥</span> {t('application')}:</div><p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{devocional.aplicacion}</p></div>}
-        </div>
+          {/* Resto del contenido del devocional (sin cambios) */}
+          <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-1"><span role="img" aria-label="book emoji" className="mr-2">📖</span> {t('key_verse')}:</div>
+            <div className="text-blue-600 dark:text-blue-400 uppercase font-semibold text-md sm:text-lg">{devocional.versiculo}</div>
+            <div className="text-gray-600 dark:text-gray-300 mt-1">{devocional.cita}</div>
+          </div>
+          
+          <div className="space-y-6">
+            {devocional.reflexion && ( <div> <div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"> <span role="img" aria-label="pray emoji" className="mr-2">🙏</span> {t('reflection')}: </div> <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line"> {devocional.reflexion && typeof devocional.reflexion === 'object' ? documentToReactComponents(devocional.reflexion) : devocional.reflexion} </div> </div> )}
+            {devocional.pregunta && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="thinking face emoji" className="mr-2">🤔</span> {t('question')}:</div><p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{devocional.pregunta}</p></div>}
+            {devocional.aplicacion && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="fire emoji" className="mr-2">🔥</span> {t('application')}:</div><p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{devocional.aplicacion}</p></div>}
+          </div>
 
-        <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center gap-4">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={async () => { 
-            const textToShare = getShareText(devocional, t, i18n); 
-            
-            // Intenta usar el Share nativo primero
-            try {
-              await Share.share({
-                title: devocional.titulo,
-                text: textToShare,
-                dialogTitle: t('share_devotional'),
-              });
-            } catch (error) {
-              // Si falla (ej. en web sin soporte), usa el método antiguo
-              if (isClient && navigator.share) { 
-                try { 
-                  await navigator.share({ title: devocional.titulo, text: textToShare }); 
-                } catch (err) {} 
-              } else if (isClient) { 
-                navigator.clipboard.writeText(textToShare).then(() => alert(t('text_copied'))); 
+          <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center gap-4">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={async () => { 
+              const textToShare = getShareText(devocional, t, i18n); 
+              try {
+                await Share.share({
+                  title: devocional.titulo,
+                  text: textToShare,
+                  dialogTitle: t('share_devotional'),
+                });
+              } catch (error) {
+                if (isClient && navigator.share) { 
+                  try { 
+                    await navigator.share({ title: devocional.titulo, text: textToShare }); 
+                  } catch (err) {} 
+                } else if (isClient) { 
+                  navigator.clipboard.writeText(textToShare).then(() => alert(t('text_copied'))); 
+                }
               }
-            }
-          }}>
-            <img src="/icons/share.png" alt={t('share')} className="w-5 h-5 mr-1" style={{ display: "inline-block", verticalAlign: "middle" }} />
-            {t('share_devotional')}
-          </button>
-
-          <Link to="/historial/" className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
-            <img src="/icons/calendar.png" alt={t('history')} className="w-5 h-5 mr-1 dark:invert" style={{ display: "inline-block", verticalAlign: "middle" }} />
-            {t('view_previous_devotionals')}
-          </Link>
-
-          <button className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={onWhatsAppClick} type="button" aria-label={t('whatsapp_contact')}>
-            <WhatsAppIcon />
-            <span className="hidden sm:inline">{t('whatsapp_long')}</span>
-            <span className="inline sm:hidden">{t('whatsapp_short')}</span>
-          </button>
-
-          {/* Botón de Suscribir para Android/Desktop */}
-          {isClient && !isIOS && (
-            <button onClick={handleSubscribeClick} className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
-              <img src="/icons/bell.png" alt={t('subscribe')} className="w-5 h-5 mr-1" />
-              {t('subscribe_to_notifications')}
+            }}>
+              <img src="/icons/share.png" alt={t('share')} className="w-5 h-5 mr-1" style={{ display: "inline-block", verticalAlign: "middle" }} />
+              {t('share_devotional')}
             </button>
-          )}
 
-          {/* Mensaje para iOS al final */}
-          {isClient && isIOS && !isStandalone && (
-            <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg w-full sm:w-auto mt-2">
-              <p className="font-semibold text-gray-800 dark:text-gray-100">{t('get_the_app')}</p>
-              <p className="text-sm text-gray-600 dark:text-gray-300">{t('add_to_home_screen_prompt')}</p>
-            </div>
-          )}
+            <Link to="/historial/" className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
+              <img src="/icons/calendar.png" alt={t('history')} className="w-5 h-5 mr-1 dark:invert" style={{ display: "inline-block", verticalAlign: "middle" }} />
+              {t('view_previous_devotionals')}
+            </Link>
+
+            <button className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={onWhatsAppClick} type="button" aria-label={t('whatsapp_contact')}>
+              <WhatsAppIcon />
+              <span className="hidden sm:inline">{t('whatsapp_long')}</span>
+              <span className="inline sm:hidden">{t('whatsapp_short')}</span>
+            </button>
+
+            {/* Botón de Suscribir para Android/Desktop */}
+            {isClient && !isIOS && (
+              <button onClick={handleSubscribeClick} className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto">
+                <img src="/icons/bell.png" alt={t('subscribe')} className="w-5 h-5 mr-1" />
+                {t('subscribe_to_notifications')}
+              </button>
+            )}
+
+            {/* Mensaje para iOS al final */}
+            {isClient && isIOS && !isStandalone && (
+              <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg w-full sm:w-auto mt-2">
+                <p className="font-semibold text-gray-800 dark:text-gray-100">{t('get_the_app')}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{t('add_to_home_screen_prompt')}</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
