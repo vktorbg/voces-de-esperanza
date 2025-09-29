@@ -12,6 +12,8 @@ import { Network } from '@capacitor/network';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
 import { isEnglishSite } from "../components/LanguageProvider";
+// === IMPORT: nuevo PageHeader component ===
+import PageHeader from "../components/PageHeader";
 
 // --- Iconos ---
 // (Todos los SVGs que sí funcionan bien se mantienen)
@@ -369,14 +371,12 @@ const HistorialPage = ({ data }) => {
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-            <main className="flex flex-col flex-grow items-center pt-4 sm:pt-6 pb-24 sm:pb-28 px-4">
+
+            {/* === USO DEL NUEVO COMPONENTE PageHeader === */}
+            <PageHeader title={t('history_title')} backTo="/" />
+
+            <main className="flex flex-col flex-grow items-center pt-16 pb-12 px-4"> {/* pt-16 para dejar espacio para el header, pb-12 para el scroll */}
                 <div className="w-full max-w-md sm:max-w-2xl mx-auto flex flex-col items-center flex-grow">
-                    <div className="relative w-full text-center mb-6">
-                        <Link to="/" title={t('history_back_to_home')} className="absolute left-0 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
-                            <ArrowLeftIcon className="w-6 h-6 text-gray-600 dark:text-gray-300"/>
-                        </Link>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">{t('history_title')}</h1>
-                    </div>
                     
                     {/* Mensaje de offline si corresponde */}
                     {isOffline && allDevotionals.length > 0 && <OfflineHistoryMessage t={t} />}

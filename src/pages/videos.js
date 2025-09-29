@@ -70,7 +70,9 @@ const VideosPage = ({ data }) => {
   const hasVideos = allVideos.length > 0;
 
   return (
-    <div className="font-sans w-full max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden my-4 sm:my-6">
+    // === AÑADIDO: contenedor con padding superior e inferior para safe-area ===
+    <div className="pt-[env(safe-area-inset-top)] pb-12">
+      <div className="font-sans w-full max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden my-4 sm:my-6">
       {/* --- Banner Superior --- */}
       <div className="relative h-48 sm:h-64">
         <img src="/banner-videos.jpg" alt={t('videos_banner_alt', 'Banner de la sección de videos')} className="absolute inset-0 w-full h-full object-cover"/>
@@ -106,6 +108,7 @@ const VideosPage = ({ data }) => {
           </a>
           <p className="mt-3 text-xs sm:text-sm text-gray-600 dark:text-gray-400">{t('videos_dont_miss', '¡No te pierdas nuestros últimos estrenos!')}</p>
         </div>
+      </div>
       </div>
     </div>
   );

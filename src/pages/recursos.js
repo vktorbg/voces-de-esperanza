@@ -143,8 +143,10 @@ const RecursosView = () => {
   );
 
   return (
-    <div className="font-sans w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden"
-         style={{ maxWidth: '95vw' }}>
+    // === AÑADIDO: contenedor con padding superior e inferior para safe-area ===
+    <div className="pt-[env(safe-area-inset-top)] pb-12">
+      <div className="font-sans w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden"
+           style={{ maxWidth: '95vw' }}>
       {/* Banner superior */}
       <div className="relative h-48 sm:h-60 md:h-64">
         <img
@@ -280,6 +282,7 @@ const RecursosView = () => {
             <div className="flex-shrink-0 w-1"></div>
           </div>
         </section>
+      </div>
       </div>
     </div>
   );

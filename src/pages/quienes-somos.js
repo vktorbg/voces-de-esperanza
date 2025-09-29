@@ -9,8 +9,10 @@ const QuienesSomosView = () => {
   const { t } = useTranslation();
   
   return (
-    <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden"
-         style={{ maxWidth: '95vw' }}>
+    // === AÑADIDO: contenedor con padding superior e inferior para safe-area ===
+    <div className="pt-[env(safe-area-inset-top)] pb-12">
+      <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden"
+           style={{ maxWidth: '95vw' }}>
       {/* Banner with Background Image */}
       <div className="relative h-48 sm:h-64">
         <img 
@@ -94,6 +96,7 @@ const QuienesSomosView = () => {
           </div>
 
         </div>
+      </div>
       </div>
     </div>
   );
