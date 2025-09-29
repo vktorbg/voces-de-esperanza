@@ -111,7 +111,7 @@ export default function Layout({ children }) {
       <Seo />
       
       <main className={`transition-all duration-300 ${nativeSafeArea.playerPadding}`}>
-        <div className={`pt-4 sm:pt-6 ${nativeSafeArea.top}`}>
+        <div className={`pt-4 sm:pt-6 ${nativeSafeArea.paddingTop}`}>
           {children}
         </div>
       </main>

@@ -89,7 +89,9 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
   // Wrap original audio URLs with the Netlify proxy so requests go through
   // /.netlify/functions/audio-proxy?url=<original>
   // In development we avoid the proxy unless USE_AUDIO_PROXY env var is true.
-  const shouldUseProxy = typeof process !== 'undefined' && (process.env.NODE_ENV === 'production' || process.env.USE_AUDIO_PROXY === 'true');
+  const shouldUseProxy = typeof process !== 'undefined' &&
+                         (process.env.NODE_ENV === 'production' || process.env.USE_AUDIO_PROXY === 'true') &&
+                         !Capacitor.isNativePlatform();
   const wrapWithProxy = (originalUrl) => {
     if (!originalUrl) return null;
     try {
