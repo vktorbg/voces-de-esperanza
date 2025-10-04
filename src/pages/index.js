@@ -94,7 +94,9 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
     try {
       let normalized = originalUrl;
       if (typeof window !== 'undefined' && normalized.startsWith('//')) {
-        normalized = window.location.protocol + normalized;
+        // En plataformas nativas, usar siempre https: en lugar de capacitor:
+        const protocol = Capacitor.isNativePlatform() ? 'https:' : window.location.protocol;
+        normalized = protocol + normalized;
       }
 
       if (!shouldUseProxy) return normalized;
