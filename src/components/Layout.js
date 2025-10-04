@@ -29,8 +29,8 @@ export default function Layout({ children }) {
   React.useEffect(() => {
     if (Capacitor.isNativePlatform()) {
       const setStatusBarStyle = (isDark) => {
-        // Cuando es oscuro, pedimos Style.Dark para que el texto sea claro en iOS/Android
-        StatusBar.setStyle({ style: isDark ? Style.Dark : Style.Light }).catch(() => {});
+        // Cuando es oscuro, pedimos Style.Light para que el texto sea claro (blanco) sobre fondo oscuro
+        StatusBar.setStyle({ style: isDark ? Style.Light : Style.Dark }).catch(() => {});
       };
 
       // Establece el estilo inicial basado en la clase 'dark' en <html>
