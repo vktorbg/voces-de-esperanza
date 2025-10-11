@@ -30,7 +30,14 @@ export default function Layout({ children }) {
     if (Capacitor.isNativePlatform()) {
       const setStatusBarStyle = (isDark) => {
         // Cuando es oscuro, pedimos Style.Light para que el texto sea claro (blanco) sobre fondo oscuro
-        StatusBar.setStyle({ style: isDark ? Style.Light : Style.Dark }).catch(() => {});
+        // Cuando es claro, pedimos Style.Dark para que el texto sea oscuro sobre fondo claro
+        if (isDark) {
+          StatusBar.setStyle({ style: Style.Light }).catch(() => {});
+          StatusBar.setBackgroundColor({ color: '#1f2937' }).catch(() => {}); // gray-800
+        } else {
+          StatusBar.setStyle({ style: Style.Dark }).catch(() => {});
+          StatusBar.setBackgroundColor({ color: '#f3f4f6' }).catch(() => {}); // gray-100
+        }
       };
 
       // Establece el estilo inicial basado en la clase 'dark' en <html>
