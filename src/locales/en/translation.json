@@ -189,6 +189,13 @@
   "no_connection": "No Connection",
   "need_internet_first_time": "You need an internet connection the first time to download devotionals.",
   "need_internet_history": "You need an internet connection the first time to download devotional history.",
+  "sync_now": "Sync now",
+  "sync_success": "✅ Sync successful",
+  "sync_error": "❌ Sync error. Please try again.",
+  "syncing": "Syncing...",
+  "data_source_api": "Updated content",
+  "data_source_cache": "Cached content",
+  "data_source_build": "Build content",
   "sections": {
     "banner": {
       "devotionals": "Daily devotionals to nourish your spirit",

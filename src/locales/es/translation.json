@@ -189,6 +189,13 @@
   "no_connection": "Sin Conexión",
   "need_internet_first_time": "Necesitas conexión a internet la primera vez para descargar los devocionales.",
   "need_internet_history": "Necesitas conexión a internet la primera vez para descargar el historial de devocionales.",
+  "sync_now": "Sincronizar ahora",
+  "sync_success": "✅ Sincronización exitosa",
+  "sync_error": "❌ Error al sincronizar. Inténtalo de nuevo.",
+  "syncing": "Sincronizando...",
+  "data_source_api": "Contenido actualizado",
+  "data_source_cache": "Contenido en caché",
+  "data_source_build": "Contenido del build",
   "sections": {
     "banner": {
       "devotionals": "Devocionales diarios para alimentar tu espíritu",

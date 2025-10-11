@@ -56,7 +56,7 @@ const NoDevotionalMessage = ({ t }) => (
 );
 
 // NUEVA DevotionalView separando encabezado fijo y contenido desplazable
-const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
+const DevotionalView = ({ devocional, onWhatsAppClick, isClient, dataSource, syncing, handleManualSync, isOffline }) => {
   const { t, i18n } = useTranslation();
   const { playTrack } = useAudioPlayer();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -154,9 +154,36 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
             <div className="flex-grow">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-blue-600 dark:text-blue-400 uppercase font-semibold tracking-wider">{t('app_name')}</span>
-                <button onClick={() => window.location.reload()} title={t('reload_devotional')} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition flex-shrink-0" aria-label={t('reload_devotional')}>
-                  <ReloadIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-                </button>
+                <div className="flex items-center gap-2">
+                  {/* Indicador de fuente de datos */}
+                  {isClient && Capacitor.isNativePlatform() && (
+                    <span className="text-xs px-2 py-1 rounded-full" style={{
+                      backgroundColor: dataSource === 'api' || dataSource === 'api-manual' ? '#10b981' : 
+                                     dataSource === 'cache' || dataSource === 'cache-offline' ? '#f59e0b' : 
+                                     '#6b7280',
+                      color: 'white'
+                    }} title={`Fuente: ${dataSource}`}>
+                      {dataSource === 'api' || dataSource === 'api-manual' ? '🌐' : 
+                       dataSource === 'cache' || dataSource === 'cache-offline' ? '📦' : '🏗️'}
+                    </span>
+                  )}
+                  {/* Botón de sincronización manual */}
+                  {isClient && Capacitor.isNativePlatform() && !isOffline && (
+                    <button 
+                      onClick={handleManualSync} 
+                      disabled={syncing}
+                      title={t('sync_now') || 'Sincronizar ahora'} 
+                      className={`p-1 rounded-full transition flex-shrink-0 ${syncing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`} 
+                      aria-label={t('sync_now') || 'Sincronizar ahora'}
+                    >
+                      <ReloadIcon className={`w-5 h-5 text-gray-500 dark:text-gray-400 ${syncing ? 'animate-spin' : ''}`} />
+                    </button>
+                  )}
+                  {/* Botón de reload general */}
+                  <button onClick={() => window.location.reload()} title={t('reload_devotional')} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition flex-shrink-0" aria-label={t('reload_devotional')}>
+                    <ReloadIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                  </button>
+                </div>
               </div>
               <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">{t('daily_devotional')}</div>
               <div className="text-sm text-gray-500 dark:text-gray-400">{fechaFormateada}</div>
@@ -256,13 +283,15 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient }) => {
 };
 
 
-// Main Page Component - Now with a single, robust client-side check
+// Main Page Component - Now with hybrid GraphQL + Runtime Sync
 const IndexPage = ({ data }) => {
   const { t } = useTranslation();
   const [showWhatsAppBox, setShowWhatsAppBox] = useState(false);
   const [devocional, setDevocional] = useState(null);
   const [isOffline, setIsOffline] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [dataSource, setDataSource] = useState('build'); // 'build', 'api', 'cache'
+  const [syncing, setSyncing] = useState(false);
   
   // THIS IS THE SINGLE SOURCE OF TRUTH FOR HYDRATION
   const [isClient, setIsClient] = useState(false);
@@ -327,7 +356,7 @@ const IndexPage = ({ data }) => {
       : null;
   };
 
-  // Efecto principal para cargar el devocional
+  // Efecto principal para cargar el devocional - MODO HÍBRIDO
   useEffect(() => {
     const loadDevotional = async () => {
       if (!isClient || !data) return;
@@ -335,68 +364,173 @@ const IndexPage = ({ data }) => {
       setLoading(true);
 
       try {
-        // La detección de red solo funciona en plataformas nativas
-        if (Capacitor.isNativePlatform()) {
+        // 1. Primero, cargar desde GraphQL (datos del build) - RÁPIDO
+        const buildDevotional = buildDevotionalFromData(data);
+        setDevocional(buildDevotional);
+        setDataSource('build');
+        setLoading(false); // Ya mostramos algo al usuario
+
+        // 2. Verificar si estamos en plataforma nativa y hay conexión
+        const isNative = Capacitor.isNativePlatform();
+        let isConnected = true;
+
+        if (isNative) {
           const status = await Network.getStatus();
+          isConnected = status.connected;
+          setIsOffline(!isConnected);
+        } else {
+          setIsOffline(false);
+        }
 
-          if (status.connected) {
-            // --- MODO ONLINE ---
-            setIsOffline(false);
-            // Carga desde GraphQL y guarda en caché
-            const latestDevotional = buildDevotionalFromData(data);
-            setDevocional(latestDevotional);
+        // 3. Si estamos online, intentar fetch desde Contentful API para contenido fresco
+        if (isConnected) {
+          try {
+            console.log('🔄 Checking for fresh content from Contentful API...');
+            
+            // Importar dinámicamente el servicio (solo si estamos online)
+            const { getDevotionalByDate } = await import('../services/contentful-sync');
+            
+            const today = new Date();
+            const result = await getDevotionalByDate(today);
+            
+            if (result.devotional) {
+              // Transformar el formato de la API al formato esperado
+              const freshDevotional = {
+                titulo: result.devotional.titulo || result.devotional.title || '',
+                fecha: result.devotional.date || result.devotional.fecha,
+                versiculo: result.devotional.versiculo || result.devotional.bibleVerse || '',
+                cita: result.devotional.cita || result.devotional.citation || result.devotional.quote || '',
+                reflexion: result.devotional.reflexion || result.devotional.reflection,
+                pregunta: result.devotional.pregunta || result.devotional.question?.question,
+                aplicacion: result.devotional.aplicacion || result.devotional.application?.application,
+                audioEspanolUrl: result.devotional.audioEspanolUrl,
+                audioNahuatlUrl: result.devotional.audioNahuatlUrl,
+                audioEnglishUrl: result.devotional.audioEnglishUrl,
+              };
 
-            if (latestDevotional) {
-              // Guarda en Preferences para uso offline
-              await Preferences.set({
-                key: 'latestDevotional',
-                value: JSON.stringify(latestDevotional),
-              });
-              
-              // También guarda la fecha para saber cuándo fue guardado
-              await Preferences.set({
-                key: 'devotionalCacheDate',
-                value: new Date().toISOString(),
-              });
+              // Limpiar título de la fecha si viene incluida
+              if (freshDevotional.titulo) {
+                freshDevotional.titulo = freshDevotional.titulo.replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/, '');
+              }
+
+              console.log('✅ Fresh content loaded from:', result.source);
+              setDevocional(freshDevotional);
+              setDataSource(result.source);
+
+              // Guardar en cache local para uso offline
+              if (isNative) {
+                await Preferences.set({
+                  key: 'latestDevotional',
+                  value: JSON.stringify(freshDevotional),
+                });
+                await Preferences.set({
+                  key: 'devotionalCacheDate',
+                  value: new Date().toISOString(),
+                });
+              }
+            } else {
+              console.log('ℹ️ No fresh content available, using build data');
             }
-          } else {
-            // --- MODO OFFLINE ---
-            setIsOffline(true);
-            // Carga desde Preferences
+          } catch (apiError) {
+            console.warn('⚠️ API fetch failed, using build data:', apiError.message);
+            // Mantener el devocional del build si el API falla
+          }
+        } else if (isNative) {
+          // --- MODO OFFLINE (solo en nativo) ---
+          console.log('📴 Offline mode, loading from cache...');
+          
+          try {
+            const { value } = await Preferences.get({ key: 'latestDevotional' });
+            if (value) {
+              const cachedDevotional = JSON.parse(value);
+              setDevocional(cachedDevotional);
+              setDataSource('cache');
+              console.log('✅ Loaded from cache');
+            } else if (!buildDevotional) {
+              // Si no hay cache ni datos del build
+              setDevocional(null);
+              console.log('❌ No cached data available');
+            }
+          } catch (cacheError) {
+            console.error('Error loading from cache:', cacheError);
+            // Mantener buildDevotional si hay error
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error in loadDevotional:', error);
+        
+        // Fallback: intentar cargar desde cache
+        if (Capacitor.isNativePlatform()) {
+          try {
             const { value } = await Preferences.get({ key: 'latestDevotional' });
             if (value) {
               setDevocional(JSON.parse(value));
-            } else {
-              // Si no hay nada en caché, devocional seguirá siendo null
-              setDevocional(null);
+              setDataSource('cache-fallback');
+              setIsOffline(true);
             }
+          } catch (cacheError) {
+            console.error('Error in fallback cache load:', cacheError);
           }
-        } else {
-          // --- MODO WEB (navegador) ---
-          // Simplemente carga los datos como normalmente
-          setIsOffline(false);
-          const latestDevotional = buildDevotionalFromData(data);
-          setDevocional(latestDevotional);
-        }
-      } catch (error) {
-        console.error('Error loading devotional:', error);
-        // En caso de error, intenta cargar desde cache
-        try {
-          const { value } = await Preferences.get({ key: 'latestDevotional' });
-          if (value) {
-            setDevocional(JSON.parse(value));
-            setIsOffline(true);
-          }
-        } catch (cacheError) {
-          console.error('Error loading from cache:', cacheError);
         }
       } finally {
-        setLoading(false);
+        if (loading) setLoading(false);
       }
     };
 
     loadDevotional();
-  }, [isClient, data]); // Depende de isClient y data para recargar si los datos de GraphQL cambian
+  }, [isClient, data]); // Depende de isClient y data
+
+  // Función manual para forzar sincronización
+  const handleManualSync = async () => {
+    if (syncing || !isClient) return;
+    
+    setSyncing(true);
+    try {
+      const { forceSync } = await import('../services/contentful-sync');
+      const result = await forceSync();
+      
+      if (result.devotionals && result.devotionals.length > 0) {
+        const today = new Date();
+        const todayStr = formatDate(today);
+        
+        const todayDevotional = result.devotionals.find(d => {
+          if (!d.date) return false;
+          return formatDate(new Date(d.date)) === todayStr;
+        });
+        
+        if (todayDevotional) {
+          setDevocional({
+            titulo: (todayDevotional.titulo || todayDevotional.title || '').replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/, ''),
+            fecha: todayDevotional.date || todayDevotional.fecha,
+            versiculo: todayDevotional.versiculo || todayDevotional.bibleVerse || '',
+            cita: todayDevotional.cita || todayDevotional.quote || '',
+            reflexion: todayDevotional.reflexion || todayDevotional.reflection,
+            pregunta: todayDevotional.pregunta || todayDevotional.question?.question,
+            aplicacion: todayDevotional.aplicacion || todayDevotional.application?.application,
+            audioEspanolUrl: todayDevotional.audioEspanolUrl,
+            audioNahuatlUrl: todayDevotional.audioNahuatlUrl,
+            audioEnglishUrl: todayDevotional.audioEnglishUrl,
+          });
+          setDataSource('api-manual');
+        }
+        
+        alert(t('sync_success') || '✅ Sincronización exitosa');
+      }
+    } catch (error) {
+      console.error('Manual sync failed:', error);
+      alert(t('sync_error') || '❌ Error al sincronizar');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   // If we're on the server or during the first client render, show the skeleton.
   // This guarantees the server and client match, fixing all hydration errors.
@@ -423,7 +557,11 @@ const IndexPage = ({ data }) => {
         <DevotionalView
           devocional={devocional}
           onWhatsAppClick={() => setShowWhatsAppBox(true)}
-          isClient={true} // Pass the client status down
+          isClient={true}
+          dataSource={dataSource}
+          syncing={syncing}
+          handleManualSync={handleManualSync}
+          isOffline={isOffline}
         />
       ) : (
         !isOffline && <DevotionalSkeleton />
