@@ -11,10 +11,10 @@ const QuienesSomosView = () => {
   return (
     // === AÑADIDO: contenedor con padding superior e inferior para safe-area ===
     <div className="pt-[env(safe-area-inset-top)] pb-12">
-      <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mt-2"
+      <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mt-0"
            style={{ maxWidth: '95vw' }}>
       {/* Banner with Background Image */}
-      <div className="relative h-48 sm:h-64">
+      <div className="relative h-52 sm:h-64">
         <img 
           src="/banner-nosotros.jpg" // Assumes banner-nosotros.jpg is in /static folder
           alt={t('about_banner_alt')} 

@@ -72,9 +72,9 @@ const VideosPage = ({ data }) => {
   return (
     // === AÑADIDO: contenedor con padding superior e inferior para safe-area ===
     <div className="pt-[env(safe-area-inset-top)] pb-12">
-      <div className="font-sans w-full max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mt-2 mb-4">
+      <div className="font-sans w-full max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mt-0 mb-4">
       {/* --- Banner Superior --- */}
-      <div className="relative h-48 sm:h-64">
+      <div className="relative h-52 sm:h-64">
         <img src="/banner-videos.jpg" alt={t('videos_banner_alt', 'Banner de la sección de videos')} className="absolute inset-0 w-full h-full object-cover"/>
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent flex flex-col items-center justify-center text-center p-4">
           <img src={youtubeIconUrl} alt="YouTube" className="w-16 h-16 sm:w-20 sm:h-20 mb-2 sm:mb-3"/>

@@ -145,10 +145,10 @@ const RecursosView = () => {
   return (
     // === AÑADIDO: contenedor con padding superior e inferior para safe-area ===
     <div className="pt-[env(safe-area-inset-top)] pb-12">
-      <div className="font-sans w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden mt-2"
+      <div className="font-sans w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden mt-0"
            style={{ maxWidth: '95vw' }}>
       {/* Banner superior */}
-      <div className="relative h-48 sm:h-60 md:h-64">
+      <div className="relative h-52 sm:h-64">
         <img
           src="/banner-recursos.jpg"
           alt={t('resources_banner_alt')}
