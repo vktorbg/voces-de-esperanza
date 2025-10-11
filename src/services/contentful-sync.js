@@ -151,7 +151,7 @@ const fetchFromContentful = async (locale = 'es-MX') => {
     console.log('🌐 Fetching devotionals from Contentful...');
     
     const response = await client.getEntries({
-      content_type: 'devocional', // Ajusta esto según tu Content Type ID
+      content_type: 'devotional', // Ajusta esto según tu Content Type ID
       locale: locale,
       limit: 1000, // Ajusta según necesites
       order: '-fields.date', // Ordenar por fecha descendente
