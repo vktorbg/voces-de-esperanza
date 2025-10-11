@@ -171,7 +171,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, syncing, isOffl
       </div>
 
       {/* === 2. CONTENIDO DESPLAZABLE CON PADDING SUPERIOR PARA NO QUEDAR DETRÁS DEL ENCABEZADO === */}
-      <div className="pt-28 sm:pt-32"> {/* Este padding empuja el contenido hacia abajo */}
+      <div className="pt-28 sm:pt-32 pb-32 sm:pb-36"> {/* Padding superior e inferior para evitar que quede detrás de los headers */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
           <div className="flex justify-between items-start gap-4 mb-4">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 break-words"> 🌟 {devocional.titulo} </h1>
