@@ -113,23 +113,85 @@ const isCacheValid = async () => {
 
 /**
  * Transforma entradas de Contentful al formato esperado por la app
+ * Normaliza al mismo formato que GraphQL (Gatsby)
  */
 const transformContentfulEntry = (entry) => {
   try {
+    // Normalizar reflection (Rich Text) al formato de GraphQL
+    let reflectionFormatted = null;
+    if (entry.fields.reflection) {
+      // Si es Rich Text, tiene nodeType
+      if (entry.fields.reflection.nodeType) {
+        reflectionFormatted = {
+          raw: JSON.stringify(entry.fields.reflection)
+        };
+      } else if (typeof entry.fields.reflection === 'string') {
+        // Si ya es string (no debería pasar, pero por seguridad)
+        reflectionFormatted = entry.fields.reflection;
+      }
+    }
+
+    // Normalizar question (puede ser Rich Text o Long text) al formato de GraphQL
+    let questionFormatted = null;
+    if (entry.fields.question) {
+      if (entry.fields.question.nodeType) {
+        // Es Rich Text, convertir a objeto con raw
+        questionFormatted = {
+          question: JSON.stringify(entry.fields.question)
+        };
+      } else if (typeof entry.fields.question === 'string') {
+        // Es string simple
+        questionFormatted = { question: entry.fields.question };
+      } else if (entry.fields.question.question) {
+        // Ya está en formato correcto
+        questionFormatted = entry.fields.question;
+      }
+    }
+
+    // Normalizar application (puede ser Rich Text o Long text) al formato de GraphQL
+    let applicationFormatted = null;
+    if (entry.fields.application) {
+      if (entry.fields.application.nodeType) {
+        // Es Rich Text, convertir a objeto con raw
+        applicationFormatted = {
+          application: JSON.stringify(entry.fields.application)
+        };
+      } else if (typeof entry.fields.application === 'string') {
+        // Es string simple
+        applicationFormatted = { application: entry.fields.application };
+      } else if (entry.fields.application.application) {
+        // Ya está en formato correcto
+        applicationFormatted = entry.fields.application;
+      }
+    }
+
     return {
       id: entry.sys.id,
-      titulo: entry.fields.titulo || entry.fields.title || '',
-      date: entry.fields.date || entry.fields.fecha || '',
-      versiculo: entry.fields.versiculo || entry.fields.verse || '',
-      cita: entry.fields.cita || entry.fields.citation || '',
-      reflexion: entry.fields.reflexion || entry.fields.reflection || null,
-      oracion: entry.fields.oracion || entry.fields.prayer || '',
-      audioEspanolUrl: entry.fields.audioEspanol?.fields?.file?.url || null,
-      audioNahuatlUrl: entry.fields.audioNahuatl?.fields?.file?.url || null,
-      audioEnglishUrl: entry.fields.audioEnglish?.fields?.file?.url || null,
+      // Usar nombres en inglés como GraphQL
+      title: entry.fields.title || '',
+      date: entry.fields.date || '',
+      bibleVerse: entry.fields.bibleVerse || '',
+      quote: entry.fields.quote || '',
+      reflection: reflectionFormatted,
+      question: questionFormatted,
+      application: applicationFormatted,
+      // Audio URLs normalizados
+      audioEspanol: entry.fields.audioEspanol ? {
+        file: {
+          url: entry.fields.audioEspanol.fields?.file?.url || null
+        }
+      } : null,
+      audioNahuatl: entry.fields.audioNahuatl ? {
+        file: {
+          url: entry.fields.audioNahuatl.fields?.file?.url || null
+        }
+      } : null,
+      audioEnglish: entry.fields.audioEnglish ? {
+        file: {
+          url: entry.fields.audioEnglish.fields?.file?.url || null
+        }
+      } : null,
       node_locale: entry.sys.locale || 'es-MX',
-      // Campos adicionales que puedas necesitar
-      contentType: entry.sys.contentType?.sys?.id,
     };
   } catch (error) {
     console.error('Error transforming entry:', entry.sys.id, error);

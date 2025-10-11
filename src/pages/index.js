@@ -222,8 +222,8 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, dataSource, syn
           
           <div className="space-y-6">
             {devocional.reflexion && ( <div> <div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"> <span role="img" aria-label="pray emoji" className="mr-2">🙏</span> {t('reflection')}: </div> <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line"> {devocional.reflexion && typeof devocional.reflexion === 'object' ? documentToReactComponents(devocional.reflexion) : devocional.reflexion} </div> </div> )}
-            {devocional.pregunta && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="thinking face emoji" className="mr-2">🤔</span> {t('question')}:</div><p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{devocional.pregunta}</p></div>}
-            {devocional.aplicacion && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="fire emoji" className="mr-2">🔥</span> {t('application')}:</div><p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{devocional.aplicacion}</p></div>}
+            {devocional.pregunta && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="thinking face emoji" className="mr-2">🤔</span> {t('question')}:</div><div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{typeof devocional.pregunta === 'object' && devocional.pregunta.nodeType ? documentToReactComponents(devocional.pregunta) : devocional.pregunta}</div></div>}
+            {devocional.aplicacion && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="fire emoji" className="mr-2">🔥</span> {t('application')}:</div><div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{typeof devocional.aplicacion === 'object' && devocional.aplicacion.nodeType ? documentToReactComponents(devocional.aplicacion) : devocional.aplicacion}</div></div>}
           </div>
 
           <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center gap-4">
@@ -392,26 +392,31 @@ const IndexPage = ({ data }) => {
             
             const today = new Date();
             const result = await getDevotionalByDate(today);
-            
             if (result.devotional) {
-              // Transformar el formato de la API al formato esperado
+              // Los datos ya vienen en el formato correcto de transformContentfulEntry
+              // que coincide con el formato de GraphQL
               const freshDevotional = {
-                titulo: result.devotional.titulo || result.devotional.title || '',
-                fecha: result.devotional.date || result.devotional.fecha,
-                versiculo: result.devotional.versiculo || result.devotional.bibleVerse || '',
-                cita: result.devotional.cita || result.devotional.citation || result.devotional.quote || '',
-                reflexion: result.devotional.reflexion || result.devotional.reflection,
-                pregunta: result.devotional.pregunta || result.devotional.question?.question,
-                aplicacion: result.devotional.aplicacion || result.devotional.application?.application,
-                audioEspanolUrl: result.devotional.audioEspanolUrl,
-                audioNahuatlUrl: result.devotional.audioNahuatlUrl,
-                audioEnglishUrl: result.devotional.audioEnglishUrl,
+                titulo: (result.devotional.title || '').replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/, ''),
+                fecha: result.devotional.date,
+                versiculo: result.devotional.bibleVerse || '',
+                cita: result.devotional.quote || '',
+                reflexion: result.devotional.reflection,
+                // Question y application pueden venir como objetos con el texto dentro
+                pregunta: result.devotional.question?.question 
+                  ? (typeof result.devotional.question.question === 'string' 
+                      ? JSON.parse(result.devotional.question.question) 
+                      : result.devotional.question.question)
+                  : null,
+                aplicacion: result.devotional.application?.application 
+                  ? (typeof result.devotional.application.application === 'string'
+                      ? JSON.parse(result.devotional.application.application)
+                      : result.devotional.application.application)
+                  : null,
+                // URLs de audio ya normalizados en transformContentfulEntry
+                audioEspanolUrl: result.devotional.audioEspanol?.file?.url || null,
+                audioNahuatlUrl: result.devotional.audioNahuatl?.file?.url || null,
+                audioEnglishUrl: result.devotional.audioEnglish?.file?.url || null,
               };
-
-              // Limpiar título de la fecha si viene incluida
-              if (freshDevotional.titulo) {
-                freshDevotional.titulo = freshDevotional.titulo.replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/, '');
-              }
 
               console.log('✅ Fresh content loaded from:', result.source);
               setDevocional(freshDevotional);
@@ -499,17 +504,27 @@ const IndexPage = ({ data }) => {
         });
         
         if (todayDevotional) {
+          // Los datos ya vienen normalizados de transformContentfulEntry
           setDevocional({
-            titulo: (todayDevotional.titulo || todayDevotional.title || '').replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/, ''),
-            fecha: todayDevotional.date || todayDevotional.fecha,
-            versiculo: todayDevotional.versiculo || todayDevotional.bibleVerse || '',
-            cita: todayDevotional.cita || todayDevotional.quote || '',
-            reflexion: todayDevotional.reflexion || todayDevotional.reflection,
-            pregunta: todayDevotional.pregunta || todayDevotional.question?.question,
-            aplicacion: todayDevotional.aplicacion || todayDevotional.application?.application,
-            audioEspanolUrl: todayDevotional.audioEspanolUrl,
-            audioNahuatlUrl: todayDevotional.audioNahuatlUrl,
-            audioEnglishUrl: todayDevotional.audioEnglishUrl,
+            titulo: (todayDevotional.title || '').replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/, ''),
+            fecha: todayDevotional.date,
+            versiculo: todayDevotional.bibleVerse || '',
+            cita: todayDevotional.quote || '',
+            reflexion: todayDevotional.reflection,
+            // Question y application pueden venir como objetos con el texto dentro
+            pregunta: todayDevotional.question?.question 
+              ? (typeof todayDevotional.question.question === 'string' 
+                  ? JSON.parse(todayDevotional.question.question) 
+                  : todayDevotional.question.question)
+              : null,
+            aplicacion: todayDevotional.application?.application 
+              ? (typeof todayDevotional.application.application === 'string'
+                  ? JSON.parse(todayDevotional.application.application)
+                  : todayDevotional.application.application)
+              : null,
+            audioEspanolUrl: todayDevotional.audioEspanol?.file?.url || null,
+            audioNahuatlUrl: todayDevotional.audioNahuatl?.file?.url || null,
+            audioEnglishUrl: todayDevotional.audioEnglish?.file?.url || null,
           });
           setDataSource('api-manual');
         }
