@@ -56,7 +56,7 @@ const NoDevotionalMessage = ({ t }) => (
 );
 
 // NUEVA DevotionalView separando encabezado fijo y contenido desplazable
-const DevotionalView = ({ devocional, onWhatsAppClick, isClient, dataSource, syncing, handleManualSync, isOffline }) => {
+const DevotionalView = ({ devocional, onWhatsAppClick, isClient, syncing, isOffline }) => {
   const { t, i18n } = useTranslation();
   const { playTrack } = useAudioPlayer();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -155,34 +155,13 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, dataSource, syn
               <div className="flex items-center justify-between">
                 <span className="text-xs text-blue-600 dark:text-blue-400 uppercase font-semibold tracking-wider">{t('app_name')}</span>
                 <div className="flex items-center gap-2">
-                  {/* Indicador de fuente de datos */}
-                  {isClient && Capacitor.isNativePlatform() && (
-                    <span className="text-xs px-2 py-1 rounded-full" style={{
-                      backgroundColor: dataSource === 'api' || dataSource === 'api-manual' ? '#10b981' : 
-                                     dataSource === 'cache' || dataSource === 'cache-offline' ? '#f59e0b' : 
-                                     '#6b7280',
-                      color: 'white'
-                    }} title={`Fuente: ${dataSource}`}>
-                      {dataSource === 'api' || dataSource === 'api-manual' ? '🌐' : 
-                       dataSource === 'cache' || dataSource === 'cache-offline' ? '📦' : '🏗️'}
-                    </span>
+                  {/* Indicador discreto de sincronización */}
+                  {isClient && syncing && (
+                    <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                      <ReloadIcon className="w-4 h-4 animate-spin" />
+                      <span className="hidden sm:inline">{t('syncing') || 'Sincronizando...'}</span>
+                    </div>
                   )}
-                  {/* Botón de sincronización manual */}
-                  {isClient && Capacitor.isNativePlatform() && !isOffline && (
-                    <button 
-                      onClick={handleManualSync} 
-                      disabled={syncing}
-                      title={t('sync_now') || 'Sincronizar ahora'} 
-                      className={`p-1 rounded-full transition flex-shrink-0 ${syncing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`} 
-                      aria-label={t('sync_now') || 'Sincronizar ahora'}
-                    >
-                      <ReloadIcon className={`w-5 h-5 text-gray-500 dark:text-gray-400 ${syncing ? 'animate-spin' : ''}`} />
-                    </button>
-                  )}
-                  {/* Botón de reload general */}
-                  <button onClick={() => window.location.reload()} title={t('reload_devotional')} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition flex-shrink-0" aria-label={t('reload_devotional')}>
-                    <ReloadIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-                  </button>
                 </div>
               </div>
               <div className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">{t('daily_devotional')}</div>
@@ -221,9 +200,63 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, dataSource, syn
           </div>
           
           <div className="space-y-6">
-            {devocional.reflexion && ( <div> <div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"> <span role="img" aria-label="pray emoji" className="mr-2">🙏</span> {t('reflection')}: </div> <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line"> {devocional.reflexion && typeof devocional.reflexion === 'object' ? documentToReactComponents(devocional.reflexion) : devocional.reflexion} </div> </div> )}
-            {devocional.pregunta && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="thinking face emoji" className="mr-2">🤔</span> {t('question')}:</div><div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{typeof devocional.pregunta === 'object' && devocional.pregunta.nodeType ? documentToReactComponents(devocional.pregunta) : devocional.pregunta}</div></div>}
-            {devocional.aplicacion && <div><div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"><span role="img" aria-label="fire emoji" className="mr-2">🔥</span> {t('application')}:</div><div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{typeof devocional.aplicacion === 'object' && devocional.aplicacion.nodeType ? documentToReactComponents(devocional.aplicacion) : devocional.aplicacion}</div></div>}
+            {devocional.reflexion && ( 
+              <div> 
+                <div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2"> 
+                  <span role="img" aria-label="pray emoji" className="mr-2">🙏</span> {t('reflection')}: 
+                </div> 
+                <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line"> 
+                  {(() => {
+                    // Si tiene .raw, es formato GraphQL, parsearlo
+                    if (devocional.reflexion.raw) {
+                      try {
+                        return documentToReactComponents(JSON.parse(devocional.reflexion.raw));
+                      } catch (e) {
+                        return devocional.reflexion.raw;
+                      }
+                    }
+                    // Si tiene .nodeType, es Rich Text directo
+                    if (devocional.reflexion.nodeType) {
+                      return documentToReactComponents(devocional.reflexion);
+                    }
+                    // Si es string, mostrarlo
+                    if (typeof devocional.reflexion === 'string') {
+                      return devocional.reflexion;
+                    }
+                    // Fallback
+                    return null;
+                  })()} 
+                </div> 
+              </div> 
+            )}
+            {devocional.pregunta && (
+              <div>
+                <div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2">
+                  <span role="img" aria-label="thinking face emoji" className="mr-2">🤔</span> {t('question')}:
+                </div>
+                <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+                  {(() => {
+                    if (typeof devocional.pregunta === 'string') return devocional.pregunta;
+                    if (devocional.pregunta?.nodeType) return documentToReactComponents(devocional.pregunta);
+                    return null;
+                  })()}
+                </div>
+              </div>
+            )}
+            {devocional.aplicacion && (
+              <div>
+                <div className="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2">
+                  <span role="img" aria-label="fire emoji" className="mr-2">🔥</span> {t('application')}:
+                </div>
+                <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+                  {(() => {
+                    if (typeof devocional.aplicacion === 'string') return devocional.aplicacion;
+                    if (devocional.aplicacion?.nodeType) return documentToReactComponents(devocional.aplicacion);
+                    return null;
+                  })()}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center gap-4">
@@ -290,7 +323,6 @@ const IndexPage = ({ data }) => {
   const [devocional, setDevocional] = useState(null);
   const [isOffline, setIsOffline] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [dataSource, setDataSource] = useState('build'); // 'build', 'api', 'cache'
   const [syncing, setSyncing] = useState(false);
   
   // THIS IS THE SINGLE SOURCE OF TRUTH FOR HYDRATION
@@ -367,7 +399,6 @@ const IndexPage = ({ data }) => {
         // 1. Primero, cargar desde GraphQL (datos del build) - RÁPIDO
         const buildDevotional = buildDevotionalFromData(data);
         setDevocional(buildDevotional);
-        setDataSource('build');
         setLoading(false); // Ya mostramos algo al usuario
 
         // 2. Verificar si estamos en plataforma nativa y hay conexión
@@ -395,23 +426,30 @@ const IndexPage = ({ data }) => {
             if (result.devotional) {
               // Los datos ya vienen en el formato correcto de transformContentfulEntry
               // que coincide con el formato de GraphQL
+              
+              // Helper para parsear question/application de manera segura
+              const parseRichTextField = (field) => {
+                if (!field) return null;
+                if (typeof field === 'object' && field.nodeType) return field;
+                if (typeof field === 'string') {
+                  try {
+                    const parsed = JSON.parse(field);
+                    return parsed.nodeType ? parsed : field;
+                  } catch {
+                    return field;
+                  }
+                }
+                return field;
+              };
+              
               const freshDevotional = {
                 titulo: (result.devotional.title || '').replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/, ''),
                 fecha: result.devotional.date,
                 versiculo: result.devotional.bibleVerse || '',
                 cita: result.devotional.quote || '',
                 reflexion: result.devotional.reflection,
-                // Question y application pueden venir como objetos con el texto dentro
-                pregunta: result.devotional.question?.question 
-                  ? (typeof result.devotional.question.question === 'string' 
-                      ? JSON.parse(result.devotional.question.question) 
-                      : result.devotional.question.question)
-                  : null,
-                aplicacion: result.devotional.application?.application 
-                  ? (typeof result.devotional.application.application === 'string'
-                      ? JSON.parse(result.devotional.application.application)
-                      : result.devotional.application.application)
-                  : null,
+                pregunta: parseRichTextField(result.devotional.question?.question),
+                aplicacion: parseRichTextField(result.devotional.application?.application),
                 // URLs de audio ya normalizados en transformContentfulEntry
                 audioEspanolUrl: result.devotional.audioEspanol?.file?.url || null,
                 audioNahuatlUrl: result.devotional.audioNahuatl?.file?.url || null,
@@ -420,7 +458,6 @@ const IndexPage = ({ data }) => {
 
               console.log('✅ Fresh content loaded from:', result.source);
               setDevocional(freshDevotional);
-              setDataSource(result.source);
 
               // Guardar en cache local para uso offline
               if (isNative) {
@@ -449,7 +486,6 @@ const IndexPage = ({ data }) => {
             if (value) {
               const cachedDevotional = JSON.parse(value);
               setDevocional(cachedDevotional);
-              setDataSource('cache');
               console.log('✅ Loaded from cache');
             } else if (!buildDevotional) {
               // Si no hay cache ni datos del build
@@ -470,7 +506,6 @@ const IndexPage = ({ data }) => {
             const { value } = await Preferences.get({ key: 'latestDevotional' });
             if (value) {
               setDevocional(JSON.parse(value));
-              setDataSource('cache-fallback');
               setIsOffline(true);
             }
           } catch (cacheError) {
@@ -484,60 +519,6 @@ const IndexPage = ({ data }) => {
 
     loadDevotional();
   }, [isClient, data]); // Depende de isClient y data
-
-  // Función manual para forzar sincronización
-  const handleManualSync = async () => {
-    if (syncing || !isClient) return;
-    
-    setSyncing(true);
-    try {
-      const { forceSync } = await import('../services/contentful-sync');
-      const result = await forceSync();
-      
-      if (result.devotionals && result.devotionals.length > 0) {
-        const today = new Date();
-        const todayStr = formatDate(today);
-        
-        const todayDevotional = result.devotionals.find(d => {
-          if (!d.date) return false;
-          return formatDate(new Date(d.date)) === todayStr;
-        });
-        
-        if (todayDevotional) {
-          // Los datos ya vienen normalizados de transformContentfulEntry
-          setDevocional({
-            titulo: (todayDevotional.title || '').replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/, ''),
-            fecha: todayDevotional.date,
-            versiculo: todayDevotional.bibleVerse || '',
-            cita: todayDevotional.quote || '',
-            reflexion: todayDevotional.reflection,
-            // Question y application pueden venir como objetos con el texto dentro
-            pregunta: todayDevotional.question?.question 
-              ? (typeof todayDevotional.question.question === 'string' 
-                  ? JSON.parse(todayDevotional.question.question) 
-                  : todayDevotional.question.question)
-              : null,
-            aplicacion: todayDevotional.application?.application 
-              ? (typeof todayDevotional.application.application === 'string'
-                  ? JSON.parse(todayDevotional.application.application)
-                  : todayDevotional.application.application)
-              : null,
-            audioEspanolUrl: todayDevotional.audioEspanol?.file?.url || null,
-            audioNahuatlUrl: todayDevotional.audioNahuatl?.file?.url || null,
-            audioEnglishUrl: todayDevotional.audioEnglish?.file?.url || null,
-          });
-          setDataSource('api-manual');
-        }
-        
-        alert(t('sync_success') || '✅ Sincronización exitosa');
-      }
-    } catch (error) {
-      console.error('Manual sync failed:', error);
-      alert(t('sync_error') || '❌ Error al sincronizar');
-    } finally {
-      setSyncing(false);
-    }
-  };
 
   const formatDate = (date) => {
     const d = new Date(date);
@@ -573,9 +554,7 @@ const IndexPage = ({ data }) => {
           devocional={devocional}
           onWhatsAppClick={() => setShowWhatsAppBox(true)}
           isClient={true}
-          dataSource={dataSource}
           syncing={syncing}
-          handleManualSync={handleManualSync}
           isOffline={isOffline}
         />
       ) : (

@@ -165,6 +165,16 @@ const transformContentfulEntry = (entry) => {
       }
     }
 
+    // Debug: Log audio structure for one entry
+    if (entry.fields.date === '2025-10-10' && entry.fields.audioEspanol) {
+      console.log('🔍 DEBUG Audio Structure for 2025-10-10:', {
+        audioEspanol: entry.fields.audioEspanol,
+        audioEspanolFields: entry.fields.audioEspanol?.fields,
+        audioEspanolFile: entry.fields.audioEspanol?.fields?.file,
+        audioEspanolUrl: entry.fields.audioEspanol?.fields?.file?.url,
+      });
+    }
+
     return {
       id: entry.sys.id,
       // Usar nombres en inglés como GraphQL
@@ -175,20 +185,20 @@ const transformContentfulEntry = (entry) => {
       reflection: reflectionFormatted,
       question: questionFormatted,
       application: applicationFormatted,
-      // Audio URLs normalizados
+      // Audio URLs normalizados (assets tienen .fields.file.url)
       audioEspanol: entry.fields.audioEspanol ? {
         file: {
-          url: entry.fields.audioEspanol.fields?.file?.url || null
+          url: entry.fields.audioEspanol.fields?.file?.url || entry.fields.audioEspanol.file?.url || null
         }
       } : null,
       audioNahuatl: entry.fields.audioNahuatl ? {
         file: {
-          url: entry.fields.audioNahuatl.fields?.file?.url || null
+          url: entry.fields.audioNahuatl.fields?.file?.url || entry.fields.audioNahuatl.file?.url || null
         }
       } : null,
       audioEnglish: entry.fields.audioEnglish ? {
         file: {
-          url: entry.fields.audioEnglish.fields?.file?.url || null
+          url: entry.fields.audioEnglish.fields?.file?.url || entry.fields.audioEnglish.file?.url || null
         }
       } : null,
       node_locale: entry.sys.locale || 'es-MX',
@@ -198,6 +208,113 @@ const transformContentfulEntry = (entry) => {
     return null;
   }
 };
+
+/**
+ * Transforma entradas de Contentful cuando se usa withAllLocales
+ * Los fields vienen como {fieldName: {'es-MX': value, 'en-US': value}}
+ */
+const transformContentfulEntryWithLocale = (entry, targetLocale = 'es-MX') => {
+  try {
+    // Función helper para extraer valor del locale específico
+    const getLocaleValue = (field) => {
+      if (!field) return null;
+      // Si el campo tiene múltiples locales, extraer el deseado
+      if (field[targetLocale] !== undefined) return field[targetLocale];
+      if (field['es-MX'] !== undefined) return field['es-MX'];
+      // Si no tiene locales específicos, devolverlo tal cual (assets)
+      return field;
+    };
+
+    const title = getLocaleValue(entry.fields.title) || '';
+    const date = getLocaleValue(entry.fields.date) || '';
+    const bibleVerse = getLocaleValue(entry.fields.bibleVerse) || '';
+    const quote = getLocaleValue(entry.fields.quote) || '';
+    const reflection = getLocaleValue(entry.fields.reflection);
+    const question = getLocaleValue(entry.fields.question);
+    const application = getLocaleValue(entry.fields.application);
+    
+    // Los assets no tienen locale, están compartidos
+    const audioEspanol = entry.fields.audioEspanol;
+    const audioNahuatl = entry.fields.audioNahuatl;
+    const audioEnglish = entry.fields.audioEnglish;
+
+    // Debug para ver estructura de audios
+    if (date === '2025-10-10' && audioEspanol) {
+      console.log('🔍 DEBUG withAllLocales Audio for 2025-10-10:', {
+        audioEspanol,
+        audioEspanolFields: audioEspanol?.fields,
+        audioEspanolFile: audioEspanol?.fields?.file,
+        audioEspanolUrl: audioEspanol?.fields?.file?.url,
+      });
+    }
+
+    // Normalizar reflection
+    let reflectionFormatted = null;
+    if (reflection) {
+      if (reflection.nodeType) {
+        reflectionFormatted = { raw: JSON.stringify(reflection) };
+      } else if (typeof reflection === 'string') {
+        reflectionFormatted = reflection;
+      }
+    }
+
+    // Normalizar question
+    let questionFormatted = null;
+    if (question) {
+      if (question.nodeType) {
+        questionFormatted = { question: JSON.stringify(question) };
+      } else if (typeof question === 'string') {
+        questionFormatted = { question };
+      } else if (question.question) {
+        questionFormatted = question;
+      }
+    }
+
+    // Normalizar application
+    let applicationFormatted = null;
+    if (application) {
+      if (application.nodeType) {
+        applicationFormatted = { application: JSON.stringify(application) };
+      } else if (typeof application === 'string') {
+        applicationFormatted = { application };
+      } else if (application.application) {
+        applicationFormatted = application;
+      }
+    }
+
+    return {
+      id: entry.sys.id,
+      title,
+      date,
+      bibleVerse,
+      quote,
+      reflection: reflectionFormatted,
+      question: questionFormatted,
+      application: applicationFormatted,
+      // Audio URLs normalizados
+      audioEspanol: audioEspanol ? {
+        file: {
+          url: audioEspanol.fields?.file?.url || audioEspanol.file?.url || null
+        }
+      } : null,
+      audioNahuatl: audioNahuatl ? {
+        file: {
+          url: audioNahuatl.fields?.file?.url || audioNahuatl.file?.url || null
+        }
+      } : null,
+      audioEnglish: audioEnglish ? {
+        file: {
+          url: audioEnglish.fields?.file?.url || audioEnglish.file?.url || null
+        }
+      } : null,
+      node_locale: targetLocale,
+    };
+  } catch (error) {
+    console.error('Error transforming entry with locale:', entry.sys.id, error);
+    return null;
+  }
+};
+
 
 /**
  * Fetch devocionales desde Contentful API
@@ -212,18 +329,23 @@ const fetchFromContentful = async (locale = 'es-MX') => {
   try {
     console.log('🌐 Fetching devotionals from Contentful...');
     
-    const response = await client.getEntries({
-      content_type: 'devotional', // Ajusta esto según tu Content Type ID
-      locale: locale,
-      limit: 1000, // Ajusta según necesites
-      order: '-fields.date', // Ordenar por fecha descendente
+    // Usar withAllLocales para obtener todos los locales y resolver los assets correctamente
+    const response = await client.withAllLocales.getEntries({
+      content_type: 'devotional',
+      limit: 1000,
+      order: '-fields.date',
+      include: 10, // Aumentar para asegurar que resuelva los assets
     });
 
     console.log(`✅ Fetched ${response.items.length} devotionals from Contentful`);
     
+    // Con withAllLocales, los fields vienen como {fieldName: {'es-MX': value, 'en-US': value}}
+    // Necesitamos transformar cada entrada para extraer el locale específico
     const transformed = response.items
-      .map(transformContentfulEntry)
-      .filter(Boolean); // Eliminar nulos
+      .map(entry => transformContentfulEntryWithLocale(entry, locale))
+      .filter(Boolean);
+    
+    console.log(`📝 Transformed to ${transformed.length} devotionals for locale ${locale}`);
 
     return transformed;
   } catch (error) {
@@ -321,14 +443,15 @@ export const getDevotionalByDate = async (date, locale = 'es-MX') => {
     return { devotional: null, source, isOnline };
   }
   
-  // Formatear la fecha para comparación
-  const targetDate = formatDate(date);
+  // Formatear la fecha para comparación (sin crear objeto Date para evitar problemas de zona horaria)
+  const targetDate = typeof date === 'string' ? date : formatDate(date);
   
-  // Buscar devocional que coincida con la fecha
+  // Buscar devocional que coincida con la fecha (comparación directa de strings YYYY-MM-DD)
   const devotional = devotionals.find(d => {
     if (!d.date) return false;
-    const dDate = formatDate(new Date(d.date));
-    return dDate === targetDate;
+    // Comparar directamente como strings, sin conversión a Date
+    const devotionalDate = d.date.split('T')[0]; // Por si viene con hora, tomar solo la fecha
+    return devotionalDate === targetDate || d.date === targetDate;
   });
   
   console.log(`📅 Found devotional for ${targetDate}:`, !!devotional);
