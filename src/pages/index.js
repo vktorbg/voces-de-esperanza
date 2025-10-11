@@ -6,8 +6,6 @@ import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import { Link, graphql } from "gatsby";
 import { useTranslation } from "react-i18next";
 import { useAudioPlayer } from "../components/AudioPlayer";
-import InstallPrompt from "../components/InstallPrompt";
-import IOSInstallPrompt from "../components/IOSInstallPrompt";
 import { isEnglishSite } from "../components/LanguageProvider";
 import { Share } from '@capacitor/share';
 import { Preferences } from '@capacitor/preferences';
@@ -308,14 +306,6 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, syncing, isOffl
                 <img src="/icons/bell.png" alt={t('subscribe')} className="w-5 h-5 mr-1" />
                 {t('subscribe_to_notifications')}
               </button>
-            )}
-
-            {/* Mensaje para iOS al final */}
-            {isClient && isIOS && !isStandalone && (
-              <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg w-full sm:w-auto mt-2">
-                <p className="font-semibold text-gray-800 dark:text-gray-100">{t('get_the_app')}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-300">{t('add_to_home_screen_prompt')}</p>
-              </div>
             )}
           </div>
         </div>
@@ -675,8 +665,6 @@ const IndexPage = ({ data }) => {
   // The component now renders the real UI, guaranteed to be on the client
   return (
     <>
-      <InstallPrompt />
-      <IOSInstallPrompt />
       {isOffline && devocional && <OfflineMessage t={t} />}
       {!devocional && isOffline && <NoDevotionalMessage t={t} />}
       {devocional ? (
