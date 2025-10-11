@@ -36,8 +36,9 @@ const CACHE_KEYS = {
   NETWORK_STATUS: 'network_status',
 };
 
-// Reducido a 2 horas para que se actualice más seguido
-const CACHE_DURATION = 2 * 60 * 60 * 1000; // 2 horas en milisegundos
+// Cache de TEXTO: 30 minutos (para permitir correcciones durante el día)
+const CACHE_DURATION = 30 * 60 * 1000; // 30 minutos en milisegundos
+// NOTA: Los audios NO usan cache, siempre se fetch en cada apertura
 
 /**
  * Verifica si hay conexión a internet
@@ -544,6 +545,69 @@ const formatDate = (date) => {
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+};
+
+/**
+ * Fetch SOLO los audios de un devocional específico (muy liviano, ~2KB)
+ * Siempre hace fetch del API, sin cache
+ */
+export const fetchAudiosOnly = async (date, locale = 'es-MX') => {
+  const client = getContentfulClient();
+  if (!client) {
+    console.warn('⚠️ Contentful client not available for audio fetch');
+    return null;
+  }
+
+  const isOnline = await checkNetworkStatus();
+  if (!isOnline) {
+    console.log('📴 Offline, cannot fetch audios');
+    return null;
+  }
+
+  try {
+    const targetDate = typeof date === 'string' ? date : formatDate(date);
+    console.log(`🎵 Fetching ONLY audios for ${targetDate}...`);
+
+    // Fetch con select para traer SOLO los campos de audio (optimizado)
+    const response = await client.withAllLocales.getEntries({
+      content_type: 'devotional',
+      'fields.date': targetDate,
+      select: 'sys.id,fields.date,fields.audioEspanol,fields.audioNahuatl,fields.audioEnglish',
+      include: 10, // Incluir assets
+      limit: 1,
+    });
+
+    if (response.items.length === 0) {
+      console.log(`⚠️ No devotional found for ${targetDate}`);
+      return null;
+    }
+
+    const entry = response.items[0];
+    
+    // Extraer URLs de audios (con locale support)
+    const getAudioUrl = (audioField) => {
+      if (!audioField) return null;
+      // Los assets no tienen locale, están compartidos
+      return audioField.fields?.file?.url || audioField.file?.url || null;
+    };
+
+    const audios = {
+      audioEspanolUrl: getAudioUrl(entry.fields.audioEspanol),
+      audioNahuatlUrl: getAudioUrl(entry.fields.audioNahuatl),
+      audioEnglishUrl: getAudioUrl(entry.fields.audioEnglish),
+    };
+
+    console.log('✅ Audios fetched:', {
+      espanol: !!audios.audioEspanolUrl,
+      nahuatl: !!audios.audioNahuatlUrl,
+      english: !!audios.audioEnglishUrl,
+    });
+
+    return audios;
+  } catch (error) {
+    console.error('❌ Error fetching audios:', error);
+    return null;
+  }
 };
 
 /**

@@ -193,6 +193,7 @@
   "sync_success": "✅ Sync successful",
   "sync_error": "❌ Sync error. Please try again.",
   "syncing": "Syncing...",
+  "loading_audios": "Loading audios...",
   "data_source_api": "Updated content",
   "data_source_cache": "Cached content",
   "data_source_build": "Build content",

@@ -57,7 +57,7 @@ const NoDevotionalMessage = ({ t }) => (
 );
 
 // NUEVA DevotionalView separando encabezado fijo y contenido desplazable
-const DevotionalView = ({ devocional, onWhatsAppClick, isClient, syncing, isOffline }) => {
+const DevotionalView = ({ devocional, onWhatsAppClick, isClient, syncing, isOffline, audioLoading }) => {
   const { t, i18n } = useTranslation();
   const { playTrack } = useAudioPlayer();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -177,7 +177,15 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, syncing, isOffl
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
           <div className="flex justify-between items-start gap-4 mb-4">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 break-words"> 🌟 {devocional.titulo} </h1>
-            {availableAudios.length > 0 && (
+            
+            {/* Botón de audio o indicador de carga */}
+            {audioLoading ? (
+              <div className="flex-shrink-0 p-2" title={t('loading_audios') || 'Cargando audios...'}>
+                <div className="w-6 h-6 flex items-center justify-center">
+                  <ReloadIcon className="w-6 h-6 text-blue-500 dark:text-blue-400 animate-spin" />
+                </div>
+              </div>
+            ) : availableAudios.length > 0 ? (
               <div className="relative flex-shrink-0" ref={menuRef}>
                 <button onClick={() => setMenuOpen(!menuOpen)} className={`p-2 rounded-full transition focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-blue-500 ${menuOpen ? 'bg-blue-100 dark:bg-blue-700' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`} aria-label={t('listen_devotional')} title={t('listen_devotional')}>
                   <SpeakerWaveIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -190,7 +198,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, syncing, isOffl
                   </div>
                 )}
               </div>
-            )}
+            ) : null}
           </div>
 
           {/* Resto del contenido del devocional (sin cambios) */}
@@ -325,6 +333,7 @@ const IndexPage = ({ data }) => {
   const [isOffline, setIsOffline] = useState(false);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [audioLoading, setAudioLoading] = useState(false); // Estado separado para audios
   
   // THIS IS THE SINGLE SOURCE OF TRUTH FOR HYDRATION
   const [isClient, setIsClient] = useState(false);
@@ -389,7 +398,7 @@ const IndexPage = ({ data }) => {
       : null;
   };
 
-  // Efecto principal para cargar el devocional - MODO HÍBRIDO
+  // Efecto principal - ESTRATEGIA SEPARADA: Texto con cache, Audios siempre frescos
   useEffect(() => {
     const loadDevotional = async () => {
       if (!isClient || !data) return;
@@ -397,12 +406,12 @@ const IndexPage = ({ data }) => {
       setLoading(true);
 
       try {
-        // 1. Primero, cargar desde GraphQL (datos del build) - RÁPIDO
+        // 1. TEXTO: Cargar desde GraphQL (build) primero - INSTANTÁNEO
         const buildDevotional = buildDevotionalFromData(data);
         setDevocional(buildDevotional);
-        setLoading(false); // Ya mostramos algo al usuario
+        setLoading(false); // Usuario ya puede leer el texto
 
-        // 2. Verificar si estamos en plataforma nativa y hay conexión
+        // 2. Verificar conectividad
         const isNative = Capacitor.isNativePlatform();
         let isConnected = true;
 
@@ -414,90 +423,120 @@ const IndexPage = ({ data }) => {
           setIsOffline(false);
         }
 
-        // 3. Si estamos online, intentar fetch desde Contentful API para contenido fresco
-        if (isConnected) {
-          try {
-            console.log('🔄 Checking for fresh content from Contentful API...');
-            
-            // Importar dinámicamente el servicio (solo si estamos online)
-            const { getDevotionalByDate } = await import('../services/contentful-sync');
-            
-            const today = new Date();
-            const result = await getDevotionalByDate(today);
-            if (result.devotional) {
-              // Los datos ya vienen en el formato correcto de transformContentfulEntry
-              // que coincide con el formato de GraphQL
-              
-              // Helper para parsear question/application de manera segura
-              const parseRichTextField = (field) => {
-                if (!field) return null;
-                if (typeof field === 'object' && field.nodeType) return field;
-                if (typeof field === 'string') {
-                  try {
-                    const parsed = JSON.parse(field);
-                    return parsed.nodeType ? parsed : field;
-                  } catch {
-                    return field;
-                  }
-                }
-                return field;
-              };
-              
-              const freshDevotional = {
-                titulo: (result.devotional.title || '').replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/, ''),
-                fecha: result.devotional.date,
-                versiculo: result.devotional.bibleVerse || '',
-                cita: result.devotional.quote || '',
-                reflexion: result.devotional.reflection,
-                pregunta: parseRichTextField(result.devotional.question?.question),
-                aplicacion: parseRichTextField(result.devotional.application?.application),
-                // URLs de audio ya normalizados en transformContentfulEntry
-                audioEspanolUrl: result.devotional.audioEspanol?.file?.url || null,
-                audioNahuatlUrl: result.devotional.audioNahuatl?.file?.url || null,
-                audioEnglishUrl: result.devotional.audioEnglish?.file?.url || null,
-              };
-
-              console.log('✅ Fresh content loaded from:', result.source);
-              setDevocional(freshDevotional);
-
-              // Guardar en cache local para uso offline
-              if (isNative) {
-                await Preferences.set({
-                  key: 'latestDevotional',
-                  value: JSON.stringify(freshDevotional),
-                });
-                await Preferences.set({
-                  key: 'devotionalCacheDate',
-                  value: new Date().toISOString(),
-                });
-              }
-            } else {
-              console.log('ℹ️ No fresh content available, using build data');
-            }
-          } catch (apiError) {
-            console.warn('⚠️ API fetch failed, using build data:', apiError.message);
-            // Mantener el devocional del build si el API falla
-          }
-        } else if (isNative) {
-          // --- MODO OFFLINE (solo en nativo) ---
+        if (!isConnected && isNative) {
+          // MODO OFFLINE: intentar cargar texto del cache
           console.log('📴 Offline mode, loading from cache...');
-          
           try {
             const { value } = await Preferences.get({ key: 'latestDevotional' });
             if (value) {
               const cachedDevotional = JSON.parse(value);
               setDevocional(cachedDevotional);
-              console.log('✅ Loaded from cache');
-            } else if (!buildDevotional) {
-              // Si no hay cache ni datos del build
-              setDevocional(null);
-              console.log('❌ No cached data available');
+              console.log('✅ Loaded from cache (offline)');
             }
           } catch (cacheError) {
             console.error('Error loading from cache:', cacheError);
-            // Mantener buildDevotional si hay error
+          }
+          return; // No intentar fetch si offline
+        }
+
+        // 3. TEXTO: Si estamos online, buscar versión fresca (con cache de 30 min)
+        const today = new Date();
+        setSyncing(true);
+        
+        try {
+          const { getDevotionalByDate } = await import('../services/contentful-sync');
+          const result = await getDevotionalByDate(today);
+          
+          if (result.devotional) {
+            const parseRichTextField = (field) => {
+              if (!field) return null;
+              if (typeof field === 'object' && field.nodeType) return field;
+              if (typeof field === 'string') {
+                try {
+                  const parsed = JSON.parse(field);
+                  return parsed.nodeType ? parsed : field;
+                } catch {
+                  return field;
+                }
+              }
+              return field;
+            };
+            
+            // Crear devocional con texto fresco (los audios se cargarán por separado)
+            const freshDevotional = {
+              titulo: (result.devotional.title || '').replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/, ''),
+              fecha: result.devotional.date,
+              versiculo: result.devotional.bibleVerse || '',
+              cita: result.devotional.quote || '',
+              reflexion: result.devotional.reflection,
+              pregunta: parseRichTextField(result.devotional.question?.question),
+              aplicacion: parseRichTextField(result.devotional.application?.application),
+              // Audios temporales del build/cache (se reemplazarán abajo)
+              audioEspanolUrl: buildDevotional?.audioEspanolUrl || null,
+              audioNahuatlUrl: buildDevotional?.audioNahuatlUrl || null,
+              audioEnglishUrl: buildDevotional?.audioEnglishUrl || null,
+            };
+
+            console.log('✅ Fresh text loaded from:', result.source);
+            setDevocional(freshDevotional);
+
+            // Guardar en cache local
+            if (isNative) {
+              await Preferences.set({
+                key: 'latestDevotional',
+                value: JSON.stringify(freshDevotional),
+              });
+              await Preferences.set({
+                key: 'devotionalCacheDate',
+                value: new Date().toISOString(),
+              });
+            }
+          }
+        } catch (apiError) {
+          console.warn('⚠️ Text API fetch failed, using build data:', apiError.message);
+        } finally {
+          setSyncing(false);
+        }
+
+        // 4. AUDIOS: Siempre fetch fresco, sin cache (en paralelo, no bloqueante)
+        if (isConnected) {
+          setAudioLoading(true);
+          try {
+            const { fetchAudiosOnly } = await import('../services/contentful-sync');
+            const freshAudios = await fetchAudiosOnly(today);
+            
+            if (freshAudios) {
+              console.log('🎵 Fresh audios loaded');
+              // Actualizar solo los audios, manteniendo el resto del devocional
+              setDevocional(prev => ({
+                ...prev,
+                audioEspanolUrl: freshAudios.audioEspanolUrl || prev?.audioEspanolUrl,
+                audioNahuatlUrl: freshAudios.audioNahuatlUrl || prev?.audioNahuatlUrl,
+                audioEnglishUrl: freshAudios.audioEnglishUrl || prev?.audioEnglishUrl,
+              }));
+              
+              // Actualizar cache con los nuevos audios
+              if (isNative) {
+                const { value } = await Preferences.get({ key: 'latestDevotional' });
+                if (value) {
+                  const cached = JSON.parse(value);
+                  const updated = { ...cached, ...freshAudios };
+                  await Preferences.set({
+                    key: 'latestDevotional',
+                    value: JSON.stringify(updated),
+                  });
+                }
+              }
+            } else {
+              console.log('⚠️ No fresh audios available');
+            }
+          } catch (audioError) {
+            console.warn('⚠️ Audio fetch failed:', audioError.message);
+          } finally {
+            setAudioLoading(false);
           }
         }
+
       } catch (error) {
         console.error('❌ Error in loadDevotional:', error);
         
@@ -532,16 +571,19 @@ const IndexPage = ({ data }) => {
         // Escuchar cuando la app vuelve a estar activa
         appStateListener = await App.addListener('appStateChange', async (state) => {
           if (state.isActive) {
-            console.log('📱 App became active, checking for updates...');
+            console.log('📱 App became active, refreshing content...');
             setSyncing(true);
+            setAudioLoading(true);
             
             try {
-              const { getDevotionalByDate } = await import('../services/contentful-sync');
               const today = new Date();
+              
+              // Fetch texto (con cache de 30 min)
+              const { getDevotionalByDate, fetchAudiosOnly } = await import('../services/contentful-sync');
               const result = await getDevotionalByDate(today);
               
               if (result.devotional && (result.source === 'api' || result.source === 'api-refresh')) {
-                console.log('✅ Fresh content loaded on app resume');
+                console.log('✅ Fresh text loaded on app resume');
                 
                 const parseRichTextField = (field) => {
                   if (!field) return null;
@@ -565,17 +607,31 @@ const IndexPage = ({ data }) => {
                   reflexion: result.devotional.reflection,
                   pregunta: parseRichTextField(result.devotional.question?.question),
                   aplicacion: parseRichTextField(result.devotional.application?.application),
-                  audioEspanolUrl: result.devotional.audioEspanol?.file?.url || null,
-                  audioNahuatlUrl: result.devotional.audioNahuatl?.file?.url || null,
-                  audioEnglishUrl: result.devotional.audioEnglish?.file?.url || null,
+                  audioEspanolUrl: null, // Se cargarán después
+                  audioNahuatlUrl: null,
+                  audioEnglishUrl: null,
                 };
                 
                 setDevocional(freshDevotional);
               }
+              
+              // Siempre fetch audios frescos (sin cache)
+              const freshAudios = await fetchAudiosOnly(today);
+              if (freshAudios) {
+                console.log('🎵 Fresh audios loaded on app resume');
+                setDevocional(prev => ({
+                  ...prev,
+                  audioEspanolUrl: freshAudios.audioEspanolUrl || prev?.audioEspanolUrl,
+                  audioNahuatlUrl: freshAudios.audioNahuatlUrl || prev?.audioNahuatlUrl,
+                  audioEnglishUrl: freshAudios.audioEnglishUrl || prev?.audioEnglishUrl,
+                }));
+              }
+              
             } catch (error) {
               console.error('Error refreshing on app resume:', error);
             } finally {
               setSyncing(false);
+              setAudioLoading(false);
             }
           }
         });
@@ -630,6 +686,7 @@ const IndexPage = ({ data }) => {
           isClient={true}
           syncing={syncing}
           isOffline={isOffline}
+          audioLoading={audioLoading}
         />
       ) : (
         !isOffline && <DevotionalSkeleton />
