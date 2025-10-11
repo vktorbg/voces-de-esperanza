@@ -13,6 +13,7 @@ import { Share } from '@capacitor/share';
 import { Preferences } from '@capacitor/preferences';
 import { Network } from '@capacitor/network';
 import { Capacitor } from '@capacitor/core';
+import { App } from '@capacitor/app';
 
 // --- Icons (No changes here) ---
 const BookOpenIcon = (props) => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}> <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 006 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /> </svg> );
@@ -519,6 +520,79 @@ const IndexPage = ({ data }) => {
 
     loadDevotional();
   }, [isClient, data]); // Depende de isClient y data
+
+  // Listener para sincronizar cuando la app vuelve a primer plano
+  useEffect(() => {
+    if (!isClient || !Capacitor.isNativePlatform()) return;
+
+    let appStateListener;
+    
+    const setupAppListener = async () => {
+      try {
+        // Escuchar cuando la app vuelve a estar activa
+        appStateListener = await App.addListener('appStateChange', async (state) => {
+          if (state.isActive) {
+            console.log('📱 App became active, checking for updates...');
+            setSyncing(true);
+            
+            try {
+              const { getDevotionalByDate } = await import('../services/contentful-sync');
+              const today = new Date();
+              const result = await getDevotionalByDate(today);
+              
+              if (result.devotional && (result.source === 'api' || result.source === 'api-refresh')) {
+                console.log('✅ Fresh content loaded on app resume');
+                
+                const parseRichTextField = (field) => {
+                  if (!field) return null;
+                  if (typeof field === 'object' && field.nodeType) return field;
+                  if (typeof field === 'string') {
+                    try {
+                      const parsed = JSON.parse(field);
+                      return parsed.nodeType ? parsed : field;
+                    } catch {
+                      return field;
+                    }
+                  }
+                  return field;
+                };
+                
+                const freshDevotional = {
+                  titulo: (result.devotional.title || '').replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/, ''),
+                  fecha: result.devotional.date,
+                  versiculo: result.devotional.bibleVerse || '',
+                  cita: result.devotional.quote || '',
+                  reflexion: result.devotional.reflection,
+                  pregunta: parseRichTextField(result.devotional.question?.question),
+                  aplicacion: parseRichTextField(result.devotional.application?.application),
+                  audioEspanolUrl: result.devotional.audioEspanol?.file?.url || null,
+                  audioNahuatlUrl: result.devotional.audioNahuatl?.file?.url || null,
+                  audioEnglishUrl: result.devotional.audioEnglish?.file?.url || null,
+                };
+                
+                setDevocional(freshDevotional);
+              }
+            } catch (error) {
+              console.error('Error refreshing on app resume:', error);
+            } finally {
+              setSyncing(false);
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error setting up app listener:', error);
+      }
+    };
+
+    setupAppListener();
+
+    // Cleanup
+    return () => {
+      if (appStateListener) {
+        appStateListener.remove();
+      }
+    };
+  }, [isClient]);
 
   const formatDate = (date) => {
     const d = new Date(date);

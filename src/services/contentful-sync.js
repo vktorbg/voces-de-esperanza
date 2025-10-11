@@ -32,10 +32,12 @@ const getContentfulClient = () => {
 const CACHE_KEYS = {
   DEVOTIONALS: 'devotionals_cache',
   LAST_SYNC: 'devotionals_last_sync',
+  CACHE_DATE: 'devotionals_cache_date', // Nueva: fecha del cache
   NETWORK_STATUS: 'network_status',
 };
 
-const CACHE_DURATION = 12 * 60 * 60 * 1000; // 12 horas en milisegundos
+// Reducido a 2 horas para que se actualice más seguido
+const CACHE_DURATION = 2 * 60 * 60 * 1000; // 2 horas en milisegundos
 
 /**
  * Verifica si hay conexión a internet
@@ -60,13 +62,19 @@ export const checkNetworkStatus = async () => {
  */
 const saveToCache = async (devotionals) => {
   try {
+    const now = new Date();
     await Preferences.set({
       key: CACHE_KEYS.DEVOTIONALS,
       value: JSON.stringify(devotionals),
     });
     await Preferences.set({
       key: CACHE_KEYS.LAST_SYNC,
-      value: Date.now().toString(),
+      value: now.getTime().toString(),
+    });
+    // Guardar la fecha (YYYY-MM-DD) del cache para invalidar a medianoche
+    await Preferences.set({
+      key: CACHE_KEYS.CACHE_DATE,
+      value: now.toISOString().split('T')[0],
     });
     console.log('✅ Devotionals saved to cache:', devotionals.length);
   } catch (error) {
@@ -92,18 +100,33 @@ const readFromCache = async () => {
 };
 
 /**
- * Verifica si el cache es reciente
+ * Verifica si el cache es reciente y del mismo día
  */
 const isCacheValid = async () => {
   try {
-    const { value } = await Preferences.get({ key: CACHE_KEYS.LAST_SYNC });
-    if (!value) return false;
+    const { value: lastSyncValue } = await Preferences.get({ key: CACHE_KEYS.LAST_SYNC });
+    const { value: cacheDateValue } = await Preferences.get({ key: CACHE_KEYS.CACHE_DATE });
     
-    const lastSync = parseInt(value, 10);
+    if (!lastSyncValue) return false;
+    
+    const lastSync = parseInt(lastSyncValue, 10);
     const now = Date.now();
+    const ageMinutes = Math.round((now - lastSync) / 1000 / 60);
+    
+    // Verificar si es del mismo día
+    const today = new Date().toISOString().split('T')[0];
+    const cacheDate = cacheDateValue || '';
+    
+    // Invalidar si cambió el día (contenido diario)
+    if (cacheDate !== today) {
+      console.log(`�️ Cache is from ${cacheDate}, today is ${today} - INVALID (different day)`);
+      return false;
+    }
+    
+    // Verificar TTL (2 horas)
     const isValid = (now - lastSync) < CACHE_DURATION;
     
-    console.log(`🕐 Cache age: ${Math.round((now - lastSync) / 1000 / 60)} minutes (valid: ${isValid})`);
+    console.log(`🕐 Cache age: ${ageMinutes} minutes, date: ${cacheDate} (valid: ${isValid})`);
     return isValid;
   } catch (error) {
     console.error('Error checking cache validity:', error);
@@ -435,26 +458,74 @@ export const getDevotionals = async (locale = 'es-MX', forceRefresh = false) => 
 
 /**
  * Obtiene un devocional específico por fecha
+ * Si no encuentra el devocional de hoy en cache, fuerza un refresh del API
  */
 export const getDevotionalByDate = async (date, locale = 'es-MX') => {
+  // Formatear la fecha para comparación
+  const targetDate = typeof date === 'string' ? date : formatDate(date);
+  const today = formatDate(new Date());
+  const isToday = targetDate === today;
+  
+  // Primer intento: obtener desde cache
   const { devotionals, source, isOnline } = await getDevotionals(locale);
   
   if (!devotionals || devotionals.length === 0) {
+    console.log('⚠️ No devotionals found in cache');
+    
+    // Si estamos online y no hay cache, forzar fetch
+    if (isOnline) {
+      console.log('🔄 Forcing fresh fetch from API...');
+      const freshResult = await getDevotionals(locale, true);
+      if (freshResult.devotionals && freshResult.devotionals.length > 0) {
+        const devotional = freshResult.devotionals.find(d => {
+          if (!d.date) return false;
+          const devotionalDate = d.date.split('T')[0];
+          return devotionalDate === targetDate || d.date === targetDate;
+        });
+        
+        return {
+          devotional: devotional || freshResult.devotionals[0],
+          source: freshResult.source,
+          isOnline: freshResult.isOnline,
+          allDevotionals: freshResult.devotionals,
+        };
+      }
+    }
+    
     return { devotional: null, source, isOnline };
   }
   
-  // Formatear la fecha para comparación (sin crear objeto Date para evitar problemas de zona horaria)
-  const targetDate = typeof date === 'string' ? date : formatDate(date);
-  
-  // Buscar devocional que coincida con la fecha (comparación directa de strings YYYY-MM-DD)
+  // Buscar devocional que coincida con la fecha
   const devotional = devotionals.find(d => {
     if (!d.date) return false;
-    // Comparar directamente como strings, sin conversión a Date
-    const devotionalDate = d.date.split('T')[0]; // Por si viene con hora, tomar solo la fecha
+    const devotionalDate = d.date.split('T')[0];
     return devotionalDate === targetDate || d.date === targetDate;
   });
   
   console.log(`📅 Found devotional for ${targetDate}:`, !!devotional);
+  
+  // Si no encontramos el devocional de HOY y estamos online, forzar refresh
+  if (!devotional && isToday && isOnline && source === 'cache') {
+    console.log(`⚠️ Devotional for today (${today}) not found in cache. Forcing API refresh...`);
+    const freshResult = await getDevotionals(locale, true);
+    
+    if (freshResult.devotionals && freshResult.devotionals.length > 0) {
+      const freshDevotional = freshResult.devotionals.find(d => {
+        if (!d.date) return false;
+        const devotionalDate = d.date.split('T')[0];
+        return devotionalDate === targetDate || d.date === targetDate;
+      });
+      
+      console.log(`📅 After API refresh, found devotional for ${targetDate}:`, !!freshDevotional);
+      
+      return {
+        devotional: freshDevotional || freshResult.devotionals[0],
+        source: 'api-refresh',
+        isOnline: freshResult.isOnline,
+        allDevotionals: freshResult.devotionals,
+      };
+    }
+  }
   
   return {
     devotional: devotional || devotionals[0], // Fallback al más reciente
