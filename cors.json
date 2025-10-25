@@ -1,0 +1,7 @@
+[
+  {
+    "origin": ["http://localhost:8000", "https://voces-de-esperanza.com", "https://voices-of-hope.com"],
+    "method": ["GET"],
+    "maxAgeSeconds": 3600
+  }
+]

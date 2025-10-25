@@ -462,78 +462,44 @@ export const getDevotionals = async (locale = 'es-MX', forceRefresh = false) => 
  * Si no encuentra el devocional de hoy en cache, fuerza un refresh del API
  */
 export const getDevotionalByDate = async (date, locale = 'es-MX') => {
-  // Formatear la fecha para comparación
   const targetDate = typeof date === 'string' ? date : formatDate(date);
-  const today = formatDate(new Date());
-  const isToday = targetDate === today;
-  
-  // Primer intento: obtener desde cache
-  const { devotionals, source, isOnline } = await getDevotionals(locale);
-  
-  if (!devotionals || devotionals.length === 0) {
-    console.log('⚠️ No devotionals found in cache');
-    
-    // Si estamos online y no hay cache, forzar fetch
-    if (isOnline) {
-      console.log('🔄 Forcing fresh fetch from API...');
-      const freshResult = await getDevotionals(locale, true);
-      if (freshResult.devotionals && freshResult.devotionals.length > 0) {
-        const devotional = freshResult.devotionals.find(d => {
-          if (!d.date) return false;
-          const devotionalDate = d.date.split('T')[0];
-          return devotionalDate === targetDate || d.date === targetDate;
-        });
-        
-        return {
-          devotional: devotional || freshResult.devotionals[0],
-          source: freshResult.source,
-          isOnline: freshResult.isOnline,
-          allDevotionals: freshResult.devotionals,
-        };
-      }
+
+  // Lógica principal para obtener el devocional
+  const getDevotional = async (forceRefresh = false) => {
+    const { devotionals, source, isOnline } = await getDevotionals(locale, forceRefresh);
+
+    if (!devotionals || devotionals.length === 0) {
+      return { devotional: null, source, isOnline, allDevotionals: [] };
     }
+
+    const found = devotionals.find(d => {
+      if (!d.date) return false;
+      const devotionalDate = formatDate(d.date);
+      return devotionalDate === targetDate;
+    });
+
+    const devotionalToReturn = found || devotionals[0]; // Fallback al más reciente
     
-    return { devotional: null, source, isOnline };
-  }
-  
-  // Buscar devocional que coincida con la fecha
-  const devotional = devotionals.find(d => {
-    if (!d.date) return false;
-    const devotionalDate = d.date.split('T')[0];
-    return devotionalDate === targetDate || d.date === targetDate;
-  });
-  
-  console.log(`📅 Found devotional for ${targetDate}:`, !!devotional);
-  
-  // Si no encontramos el devocional de HOY y estamos online, forzar refresh
-  if (!devotional && isToday && isOnline && source === 'cache') {
-    console.log(`⚠️ Devotional for today (${today}) not found in cache. Forcing API refresh...`);
-    const freshResult = await getDevotionals(locale, true);
-    
-    if (freshResult.devotionals && freshResult.devotionals.length > 0) {
-      const freshDevotional = freshResult.devotionals.find(d => {
-        if (!d.date) return false;
-        const devotionalDate = d.date.split('T')[0];
-        return devotionalDate === targetDate || d.date === targetDate;
-      });
-      
-      console.log(`📅 After API refresh, found devotional for ${targetDate}:`, !!freshDevotional);
-      
-      return {
-        devotional: freshDevotional || freshResult.devotionals[0],
-        source: 'api-refresh',
-        isOnline: freshResult.isOnline,
-        allDevotionals: freshResult.devotionals,
-      };
-    }
-  }
-  
-  return {
-    devotional: devotional || devotionals[0], // Fallback al más reciente
-    source,
-    isOnline,
-    allDevotionals: devotionals,
+    return {
+      devotional: devotionalToReturn,
+      source,
+      isOnline,
+      allDevotionals: devotionals,
+    };
   };
+
+  let result = await getDevotional();
+  
+  // Si no se encuentra el devocional para hoy, forzar actualización
+  const isToday = targetDate === formatDate(new Date());
+  if (!result.devotional && isToday && result.isOnline) {
+    console.log(`⚠️ Devotional for today (${targetDate}) not found. Forcing API refresh...`);
+    result = await getDevotional(true);
+  }
+
+  console.log(`📅 Found devotional for ${targetDate}:`, !!result.devotional);
+
+  return result;
 };
 
 /**
