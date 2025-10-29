@@ -105,17 +105,17 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
     const fechaObj = new Date(devocional.fecha);
     const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
     const fechaFormateada = fechaObj.toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', opcionesFecha);
-    
+
     let reflexionTexto = '';
     if (devocional.reflexion?.raw) {
-        try {
-            const richText = JSON.parse(devocional.reflexion.raw);
-            reflexionTexto = richText.content.map(node => node.content.map(leaf => leaf.value).join('')).join('\n');
-        } catch(e) { /* ignore */ }
+        reflexionTexto = `${t('reflection')}:\n${devocional.reflexion.raw}`;
     }
 
+    const preguntaTexto = devocional.pregunta?.question ? `\n\n${t('question')}:\n${devocional.pregunta.question}` : '';
+    const aplicacionTexto = devocional.aplicacion?.application ? `\n\n${t('application')}:\n${devocional.aplicacion.application}` : '';
     const citaItalica = devocional.cita ? `\n${devocional.cita}` : '';
-    return ( isSpanish ? `¡Buenos días!\n\n${fechaFormateada}\n\n🌟 ${devocional.titulo}\n\n📖 Versículo Clave:\n${devocional.versiculo}${citaItalica}\n\n🙏 Reflexión:\n${reflexionTexto}\n\n🤔 Pregunta:\n${devocional.pregunta?.question || ''}\n\n🔥 Aplicación:\n${devocional.aplicacion?.application || ''}\n\nTe invitamos a visitar nuestra página: ${url}` : `Good morning!\n\n${fechaFormateada}\n\n🌟 ${devocional.titulo}\n\n📖 Key Verse:\n${devocional.versiculo}${citaItalica}\n\n🙏 Reflection:\n${reflexionTexto}\n\n🤔 Question:\n${devocional.pregunta?.question || ''}\n\n🔥 Application:\n${devocional.aplicacion?.application || ''}\n\nWe invite you to visit our website: ${url}` );
+
+    return `${t('daily_devotional')}: ${devocional.titulo}\n${fechaFormateada}\n${reflexionTexto}${preguntaTexto}${aplicacionTexto}${citaItalica}\n\n${url}`;
   }
 
   let fechaFormateada = '';
