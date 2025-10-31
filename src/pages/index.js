@@ -100,7 +100,8 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
   };
 
   function getShareText(devocional, t) {
-    const isSpanish = !isEnglishSite();
+    const isEnglish = typeof window !== 'undefined' && window.location.hostname.includes("voices-of-hope");
+    const isSpanish = !isEnglish;
     const url = isSpanish ? 'https://voces-de-esperanza.com' : 'https://voices-of-hope.com';
     const fechaObj = new Date(devocional.fecha);
     const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
