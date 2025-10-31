@@ -108,11 +108,15 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
 
     let reflexionTexto = '';
     if (devocional.reflexion?.raw) {
-        reflexionTexto = `${t('reflection')}:\n${devocional.reflexion.raw}`;
+        const reflexionContent = JSON.parse(devocional.reflexion.raw);
+        reflexionTexto = `${t('reflection')}:
+${documentToReactComponents(reflexionContent).props.children.map(child => child.props.children).join('')}`;
     }
 
-    const preguntaTexto = devocional.pregunta?.question ? `\n\n${t('question')}:\n${devocional.pregunta.question}` : '';
-    const aplicacionTexto = devocional.aplicacion?.application ? `\n\n${t('application')}:\n${devocional.aplicacion.application}` : '';
+    const preguntaTexto = devocional.pregunta?.question ? `\n\n${t('question')}:
+${devocional.pregunta.question}` : '';
+    const aplicacionTexto = devocional.aplicacion?.application ? `\n\n${t('application')}:
+${devocional.aplicacion.application}` : '';
     const citaItalica = devocional.cita ? `\n${devocional.cita}` : '';
 
     return `${t('daily_devotional')}: ${devocional.titulo}\n${fechaFormateada}\n${reflexionTexto}${preguntaTexto}${aplicacionTexto}${citaItalica}\n\n${url}`;
