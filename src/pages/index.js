@@ -105,7 +105,9 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
     const url = isSpanish ? 'https://voces-de-esperanza.com' : 'https://voices-of-hope.com';
     const fechaObj = new Date(devocional.fecha);
     const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
-    const fechaFormateada = fechaObj.toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', opcionesFecha);
+    let fechaFormateada = fechaObj.toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', opcionesFecha);
+    // Capitalize the first letter of the day of the week
+    fechaFormateada = fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
 
     let reflexionTexto = '';
     if (devocional.reflexion?.raw) {
@@ -132,6 +134,8 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
     if (!isNaN(fecha.getTime())) {
       const localeForDate = isEnglishSite() ? 'en-US' : 'es-ES';
       fechaFormateada = fecha.toLocaleDateString(localeForDate, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+      // Capitalize the first letter of the formatted date
+      fechaFormateada = fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
     }
   }
 
