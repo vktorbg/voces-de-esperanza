@@ -108,18 +108,21 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
 
     let reflexionTexto = '';
     if (devocional.reflexion?.raw) {
-        const reflexionContent = JSON.parse(devocional.reflexion.raw);
-        reflexionTexto = `${t('reflection')}:
-${documentToReactComponents(reflexionContent).props.children.map(child => child.props.children).join('')}`;
+        try {
+            const richText = JSON.parse(devocional.reflexion.raw);
+            reflexionTexto = richText.content.map(node => node.content.map(leaf => leaf.value).join('')).join('\n');
+        } catch (e) {
+            reflexionTexto = t('error_parsing_reflection');
+        }
     }
 
-    const preguntaTexto = devocional.pregunta?.question ? `\n\n${t('question')}:
-${devocional.pregunta.question}` : '';
-    const aplicacionTexto = devocional.aplicacion?.application ? `\n\n${t('application')}:
-${devocional.aplicacion.application}` : '';
     const citaItalica = devocional.cita ? `\n${devocional.cita}` : '';
 
-    return `${t('daily_devotional')}: ${devocional.titulo}\n${fechaFormateada}\n${reflexionTexto}${preguntaTexto}${aplicacionTexto}${citaItalica}\n\n${url}`;
+    return (
+        isSpanish
+            ? `¡Buenos días!\n\n${fechaFormateada}\n\n🌟 ${devocional.titulo}\n\n📖 Versículo Clave:\n${devocional.versiculo}${citaItalica}\n\n🙏 Reflexión:\n${reflexionTexto}\n\n🤔 Pregunta:\n${devocional.pregunta?.question || ''}\n\n🔥 Aplicación:\n${devocional.aplicacion?.application || ''}\n\nTe invitamos a visitar nuestra página: ${url}`
+            : `Good morning!\n\n${fechaFormateada}\n\n🌟 ${devocional.titulo}\n\n📖 Key Verse:\n${devocional.versiculo}${citaItalica}\n\n🙏 Reflection:\n${reflexionTexto}\n\n🤔 Question:\n${devocional.pregunta?.question || ''}\n\n🔥 Application:\n${devocional.aplicacion?.application || ''}\n\nWe invite you to visit our website: ${url}`
+    );
   }
 
   let fechaFormateada = '';
