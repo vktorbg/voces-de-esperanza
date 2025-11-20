@@ -15,8 +15,35 @@ const firebaseConfig = {
   measurementId: process.env.GATSBY_FIREBASE_MEASUREMENT_ID
 };
 
+// Debug logging (solo en desarrollo o para debugging)
+console.log('🔥 Firebase Config Check:', {
+  hasApiKey: !!firebaseConfig.apiKey,
+  hasProjectId: !!firebaseConfig.projectId,
+  hasStorageBucket: !!firebaseConfig.storageBucket,
+  projectId: firebaseConfig.projectId,
+  storageBucket: firebaseConfig.storageBucket
+});
+
+// Verificar que las variables estén disponibles
+if (!firebaseConfig.apiKey || !firebaseConfig.storageBucket) {
+  console.error('❌ Firebase configuration is incomplete!', {
+    apiKey: firebaseConfig.apiKey ? 'present' : 'MISSING',
+    storageBucket: firebaseConfig.storageBucket ? 'present' : 'MISSING'
+  });
+}
+
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+let app;
+let storage;
+
+try {
+  app = initializeApp(firebaseConfig);
+  storage = getStorage(app);
+  console.log('✅ Firebase initialized successfully');
+} catch (error) {
+  console.error('❌ Error initializing Firebase:', error);
+  storage = null;
+}
 
 // Get a reference to the storage service and export it
-export const storage = getStorage(app);
+export { storage };

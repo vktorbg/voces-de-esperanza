@@ -42,6 +42,15 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
         setAvailableAudios([]);
         return;
       }
+
+      // Verificar que Firebase Storage esté inicializado
+      if (!storage) {
+        console.error('❌ Firebase Storage is not initialized. Audio playback unavailable.');
+        setAvailableAudios([]);
+        setAudioLoading(false);
+        return;
+      }
+
       setAudioLoading(true);
 
       try {
