@@ -7,7 +7,7 @@ android {
         applicationId "com.vocesdeesperanza.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 7
+        versionCode 8
         versionName "1.0.5"
     
          // Instrumentation runner para pruebas de UI

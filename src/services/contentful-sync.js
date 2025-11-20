@@ -14,12 +14,12 @@ const getContentfulClient = () => {
     // Usar variables con prefijo GATSBY_ para que estén disponibles en el cliente
     const spaceId = process.env.GATSBY_CONTENTFUL_SPACE_ID || process.env.CONTENTFUL_SPACE_ID;
     const accessToken = process.env.GATSBY_CONTENTFUL_ACCESS_TOKEN || process.env.CONTENTFUL_ACCESS_TOKEN;
-    
+
     if (!spaceId || !accessToken) {
       console.warn('⚠️ Contentful credentials not found. Runtime sync disabled.');
       return null;
     }
-    
+
     contentfulClient = createClient({
       space: spaceId,
       accessToken: accessToken,
@@ -38,7 +38,7 @@ const CACHE_KEYS = {
 
 // Cache de TEXTO: 30 minutos (para permitir correcciones durante el día)
 const CACHE_DURATION = 30 * 60 * 1000; // 30 minutos en milisegundos
-// NOTA: Los audios NO usan cache, siempre se fetch en cada apertura
+// NOTA: Los audios vienen de Firebase Storage, no de Contentful
 
 /**
  * Verifica si hay conexión a internet
@@ -107,26 +107,26 @@ const isCacheValid = async () => {
   try {
     const { value: lastSyncValue } = await Preferences.get({ key: CACHE_KEYS.LAST_SYNC });
     const { value: cacheDateValue } = await Preferences.get({ key: CACHE_KEYS.CACHE_DATE });
-    
+
     if (!lastSyncValue) return false;
-    
+
     const lastSync = parseInt(lastSyncValue, 10);
     const now = Date.now();
     const ageMinutes = Math.round((now - lastSync) / 1000 / 60);
-    
+
     // Verificar si es del mismo día
     const today = new Date().toISOString().split('T')[0];
     const cacheDate = cacheDateValue || '';
-    
+
     // Invalidar si cambió el día (contenido diario)
     if (cacheDate !== today) {
       console.log(`�️ Cache is from ${cacheDate}, today is ${today} - INVALID (different day)`);
       return false;
     }
-    
+
     // Verificar TTL (2 horas)
     const isValid = (now - lastSync) < CACHE_DURATION;
-    
+
     console.log(`🕐 Cache age: ${ageMinutes} minutes, date: ${cacheDate} (valid: ${isValid})`);
     return isValid;
   } catch (error) {
@@ -189,16 +189,6 @@ const transformContentfulEntry = (entry) => {
       }
     }
 
-    // Debug: Log audio structure for one entry
-    if (entry.fields.date === '2025-10-10' && entry.fields.audioEspanol) {
-      console.log('🔍 DEBUG Audio Structure for 2025-10-10:', {
-        audioEspanol: entry.fields.audioEspanol,
-        audioEspanolFields: entry.fields.audioEspanol?.fields,
-        audioEspanolFile: entry.fields.audioEspanol?.fields?.file,
-        audioEspanolUrl: entry.fields.audioEspanol?.fields?.file?.url,
-      });
-    }
-
     return {
       id: entry.sys.id,
       // Usar nombres en inglés como GraphQL
@@ -209,22 +199,7 @@ const transformContentfulEntry = (entry) => {
       reflection: reflectionFormatted,
       question: questionFormatted,
       application: applicationFormatted,
-      // Audio URLs normalizados (assets tienen .fields.file.url)
-      audioEspanol: entry.fields.audioEspanol ? {
-        file: {
-          url: entry.fields.audioEspanol.fields?.file?.url || entry.fields.audioEspanol.file?.url || null
-        }
-      } : null,
-      audioNahuatl: entry.fields.audioNahuatl ? {
-        file: {
-          url: entry.fields.audioNahuatl.fields?.file?.url || entry.fields.audioNahuatl.file?.url || null
-        }
-      } : null,
-      audioEnglish: entry.fields.audioEnglish ? {
-        file: {
-          url: entry.fields.audioEnglish.fields?.file?.url || entry.fields.audioEnglish.file?.url || null
-        }
-      } : null,
+      // Nota: Los audios vienen de Firebase Storage, no de Contentful
       node_locale: entry.sys.locale || 'es-MX',
     };
   } catch (error) {
@@ -256,21 +231,6 @@ const transformContentfulEntryWithLocale = (entry, targetLocale = 'es-MX') => {
     const reflection = getLocaleValue(entry.fields.reflection);
     const question = getLocaleValue(entry.fields.question);
     const application = getLocaleValue(entry.fields.application);
-    
-    // Los assets no tienen locale, están compartidos
-    const audioEspanol = entry.fields.audioEspanol;
-    const audioNahuatl = entry.fields.audioNahuatl;
-    const audioEnglish = entry.fields.audioEnglish;
-
-    // Debug para ver estructura de audios
-    if (date === '2025-10-10' && audioEspanol) {
-      console.log('🔍 DEBUG withAllLocales Audio for 2025-10-10:', {
-        audioEspanol,
-        audioEspanolFields: audioEspanol?.fields,
-        audioEspanolFile: audioEspanol?.fields?.file,
-        audioEspanolUrl: audioEspanol?.fields?.file?.url,
-      });
-    }
 
     // Normalizar reflection
     let reflectionFormatted = null;
@@ -315,22 +275,7 @@ const transformContentfulEntryWithLocale = (entry, targetLocale = 'es-MX') => {
       reflection: reflectionFormatted,
       question: questionFormatted,
       application: applicationFormatted,
-      // Audio URLs normalizados
-      audioEspanol: audioEspanol ? {
-        file: {
-          url: audioEspanol.fields?.file?.url || audioEspanol.file?.url || null
-        }
-      } : null,
-      audioNahuatl: audioNahuatl ? {
-        file: {
-          url: audioNahuatl.fields?.file?.url || audioNahuatl.file?.url || null
-        }
-      } : null,
-      audioEnglish: audioEnglish ? {
-        file: {
-          url: audioEnglish.fields?.file?.url || audioEnglish.file?.url || null
-        }
-      } : null,
+      // Nota: Los audios vienen de Firebase Storage, no de Contentful
       node_locale: targetLocale,
     };
   } catch (error) {
@@ -352,7 +297,7 @@ const fetchFromContentful = async (locale = 'es-MX') => {
 
   try {
     console.log('🌐 Fetching devotionals from Contentful...');
-    
+
     // Usar withAllLocales para obtener todos los locales y resolver los assets correctamente
     const response = await client.withAllLocales.getEntries({
       content_type: 'devotional',
@@ -362,13 +307,13 @@ const fetchFromContentful = async (locale = 'es-MX') => {
     });
 
     console.log(`✅ Fetched ${response.items.length} devotionals from Contentful`);
-    
+
     // Con withAllLocales, los fields vienen como {fieldName: {'es-MX': value, 'en-US': value}}
     // Necesitamos transformar cada entrada para extraer el locale específico
     const transformed = response.items
       .map(entry => transformContentfulEntryWithLocale(entry, locale))
       .filter(Boolean);
-    
+
     console.log(`📝 Transformed to ${transformed.length} devotionals for locale ${locale}`);
 
     return transformed;
@@ -383,16 +328,16 @@ const fetchFromContentful = async (locale = 'es-MX') => {
  */
 export const getDevotionals = async (locale = 'es-MX', forceRefresh = false) => {
   const isOnline = await checkNetworkStatus();
-  
+
   // Estrategia: Cache-first con revalidación
   if (!forceRefresh) {
     // Intentar leer del cache primero
     const cached = await readFromCache();
     const cacheValid = await isCacheValid();
-    
+
     if (cached && cacheValid) {
       console.log('✅ Using valid cached devotionals');
-      
+
       // Si estamos online, sincronizar en background (no bloqueante)
       if (isOnline) {
         console.log('🔄 Syncing in background...');
@@ -404,14 +349,14 @@ export const getDevotionals = async (locale = 'es-MX', forceRefresh = false) => 
           })
           .catch(err => console.error('Background sync failed:', err));
       }
-      
+
       return {
         devotionals: cached,
         source: 'cache',
         isOnline,
       };
     }
-    
+
     if (cached && !isOnline) {
       console.log('⚠️ Using expired cache (offline)');
       return {
@@ -421,11 +366,11 @@ export const getDevotionals = async (locale = 'es-MX', forceRefresh = false) => 
       };
     }
   }
-  
+
   // Si estamos online, fetch desde Contentful
   if (isOnline) {
     const fresh = await fetchFromContentful(locale);
-    
+
     if (fresh && fresh.length > 0) {
       await saveToCache(fresh);
       console.log('✅ Using fresh devotionals from API');
@@ -435,7 +380,7 @@ export const getDevotionals = async (locale = 'es-MX', forceRefresh = false) => 
         isOnline,
       };
     }
-    
+
     // Si el fetch falla pero hay cache, usar cache
     const cached = await readFromCache();
     if (cached) {
@@ -447,7 +392,7 @@ export const getDevotionals = async (locale = 'es-MX', forceRefresh = false) => 
       };
     }
   }
-  
+
   // Sin cache y sin conexión
   console.log('❌ No devotionals available');
   return {
@@ -479,7 +424,7 @@ export const getDevotionalByDate = async (date, locale = 'es-MX') => {
     });
 
     const devotionalToReturn = found || devotionals[0]; // Fallback al más reciente
-    
+
     return {
       devotional: devotionalToReturn,
       source,
@@ -489,7 +434,7 @@ export const getDevotionalByDate = async (date, locale = 'es-MX') => {
   };
 
   let result = await getDevotional();
-  
+
   // Si no se encuentra el devocional para hoy, forzar actualización
   const isToday = targetDate === formatDate(new Date());
   if (!result.devotional && isToday && result.isOnline) {
@@ -513,68 +458,7 @@ const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
-/**
- * Fetch SOLO los audios de un devocional específico (muy liviano, ~2KB)
- * Siempre hace fetch del API, sin cache
- */
-export const fetchAudiosOnly = async (date, locale = 'es-MX') => {
-  const client = getContentfulClient();
-  if (!client) {
-    console.warn('⚠️ Contentful client not available for audio fetch');
-    return null;
-  }
 
-  const isOnline = await checkNetworkStatus();
-  if (!isOnline) {
-    console.log('📴 Offline, cannot fetch audios');
-    return null;
-  }
-
-  try {
-    const targetDate = typeof date === 'string' ? date : formatDate(date);
-    console.log(`🎵 Fetching ONLY audios for ${targetDate}...`);
-
-    // Fetch con select para traer SOLO los campos de audio (optimizado)
-    const response = await client.withAllLocales.getEntries({
-      content_type: 'devotional',
-      'fields.date': targetDate,
-      select: 'sys.id,fields.date,fields.audioEspanol,fields.audioNahuatl,fields.audioEnglish',
-      include: 10, // Incluir assets
-      limit: 1,
-    });
-
-    if (response.items.length === 0) {
-      console.log(`⚠️ No devotional found for ${targetDate}`);
-      return null;
-    }
-
-    const entry = response.items[0];
-    
-    // Extraer URLs de audios (con locale support)
-    const getAudioUrl = (audioField) => {
-      if (!audioField) return null;
-      // Los assets no tienen locale, están compartidos
-      return audioField.fields?.file?.url || audioField.file?.url || null;
-    };
-
-    const audios = {
-      audioEspanolUrl: getAudioUrl(entry.fields.audioEspanol),
-      audioNahuatlUrl: getAudioUrl(entry.fields.audioNahuatl),
-      audioEnglishUrl: getAudioUrl(entry.fields.audioEnglish),
-    };
-
-    console.log('✅ Audios fetched:', {
-      espanol: !!audios.audioEspanolUrl,
-      nahuatl: !!audios.audioNahuatlUrl,
-      english: !!audios.audioEnglishUrl,
-    });
-
-    return audios;
-  } catch (error) {
-    console.error('❌ Error fetching audios:', error);
-    return null;
-  }
-};
 
 /**
  * Fuerza una sincronización manual
