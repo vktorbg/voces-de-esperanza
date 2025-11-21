@@ -25,6 +25,14 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
   const menuRef = useRef(null);
   const [availableAudios, setAvailableAudios] = useState([]);
 
+  // DEBUG: Estados para mostrar mensajes en pantalla
+  const [debugMessages, setDebugMessages] = useState([]);
+  const [showDebug, setShowDebug] = useState(true); // Cambiar a false para ocultar
+
+  const addDebugMessage = (msg) => {
+    setDebugMessages(prev => [...prev, `${new Date().toLocaleTimeString()}: ${msg}`]);
+  };
+
   const iconSrc = isEnglishSite() ? "/icon2.jpg" : "/icon.jpg";
 
   useEffect(() => {
