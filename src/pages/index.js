@@ -76,63 +76,35 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
 
         addDebugMessage(`🔍 Buscando audios para: ${dateString}`);
 
-        const listRef = ref(storage, 'devocionales');
-        addDebugMessage('📂 Listando archivos en Firebase...');
+        // NUEVO ENFOQUE: No usar listAll() que no funciona en iOS
+        // En su lugar, intentar cargar archivos esperados directamente
+        addDebugMessage('📂 Buscando archivos directamente (sin listAll)...');
 
-        // Timeout para evitar hang en iOS
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Timeout: Firebase listAll tomó más de 10 segundos')), 10000);
+        const expectedLanguages = [
+          { code: 'es', name: t('language_spanish') },
+          { code: 'en', name: t('language_english') },
+          { code: 'nah', name: t('language_nahuatl') }
+        ];
+
+        const audioPromises = expectedLanguages.map(async ({ code, name }) => {
+          const fileName = `${dateString}-${code}.m4a`;
+          addDebugMessage(`🔍 Buscando: ${fileName}`);
+
+          try {
+            const audioRef = ref(storage, `devocionales/${fileName}`);
+            const url = await getDownloadURL(audioRef);
+            addDebugMessage(`✅ Encontrado: ${fileName}`);
+            return { lang: name, url };
+          } catch (error) {
+            addDebugMessage(`⚠️ No encontrado: ${fileName} (${error.code})`);
+            return null;
+          }
         });
 
-        let res;
-        try {
-          res = await Promise.race([listAll(listRef), timeoutPromise]);
-          addDebugMessage(`📦 Archivos encontrados: ${res.items.length}`);
-          addDebugMessage(`📋 Nombres: ${res.items.map(item => item.name).join(', ')}`);
-        } catch (timeoutError) {
-          addDebugMessage(`❌ TIMEOUT: ${timeoutError.message}`);
-          addDebugMessage('⚠️ Firebase Storage no responde en iOS');
-          addDebugMessage('💡 Esto puede ser problema de CORS o configuración de Firebase');
-          setAvailableAudios([]);
-          setAudioLoading(false);
-          return;
-        }
-        const todaysItems = res.items.filter(itemRef => itemRef.name.startsWith(dateString));
-        addDebugMessage(`🎯 Archivos con fecha correcta: ${todaysItems.length}`);
-        addDebugMessage(`📝 Archivos: ${todaysItems.map(item => item.name).join(', ')}`);
+        addDebugMessage('⏳ Esperando resultados de las 3 búsquedas...');
+        const audioUrls = (await Promise.all(audioPromises)).filter(Boolean);
 
-        const audios = todaysItems.map(itemRef => {
-          const name = itemRef.name;
-          const langMatch = name.match(/-(\w{2,3})\.m4a$/); // Corrected regex escaping
-          if (!langMatch) {
-            addDebugMessage(`⚠️ No coincide con patrón: ${name}`);
-            return null;
-          }
-
-          const langCode = langMatch[1];
-          let langName = '';
-          if (langCode === 'es') langName = t('language_spanish');
-          else if (langCode === 'en') langName = t('language_english');
-          else if (langCode === 'nah') langName = t('language_nahuatl');
-          else {
-            addDebugMessage(`⚠️ Idioma desconocido: ${langCode}`);
-            return null;
-          }
-
-          addDebugMessage(`✅ Audio válido: ${name} → ${langName}`);
-          return { lang: langName, ref: itemRef };
-        }).filter(Boolean);
-
-        addDebugMessage(`🎵 Total de audios válidos: ${audios.length}`);
-
-        const audioUrls = await Promise.all(audios.map(async (audio) => {
-          addDebugMessage(`🔗 Obteniendo URL para: ${audio.lang}`);
-          const url = await getDownloadURL(audio.ref);
-          addDebugMessage(`✅ URL obtenida: ${url.substring(0, 30)}...`);
-          return { lang: audio.lang, url: url };
-        }));
-
-        addDebugMessage('🎉 Todas las URLs obtenidas exitosamente');
+        addDebugMessage(`🎉 Total de audios encontrados: ${audioUrls.length}`);
         setAvailableAudios(audioUrls);
 
       } catch (error) {
