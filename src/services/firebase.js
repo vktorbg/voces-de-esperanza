@@ -16,10 +16,21 @@ const firebaseConfig = {
   measurementId: process.env.GATSBY_FIREBASE_MEASUREMENT_ID
 };
 
-// Limpiar storageBucket si tiene prefijo gs://
-if (firebaseConfig.storageBucket && firebaseConfig.storageBucket.startsWith('gs://')) {
-  firebaseConfig.storageBucket = firebaseConfig.storageBucket.replace('gs://', '').replace('/', '');
-  console.log('⚠️ Limpiado gs:// del storageBucket');
+// Limpiar storageBucket: quitar gs:// y barras finales
+if (firebaseConfig.storageBucket) {
+  let cleaned = firebaseConfig.storageBucket;
+  // Quitar prefijo gs://
+  if (cleaned.startsWith('gs://')) {
+    cleaned = cleaned.replace('gs://', '');
+  }
+  // Quitar todas las barras finales
+  while (cleaned.endsWith('/')) {
+    cleaned = cleaned.slice(0, -1);
+  }
+  if (cleaned !== firebaseConfig.storageBucket) {
+    console.log('⚠️ Storage Bucket limpiado:', firebaseConfig.storageBucket, '→', cleaned);
+    firebaseConfig.storageBucket = cleaned;
+  }
 }
 
 // Debug logging (solo en desarrollo o para debugging)
