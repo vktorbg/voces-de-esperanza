@@ -79,10 +79,24 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
         const listRef = ref(storage, 'devocionales');
         addDebugMessage('📂 Listando archivos en Firebase...');
 
-        const res = await listAll(listRef);
-        addDebugMessage(`📦 Archivos encontrados: ${res.items.length}`);
-        addDebugMessage(`📋 Nombres: ${res.items.map(item => item.name).join(', ')}`);
+        // Timeout para evitar hang en iOS
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Timeout: Firebase listAll tomó más de 10 segundos')), 10000);
+        });
 
+        let res;
+        try {
+          res = await Promise.race([listAll(listRef), timeoutPromise]);
+          addDebugMessage(`📦 Archivos encontrados: ${res.items.length}`);
+          addDebugMessage(`📋 Nombres: ${res.items.map(item => item.name).join(', ')}`);
+        } catch (timeoutError) {
+          addDebugMessage(`❌ TIMEOUT: ${timeoutError.message}`);
+          addDebugMessage('⚠️ Firebase Storage no responde en iOS');
+          addDebugMessage('💡 Esto puede ser problema de CORS o configuración de Firebase');
+          setAvailableAudios([]);
+          setAudioLoading(false);
+          return;
+        }
         const todaysItems = res.items.filter(itemRef => itemRef.name.startsWith(dateString));
         addDebugMessage(`🎯 Archivos con fecha correcta: ${todaysItems.length}`);
         addDebugMessage(`📝 Archivos: ${todaysItems.map(item => item.name).join(', ')}`);
