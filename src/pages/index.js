@@ -38,25 +38,25 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
   // Fetch available audios from Firebase Storage
   useEffect(() => {
     const fetchAvailableAudios = async () => {
-      console.log('📱 [Audio Fetch] Starting audio fetch process...');
+      addDebugMessage('📱 Iniciando carga de audios...');
 
       if (!devocional || !devocional.fecha) {
-        console.log('⚠️ [Audio Fetch] No devocional or fecha available');
+        addDebugMessage('⚠️ No hay devocional o fecha');
         setAvailableAudios([]);
         return;
       }
 
-      console.log('📅 [Audio Fetch] Devocional fecha:', devocional.fecha);
+      addDebugMessage(`📅 Fecha del devocional: ${devocional.fecha}`);
 
       // Verificar que Firebase Storage esté inicializado
       if (!storage) {
-        console.error('❌ [Audio Fetch] Firebase Storage is not initialized. Audio playback unavailable.');
+        addDebugMessage('❌ Firebase Storage NO inicializado');
         setAvailableAudios([]);
         setAudioLoading(false);
         return;
       }
 
-      console.log('✅ [Audio Fetch] Firebase Storage is initialized');
+      addDebugMessage('✅ Firebase Storage inicializado');
       setAudioLoading(true);
 
       try {
@@ -66,24 +66,24 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
         const day = String(d.getUTCDate()).padStart(2, '0');
         const dateString = `${year}-${month}-${day}`;
 
-        console.log('🔍 [Audio Fetch] Looking for audios with date:', dateString);
+        addDebugMessage(`🔍 Buscando audios para: ${dateString}`);
 
         const listRef = ref(storage, 'devocionales');
-        console.log('📂 [Audio Fetch] Listing files in devocionales folder...');
+        addDebugMessage('📂 Listando archivos en Firebase...');
 
         const res = await listAll(listRef);
-        console.log('📦 [Audio Fetch] Total files found:', res.items.length);
-        console.log('📋 [Audio Fetch] File names:', res.items.map(item => item.name));
+        addDebugMessage(`📦 Archivos encontrados: ${res.items.length}`);
+        addDebugMessage(`📋 Nombres: ${res.items.map(item => item.name).join(', ')}`);
 
         const todaysItems = res.items.filter(itemRef => itemRef.name.startsWith(dateString));
-        console.log('🎯 [Audio Fetch] Files matching date:', todaysItems.length);
-        console.log('📝 [Audio Fetch] Matching files:', todaysItems.map(item => item.name));
+        addDebugMessage(`🎯 Archivos con fecha correcta: ${todaysItems.length}`);
+        addDebugMessage(`📝 Archivos: ${todaysItems.map(item => item.name).join(', ')}`);
 
         const audios = todaysItems.map(itemRef => {
           const name = itemRef.name;
-          const langMatch = name.match(/-(\w{2,3})\.m4a$/);
+          const langMatch = name.match(/-(\w{2,3})\.m4a$/); // Corrected regex escaping
           if (!langMatch) {
-            console.log('⚠️ [Audio Fetch] File does not match pattern:', name);
+            addDebugMessage(`⚠️ No coincide con patrón: ${name}`);
             return null;
           }
 
@@ -93,36 +93,32 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
           else if (langCode === 'en') langName = t('language_english');
           else if (langCode === 'nah') langName = t('language_nahuatl');
           else {
-            console.log('⚠️ [Audio Fetch] Unknown language code:', langCode);
+            addDebugMessage(`⚠️ Idioma desconocido: ${langCode}`);
             return null;
           }
 
-          console.log('✅ [Audio Fetch] Valid audio found:', name, '→', langName);
+          addDebugMessage(`✅ Audio válido: ${name} → ${langName}`);
           return { lang: langName, ref: itemRef };
         }).filter(Boolean);
 
-        console.log('🎵 [Audio Fetch] Total valid audios:', audios.length);
+        addDebugMessage(`🎵 Total de audios válidos: ${audios.length}`);
 
         const audioUrls = await Promise.all(audios.map(async (audio) => {
-          console.log('🔗 [Audio Fetch] Getting download URL for:', audio.lang);
+          addDebugMessage(`🔗 Obteniendo URL para: ${audio.lang}`);
           const url = await getDownloadURL(audio.ref);
-          console.log('✅ [Audio Fetch] URL obtained:', url.substring(0, 50) + '...');
+          addDebugMessage(`✅ URL obtenida: ${url.substring(0, 30)}...`);
           return { lang: audio.lang, url: url };
         }));
 
-        console.log('🎉 [Audio Fetch] All audio URLs obtained successfully');
+        addDebugMessage('🎉 Todas las URLs obtenidas exitosamente');
         setAvailableAudios(audioUrls);
 
       } catch (error) {
-        console.error("❌ [Audio Fetch] Error fetching available audios from Firebase:", error);
-        console.error("❌ [Audio Fetch] Error details:", {
-          message: error.message,
-          code: error.code,
-          stack: error.stack
-        });
+        addDebugMessage(`❌ ERROR: ${error.message}`);
+        addDebugMessage(`❌ Código: ${error.code || 'N/A'}`);
         setAvailableAudios([]);
       } finally {
-        console.log('🏁 [Audio Fetch] Fetch process completed, setting audioLoading to false');
+        addDebugMessage('🏁 Proceso completado, desactivando loading');
         setAudioLoading(false);
       }
     };
@@ -181,6 +177,33 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
 
   return (
     <div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto px-2" style={{ maxWidth: '95vw' }}>
+
+      {/* DEBUG OVERLAY - Mostrar mensajes en pantalla */}
+      {showDebug && debugMessages.length > 0 && (
+        <div className="fixed top-20 left-0 right-0 z-50 bg-black bg-opacity-90 text-white p-4 max-h-96 overflow-y-auto mx-2 rounded-lg">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="font-bold text-yellow-400">🐛 DEBUG LOG</h3>
+            <button
+              onClick={() => setShowDebug(false)}
+              className="bg-red-600 text-white px-2 py-1 rounded text-xs"
+            >
+              Cerrar
+            </button>
+          </div>
+          <div className="text-xs font-mono space-y-1">
+            {debugMessages.map((msg, idx) => (
+              <div key={idx} className="border-b border-gray-700 pb-1">{msg}</div>
+            ))}
+          </div>
+          <button
+            onClick={() => setDebugMessages([])}
+            className="mt-2 bg-blue-600 text-white px-3 py-1 rounded text-xs w-full"
+          >
+            Limpiar Log
+          </button>
+        </div>
+      )}
+
       <div className="fixed top-0 left-0 right-0 z-30 bg-gray-100 dark:bg-gray-900 pt-[env(safe-area-inset-top)]">
         <div className="w-full max-w-md sm:max-w-2xl mx-auto px-2" style={{ maxWidth: '95vw' }}>
           <div className="flex items-start pt-4 sm:pt-6 pb-4">
