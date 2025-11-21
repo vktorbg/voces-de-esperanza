@@ -38,19 +38,25 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
   // Fetch available audios from Firebase Storage
   useEffect(() => {
     const fetchAvailableAudios = async () => {
+      console.log('📱 [Audio Fetch] Starting audio fetch process...');
+
       if (!devocional || !devocional.fecha) {
+        console.log('⚠️ [Audio Fetch] No devocional or fecha available');
         setAvailableAudios([]);
         return;
       }
 
+      console.log('📅 [Audio Fetch] Devocional fecha:', devocional.fecha);
+
       // Verificar que Firebase Storage esté inicializado
       if (!storage) {
-        console.error('❌ Firebase Storage is not initialized. Audio playback unavailable.');
+        console.error('❌ [Audio Fetch] Firebase Storage is not initialized. Audio playback unavailable.');
         setAvailableAudios([]);
         setAudioLoading(false);
         return;
       }
 
+      console.log('✅ [Audio Fetch] Firebase Storage is initialized');
       setAudioLoading(true);
 
       try {
@@ -60,38 +66,63 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
         const day = String(d.getUTCDate()).padStart(2, '0');
         const dateString = `${year}-${month}-${day}`;
 
+        console.log('🔍 [Audio Fetch] Looking for audios with date:', dateString);
+
         const listRef = ref(storage, 'devocionales');
+        console.log('📂 [Audio Fetch] Listing files in devocionales folder...');
 
         const res = await listAll(listRef);
+        console.log('📦 [Audio Fetch] Total files found:', res.items.length);
+        console.log('📋 [Audio Fetch] File names:', res.items.map(item => item.name));
 
         const todaysItems = res.items.filter(itemRef => itemRef.name.startsWith(dateString));
+        console.log('🎯 [Audio Fetch] Files matching date:', todaysItems.length);
+        console.log('📝 [Audio Fetch] Matching files:', todaysItems.map(item => item.name));
 
         const audios = todaysItems.map(itemRef => {
           const name = itemRef.name;
           const langMatch = name.match(/-(\w{2,3})\.m4a$/);
-          if (!langMatch) return null;
+          if (!langMatch) {
+            console.log('⚠️ [Audio Fetch] File does not match pattern:', name);
+            return null;
+          }
 
           const langCode = langMatch[1];
           let langName = '';
           if (langCode === 'es') langName = t('language_spanish');
           else if (langCode === 'en') langName = t('language_english');
           else if (langCode === 'nah') langName = t('language_nahuatl');
-          else return null;
+          else {
+            console.log('⚠️ [Audio Fetch] Unknown language code:', langCode);
+            return null;
+          }
 
+          console.log('✅ [Audio Fetch] Valid audio found:', name, '→', langName);
           return { lang: langName, ref: itemRef };
         }).filter(Boolean);
 
+        console.log('🎵 [Audio Fetch] Total valid audios:', audios.length);
+
         const audioUrls = await Promise.all(audios.map(async (audio) => {
+          console.log('🔗 [Audio Fetch] Getting download URL for:', audio.lang);
           const url = await getDownloadURL(audio.ref);
+          console.log('✅ [Audio Fetch] URL obtained:', url.substring(0, 50) + '...');
           return { lang: audio.lang, url: url };
         }));
 
+        console.log('🎉 [Audio Fetch] All audio URLs obtained successfully');
         setAvailableAudios(audioUrls);
 
       } catch (error) {
-        console.error("Error fetching available audios from Firebase:", error);
+        console.error("❌ [Audio Fetch] Error fetching available audios from Firebase:", error);
+        console.error("❌ [Audio Fetch] Error details:", {
+          message: error.message,
+          code: error.code,
+          stack: error.stack
+        });
         setAvailableAudios([]);
       } finally {
+        console.log('🏁 [Audio Fetch] Fetch process completed, setting audioLoading to false');
         setAudioLoading(false);
       }
     };
