@@ -2,6 +2,7 @@
 
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
+import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration from environment variables
 // Note: In Gatsby, client-exposed env vars must be prefixed with GATSBY_
@@ -35,15 +36,18 @@ if (!firebaseConfig.apiKey || !firebaseConfig.storageBucket) {
 // Initialize Firebase
 let app;
 let storage;
+let auth;
 
 try {
   app = initializeApp(firebaseConfig);
   storage = getStorage(app);
+  auth = getAuth(app);
   console.log('✅ Firebase initialized successfully');
 } catch (error) {
   console.error('❌ Error initializing Firebase:', error);
   storage = null;
+  auth = null;
 }
 
 // Get a reference to the storage service and export it
-export { storage };
+export { storage, auth };
