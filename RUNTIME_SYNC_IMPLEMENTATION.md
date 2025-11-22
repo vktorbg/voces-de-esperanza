@@ -4,11 +4,8 @@
 
 Se ha implementado un sistema **híbrido de carga de devocionales** que combina:
 - **Build-time data** (Gatsby GraphQL) - Datos rápidos del build
-- **Runtime fetching** (Contentful API) - Actualizaciones automáticas de texto sin rebuild
+- **Runtime fetching** (Contentful API) - Actualizaciones automáticas sin rebuild
 - **Cache local** (Capacitor Preferences) - Funcionalidad offline
-- **Firebase Storage** - Audios servidos con URLs directas (no requieren sincronización)
-
-**Nota importante:** La sincronización en tiempo real solo aplica al **contenido de texto** (título, versículo, reflexión, pregunta, aplicación). Los **audios se sirven desde Firebase Storage** con URLs públicas directas.
 
 ## ✨ Nuevas Funcionalidades
 
@@ -164,9 +161,8 @@ npx cap open ios
 - Auto-actualización transparente
 
 ### ✅ Para Ti
-- No necesitas rebuild ni redeploy para nuevos contenidos de texto
-- Subes contenido a Contentful → Usuarios lo ven automáticamente
-- Audios se sirven desde Firebase Storage con URLs directas
+- No necesitas rebuild ni redeploy para nuevos audios
+- Subes audio a Contentful → Usuarios lo ven automáticamente
 - Reduces costos de builds en Codemagic
 - Menos mantenimiento
 

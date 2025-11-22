@@ -12,7 +12,6 @@ workflows:
         # Esto importa correctamente TODAS las variables que creaste en la UI
         - keystore_credentials
         - contentful_credentials
-        - firebase_credentials
       vars:
         # Solo definimos las variables que no son secretas
         PACKAGE_NAME: "com.vocesdeesperanza.app"
@@ -57,7 +56,6 @@ workflows:
         - app_store_connect_credentials
         - contentful_credentials
         - ios_signing_credentials
-        - firebase_credentials
       vars:
         XCODE_TEAM_ID: AKKP464BSH
         KEYCHAIN_PATH: $CM_KEYCHAIN_PATH

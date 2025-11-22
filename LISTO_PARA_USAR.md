@@ -2,9 +2,7 @@
 
 ## 🎉 ¡Fase 1 Implementada Exitosamente!
 
-La app ahora tiene **sincronización automática del contenido de texto de los devocionales** sin necesidad de rebuild. Los usuarios recibirán automáticamente el nuevo contenido que subas a Contentful.
-
-**Nota importante:** Los audios se sirven desde **Firebase Storage** con URLs directas, no desde Contentful. La sincronización en tiempo real solo aplica al contenido de texto (título, versículo, reflexión, etc.).
+La app ahora tiene **sincronización automática de audios** sin necesidad de rebuild. Los usuarios recibirán automáticamente los nuevos audios que subas a Contentful.
 
 ---
 
@@ -133,22 +131,20 @@ En el header de la app (solo móvil) verás:
 
 ### **Antes (con build manual):**
 ```
-1. Subir contenido a Contentful
-2. Subir audios a Firebase Storage
-3. Trigger rebuild en Codemagic (15-30 min)
-4. Build y deploy web
-5. Build Android APK/AAB (10-20 min)
-6. Build iOS IPA (10-20 min)
-7. Subir a stores
-8. Usuarios actualizan la app
+1. Subir audio a Contentful
+2. Trigger rebuild en Codemagic (15-30 min)
+3. Build y deploy web
+4. Build Android APK/AAB (10-20 min)
+5. Build iOS IPA (10-20 min)
+6. Subir a stores
+7. Usuarios actualizan la app
 ⏱️ Total: 1-2 horas + espera de usuarios
 ```
 
 ### **Ahora (con runtime sync):**
 ```
-1. Subir contenido de texto a Contentful
-2. Subir audios a Firebase Storage
-3. ✅ Listo! (Usuarios ven el contenido en < 1 minuto)
+1. Subir audio a Contentful
+2. ✅ Listo! (Usuarios lo ven en < 1 minuto)
 ⏱️ Total: < 1 minuto
 ```
 
