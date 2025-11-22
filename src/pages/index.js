@@ -69,9 +69,10 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
 
       try {
         const d = new Date(devocional.fecha);
-        const year = d.getUTCFullYear();
-        const month = String(d.getUTCMonth() + 1).padStart(2, '0');
-        const day = String(d.getUTCDate()).padStart(2, '0');
+        // Usar fecha local en lugar de UTC para evitar desface de día
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
         const dateString = `${year}-${month}-${day}`;
 
         addDebugMessage(`🔍 Buscando audios para: ${dateString}`);
