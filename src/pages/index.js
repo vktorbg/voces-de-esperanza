@@ -45,11 +45,8 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
       setAudioLoading(true);
 
       try {
-        const d = new Date(devocional.fecha);
-        const year = d.getUTCFullYear();
-        const month = String(d.getUTCMonth() + 1).padStart(2, '0');
-        const day = String(d.getUTCDate()).padStart(2, '0');
-        const dateString = `${year}-${month}-${day}`;
+        // Use the date string directly from Contentful (already in YYYY-MM-DD format)
+        const dateString = devocional.fecha;
 
         const listRef = ref(storage, 'devocionales');
 
@@ -103,8 +100,13 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
     const isEnglish = typeof window !== 'undefined' && window.location.hostname.includes("voices-of-hope");
     const isSpanish = !isEnglish;
     const url = isSpanish ? 'https://voces-de-esperanza.com' : 'https://voices-of-hope.com';
-    const fechaObj = new Date(devocional.fecha);
-    const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+
+    // Parse date in local timezone
+    const [year, month, day] = devocional.fecha.split('-').map(Number);
+    const fechaObj = new Date(year, month - 1, day);
+
+    // Automatically use the user's local timezone
+    const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     let fechaFormateada = fechaObj.toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', opcionesFecha);
     // Capitalize the first letter of the day of the week
     fechaFormateada = fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
@@ -128,12 +130,20 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
     );
   }
 
+
+  // Helper function to parse YYYY-MM-DD in local timezone (not UTC)
+  const parseDateLocal = (dateString) => {
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day); // month is 0-indexed
+  };
+
   let fechaFormateada = '';
   if (devocional.fecha) {
-    const fecha = new Date(devocional.fecha);
+    const fecha = parseDateLocal(devocional.fecha);
     if (!isNaN(fecha.getTime())) {
       const localeForDate = isEnglishSite() ? 'en-US' : 'es-ES';
-      fechaFormateada = fecha.toLocaleDateString(localeForDate, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+      // Automatically use the user's local timezone
+      fechaFormateada = fecha.toLocaleDateString(localeForDate, { year: 'numeric', month: 'long', day: 'numeric' });
       // Capitalize the first letter of the formatted date
       fechaFormateada = fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
     }
@@ -272,12 +282,12 @@ const IndexPage = ({ data }) => {
     setIsClient(true);
   }, []);
 
-  // Helper to format a date to YYYY-MM-DD in UTC
-  const formatDateUTC = (date) => {
+  // Helper to format a date to YYYY-MM-DD in user's local timezone
+  const formatDateLocal = (date) => {
     const d = new Date(date);
-    const year = d.getUTCFullYear();
-    const month = String(d.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(d.getUTCDate()).padStart(2, '0');
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
 
@@ -290,14 +300,21 @@ const IndexPage = ({ data }) => {
 
   const devocional = useMemo(() => {
     const locale = getLocale();
-    const todayStr = formatDateUTC(new Date());
+    const todayStr = formatDateLocal(new Date());
+
+    console.log('🔍 DEBUG: Looking for devotional');
+    console.log('Today (local):', todayStr);
+    console.log('Locale:', locale);
 
     let devotionalNode = data.allContentfulDevotional.nodes.find(
-      (node) => node.node_locale === locale && formatDateUTC(node.date) === todayStr
+      (node) => node.node_locale === locale && node.date === todayStr
     );
+
+    console.log('Found devotional:', devotionalNode?.title || 'NONE');
 
     // Fallback to the most recent devotional if today's is not found
     if (!devotionalNode) {
+      console.log('⚠️ No devotional for today, using fallback');
       devotionalNode = data.allContentfulDevotional.nodes.find(
         (node) => node.node_locale === locale
       );
