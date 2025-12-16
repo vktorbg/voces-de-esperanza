@@ -1,7 +1,6 @@
-// File: src/services/firebase.js
-
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
+import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration from environment variables
 // Note: In Gatsby, client-exposed env vars must be prefixed with GATSBY_
@@ -20,3 +19,4 @@ const app = initializeApp(firebaseConfig);
 
 // Get a reference to the storage service and export it
 export const storage = getStorage(app);
+export const auth = getAuth(app);

@@ -56,7 +56,8 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
 
         const audios = todaysItems.map(itemRef => {
           const name = itemRef.name;
-          const langMatch = name.match(/-(\w{2,3})\.opus$/);
+          // Match various audio formats: .opus, .m4a, .mp3, .ogg
+          const langMatch = name.match(/-(\w{2,3})\.(opus|m4a|mp3|ogg)$/);
           if (!langMatch) return null;
 
           const langCode = langMatch[1];
