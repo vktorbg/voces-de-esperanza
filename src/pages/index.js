@@ -24,6 +24,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const [availableAudios, setAvailableAudios] = useState([]);
+  const [fetchError, setFetchError] = useState(null); // New state for error debugging
 
   const iconSrc = isEnglishSite() ? "/icon2.jpg" : "/icon.jpg";
 
@@ -43,6 +44,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
         return;
       }
       setAudioLoading(true);
+      setFetchError(null); // Reset error
 
       const fetchPromise = async () => {
         // Use the date string directly from Contentful (already in YYYY-MM-DD format)
@@ -89,6 +91,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
 
       } catch (error) {
         console.error("Error fetching available audios from Firebase:", error);
+        setFetchError(error.message); // Set error for UI
         // Dont clear audios on error, just stop loading to show what we have (or empty)
         if (availableAudios.length === 0) setAvailableAudios([]);
       } finally {
@@ -202,6 +205,15 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
                   </div>
                 )}
               </div>
+            ) : fetchError ? (
+               <div className="flex-shrink-0 p-2 relative group">
+                  <div className="w-6 h-6 flex items-center justify-center text-red-500 cursor-help">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path fillRule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" /></svg>
+                  </div>
+                  <div className="absolute right-0 mt-2 w-48 bg-red-100 text-red-800 text-xs p-2 rounded shadow-lg z-50 invisible group-hover:visible dark:bg-red-900 dark:text-red-100">
+                    {fetchError}
+                  </div>
+               </div>
             ) : null}
           </div>
 
