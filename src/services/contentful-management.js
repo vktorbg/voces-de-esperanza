@@ -12,14 +12,26 @@ const getManagementClient = () => {
   if (!managementClient) {
     const accessToken = process.env.GATSBY_CONTENTFUL_MANAGEMENT_TOKEN;
 
+    // Debug logging
+    console.log('🔍 Checking Contentful Management Token...');
+    console.log('Token exists:', !!accessToken);
+    console.log('Token prefix:', accessToken ? accessToken.substring(0, 10) + '...' : 'N/A');
+
     if (!accessToken) {
       console.error('⚠️ GATSBY_CONTENTFUL_MANAGEMENT_TOKEN not found in environment');
+      console.error('Available env vars:', Object.keys(process.env).filter(k => k.includes('CONTENTFUL')));
       return null;
     }
 
-    managementClient = createClient({
-      accessToken: accessToken,
-    });
+    try {
+      managementClient = createClient({
+        accessToken: accessToken,
+      });
+      console.log('✅ Contentful Management client created successfully');
+    } catch (error) {
+      console.error('❌ Error creating Contentful Management client:', error);
+      return null;
+    }
   }
   return managementClient;
 };
