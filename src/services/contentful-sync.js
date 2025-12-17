@@ -550,11 +550,70 @@ export const fetchAudiosOnly = async (date, locale = 'es-MX') => {
 
     const entry = response.items[0];
 
+    // Debug: Log the raw entry structure
+    console.log('🔍 DEBUG Entry fields:', {
+      audioEspanol: entry.fields.audioEspanol,
+      audioNahuatl: entry.fields.audioNahuatl,
+      audioEnglish: entry.fields.audioEnglish,
+    });
+
     // Extraer URLs de audios (con locale support)
     const getAudioUrl = (audioField) => {
-      if (!audioField) return null;
-      // Los assets no tienen locale, están compartidos
-      return audioField.fields?.file?.url || audioField.file?.url || null;
+      if (!audioField) {
+        console.log('No audioField provided');
+        return null;
+      }
+
+      // When using withAllLocales, assets come wrapped in locale objects
+      // Structure: { 'en-US': { fields: { file: { url: '...' } } } }
+
+      // Try to get the asset from any locale (they share the same file)
+      let asset = null;
+
+      // Check if it's wrapped in locale keys
+      if (audioField['es-MX']) {
+        asset = audioField['es-MX'];
+        console.log('Found es-MX asset:', asset);
+      } else if (audioField['en-US']) {
+        asset = audioField['en-US'];
+        console.log('Found en-US asset:', asset);
+      } else {
+        // Direct asset reference (not wrapped in locale)
+        asset = audioField;
+        console.log('Found direct asset:', asset);
+      }
+
+      // Debug the asset structure
+      console.log('Asset structure:', {
+        asset: asset,
+        hasFields: !!asset?.fields,
+        fields: asset?.fields,
+        hasFile: !!asset?.fields?.file,
+        file: asset?.fields?.file,
+        url: asset?.fields?.file?.url
+      });
+
+      // Now extract URL from the asset
+      // The file field is also wrapped in locale keys
+      let url = null;
+
+      if (asset?.fields?.file) {
+        // Try different locales for the file URL
+        if (asset.fields.file['es-MX']?.url) {
+          url = asset.fields.file['es-MX'].url;
+        } else if (asset.fields.file['en-US']?.url) {
+          url = asset.fields.file['en-US'].url;
+        } else if (asset.fields.file.url) {
+          // Fallback to direct URL (shouldn't happen with withAllLocales)
+          url = asset.fields.file.url;
+        }
+      } else if (asset?.file?.url) {
+        // Direct file URL (old format)
+        url = asset.file.url;
+      }
+
+      console.log('Extracted URL:', url);
+      return url;
     };
 
     const audios = {
@@ -568,6 +627,8 @@ export const fetchAudiosOnly = async (date, locale = 'es-MX') => {
       nahuatl: !!audios.audioNahuatlUrl,
       english: !!audios.audioEnglishUrl,
     });
+
+    console.log('Final URLs:', audios);
 
     return audios;
   } catch (error) {
