@@ -8,8 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useAudioPlayer } from "../components/AudioPlayer";
 import { isEnglishSite } from "../components/LanguageProvider";
 import { Share } from '@capacitor/share';
-import { storage } from '../services/firebase';
-import { ref, listAll, getDownloadURL } from 'firebase/storage';
+import { fetchAudiosOnly } from '../services/contentful-sync';
 
 // --- Icons (No changes here) ---
 const WhatsAppIcon = (props) => (<svg viewBox="0 0 32 32" fill="currentColor" width="1.5em" height="1.5em" {...props}> <path d="M16 3C9.373 3 4 8.373 4 15c0 2.65.87 5.1 2.36 7.09L4 29l7.18-2.32A12.94 12.94 0 0016 27c6.627 0 12-5.373 12-12S22.627 3 16 3zm0 22c-1.98 0-3.87-.52-5.5-1.5l-.39-.23-4.28 1.39 1.4-4.16-.25-.4A9.93 9.93 0 016 15c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10zm5.07-7.75c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.14-1.18-.44-2.24-1.4-.83-.74-1.39-1.65-1.56-1.93-.16-.28-.02-.43.12-.57.12-.12.28-.32.42-.48.14-.16.18-.28.28-.46.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47-.16-.01-.34-.01-.53-.01-.18 0-.48.07-.73.34-.25.28-.97.95-.97 2.3 0 1.35.99 2.65 1.13 2.83.14.18 1.95 2.98 4.73 4.06.66.28 1.18.45 1.58.57.66.21 1.26.18 1.74.11.53-.08 1.65-.67 1.88-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.18-.53-.32z" /> </svg>);
@@ -36,7 +35,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Effect to fetch available audios from Firebase Storage
+  // Effect to fetch available audios from Contentful
   useEffect(() => {
     const fetchAvailableAudios = async () => {
       if (!devocional || !devocional.fecha) {
@@ -46,54 +45,54 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
       setAudioLoading(true);
       setFetchError(null); // Reset error
 
-      const fetchPromise = async () => {
-        // Use the date string directly from Contentful (already in YYYY-MM-DD format)
-        const dateString = devocional.fecha;
-        const listRef = ref(storage, 'devocionales');
-        
-        console.log("Fetching audios for:", dateString);
-        const res = await listAll(listRef);
-        console.log("Found items:", res.items.length);
-
-        const todaysItems = res.items.filter(itemRef => itemRef.name.startsWith(dateString));
-
-        const audios = todaysItems.map(itemRef => {
-          const name = itemRef.name;
-          // Match various audio formats: .opus, .m4a, .mp3, .ogg
-          const langMatch = name.match(/-(\w{2,3})\.(opus|m4a|mp3|ogg)$/);
-          if (!langMatch) return null;
-
-          const langCode = langMatch[1];
-          let langName = '';
-          if (langCode === 'es') langName = t('language_spanish');
-          else if (langCode === 'en') langName = t('language_english');
-          else if (langCode === 'nah') langName = t('language_nahuatl');
-          else return null;
-
-          return { lang: langName, ref: itemRef };
-        }).filter(Boolean);
-
-        const audioUrls = await Promise.all(audios.map(async (audio) => {
-          const url = await getDownloadURL(audio.ref);
-          return { lang: audio.lang, url: url };
-        }));
-
-        setAvailableAudios(audioUrls);
-      };
-
       try {
-        // Timeout after 10 seconds
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error("Timeout getting audios")), 10000)
-        );
-        
-        await Promise.race([fetchPromise(), timeoutPromise]);
+        // Determine locale based on site
+        const locale = typeof window !== 'undefined' && window.location.hostname.includes("voices-of-hope")
+          ? "en-US"
+          : "es-MX";
+
+        console.log("Fetching audios from Contentful for:", devocional.fecha);
+
+        // Use Contentful instead of Firebase Storage - much faster and more reliable
+        const audios = await fetchAudiosOnly(devocional.fecha, locale);
+
+        if (!audios) {
+          console.log("No audios found in Contentful");
+          setAvailableAudios([]);
+          return;
+        }
+
+        // Map to expected format with proper URL handling
+        const audioUrls = [];
+
+        if (audios.audioEspanolUrl) {
+          const url = audios.audioEspanolUrl.startsWith('http')
+            ? audios.audioEspanolUrl
+            : `https:${audios.audioEspanolUrl}`;
+          audioUrls.push({ lang: t('language_spanish'), url });
+        }
+
+        if (audios.audioEnglishUrl) {
+          const url = audios.audioEnglishUrl.startsWith('http')
+            ? audios.audioEnglishUrl
+            : `https:${audios.audioEnglishUrl}`;
+          audioUrls.push({ lang: t('language_english'), url });
+        }
+
+        if (audios.audioNahuatlUrl) {
+          const url = audios.audioNahuatlUrl.startsWith('http')
+            ? audios.audioNahuatlUrl
+            : `https:${audios.audioNahuatlUrl}`;
+          audioUrls.push({ lang: t('language_nahuatl'), url });
+        }
+
+        console.log("Found audios:", audioUrls.length);
+        setAvailableAudios(audioUrls);
 
       } catch (error) {
-        console.error("Error fetching available audios from Firebase:", error);
+        console.error("Error fetching audios from Contentful:", error);
         setFetchError(error.message); // Set error for UI
-        // Dont clear audios on error, just stop loading to show what we have (or empty)
-        if (availableAudios.length === 0) setAvailableAudios([]);
+        setAvailableAudios([]);
       } finally {
         setAudioLoading(false);
       }

@@ -6,6 +6,7 @@ import { storage, auth } from '../services/firebase'; // Added auth
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth'; // Auth methods
 import { Link } from 'gatsby';
+import { updateContentfulAudioField } from '../services/contentful-management';
 
 const UploadPage = () => {
   const [user, setUser] = useState(null);
@@ -117,14 +118,40 @@ const UploadPage = () => {
             addLog(`Conversion complete for ${targetName}. Uploading to Firebase...`);
             setUploadStatus(prev => ({ ...prev, [originalName]: 'uploading' }));
 
-            // Upload
+            // Upload to Firebase
             const storageRef = ref(storage, `devocionales/${targetName}`);
             await uploadBytes(storageRef, blob);
-            const url = await getDownloadURL(storageRef);
+            const firebaseUrl = await getDownloadURL(storageRef);
 
-            addLog(`Uploaded: ${targetName}`);
+            addLog(`Uploaded to Firebase: ${targetName}`);
+
+            // Extract date and language from filename (e.g., "2025-12-17-es.m4a")
+            const dateMatch = targetName.match(/^(\d{4}-\d{2}-\d{2})/);
+            const langMatch = targetName.match(/-(\w{2,3})\.m4a$/);
+
+            if (dateMatch && langMatch) {
+                const devotionalDate = dateMatch[1];
+                const langCode = langMatch[1];
+
+                try {
+                    addLog(`Syncing to Contentful for ${devotionalDate} (${langCode})...`);
+                    setUploadStatus(prev => ({ ...prev, [originalName]: 'syncing' }));
+
+                    // Update Contentful with Firebase URL
+                    await updateContentfulAudioField(devotionalDate, langCode, firebaseUrl);
+
+                    addLog(`✅ Synced to Contentful: ${targetName}`);
+                } catch (contentfulError) {
+                    console.error('Contentful sync error:', contentfulError);
+                    addLog(`⚠️ Firebase upload OK but Contentful sync failed: ${contentfulError.message}`);
+                    // Don't fail the whole upload - Firebase URL is still available
+                }
+            } else {
+                addLog(`⚠️ Could not parse date/language from filename: ${targetName}`);
+            }
+
             setUploadStatus(prev => ({ ...prev, [originalName]: 'done' }));
-            
+
             // Cleanup
             await ffmpeg.deleteFile(originalName);
             await ffmpeg.deleteFile(targetName);
@@ -232,6 +259,7 @@ const UploadPage = () => {
                                             ${uploadStatus[f.name] === 'pending' ? 'bg-gray-200 text-gray-600' : ''}
                                             ${uploadStatus[f.name] === 'converting' ? 'bg-yellow-100 text-yellow-700' : ''}
                                             ${uploadStatus[f.name] === 'uploading' ? 'bg-blue-100 text-blue-700' : ''}
+                                            ${uploadStatus[f.name] === 'syncing' ? 'bg-purple-100 text-purple-700' : ''}
                                             ${uploadStatus[f.name] === 'done' ? 'bg-green-100 text-green-700' : ''}
                                             ${uploadStatus[f.name] === 'error' ? 'bg-red-100 text-red-700' : ''}
                                         `}>
