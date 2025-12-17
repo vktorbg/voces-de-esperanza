@@ -44,13 +44,14 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
       }
       setAudioLoading(true);
 
-      try {
+      const fetchPromise = async () => {
         // Use the date string directly from Contentful (already in YYYY-MM-DD format)
         const dateString = devocional.fecha;
-
         const listRef = ref(storage, 'devocionales');
-
+        
+        console.log("Fetching audios for:", dateString);
         const res = await listAll(listRef);
+        console.log("Found items:", res.items.length);
 
         const todaysItems = res.items.filter(itemRef => itemRef.name.startsWith(dateString));
 
@@ -76,10 +77,20 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
         }));
 
         setAvailableAudios(audioUrls);
+      };
+
+      try {
+        // Timeout after 10 seconds
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error("Timeout getting audios")), 10000)
+        );
+        
+        await Promise.race([fetchPromise(), timeoutPromise]);
 
       } catch (error) {
         console.error("Error fetching available audios from Firebase:", error);
-        setAvailableAudios([]);
+        // Dont clear audios on error, just stop loading to show what we have (or empty)
+        if (availableAudios.length === 0) setAvailableAudios([]);
       } finally {
         setAudioLoading(false);
       }

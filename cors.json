@@ -1,7 +1,7 @@
 [
   {
-    "origin": ["http://localhost:8000", "https://voces-de-esperanza.com", "https://voices-of-hope.com"],
-    "method": ["GET"],
+    "origin": ["http://localhost:8000", "https://voces-de-esperanza.com", "https://voices-of-hope.com", "capacitor://localhost", "http://localhost"],
+    "method": ["GET", "HEAD"],
     "maxAgeSeconds": 3600
   }
 ]
