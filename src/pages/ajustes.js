@@ -11,6 +11,9 @@ export default function AjustesPage() {
     new_videos: true,
     special_resources: true,
   });
+  const [fcmToken, setFcmToken] = useState('');
+  const [showToken, setShowToken] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -22,6 +25,12 @@ export default function AjustesPage() {
           new_videos: parsed.new_videos ?? true,
           special_resources: parsed.special_resources ?? true,
         });
+      }
+
+      // Load FCM token
+      const tokenResult = await Preferences.get({ key: 'fcm_token' });
+      if (tokenResult.value) {
+        setFcmToken(tokenResult.value);
       }
     };
     loadSettings();
@@ -37,6 +46,24 @@ export default function AjustesPage() {
       key: 'notification_topics',
       value: JSON.stringify({ ...topics, ...newSettings })
     });
+  };
+
+  const copyTokenToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(fcmToken);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = fcmToken;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   if (!Capacitor.isNativePlatform()) {
@@ -116,6 +143,48 @@ export default function AjustesPage() {
             💡 <strong>Nota:</strong> Las notificaciones se enviarán en el idioma que tengas configurado en la aplicación.
           </p>
         </div>
+
+        {/* DEBUG: Token FCM - Solo para testing */}
+        {fcmToken && (
+          <div className="mt-8 p-4 bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-300 dark:border-yellow-700 rounded-lg">
+            <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+              🔧 Token FCM (Para Testing)
+            </h3>
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
+              Usa este token para enviar notificaciones de prueba desde Firebase Console
+            </p>
+
+            <div className="flex items-start gap-2">
+              <button
+                onClick={() => setShowToken(!showToken)}
+                className="px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium rounded-lg transition-colors"
+              >
+                {showToken ? 'Ocultar Token' : 'Mostrar Token'}
+              </button>
+
+              {showToken && (
+                <button
+                  onClick={copyTokenToClipboard}
+                  className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                  {copied ? '✓ Copiado!' : 'Copiar Token'}
+                </button>
+              )}
+            </div>
+
+            {showToken && (
+              <div className="mt-3 p-3 bg-white dark:bg-gray-800 rounded border border-yellow-300 dark:border-yellow-700">
+                <p className="text-xs font-mono break-all text-gray-800 dark:text-gray-200">
+                  {fcmToken}
+                </p>
+              </div>
+            )}
+
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-3">
+              ⚠️ Este botón es temporal para pruebas. Se eliminará en producción.
+            </p>
+          </div>
+        )}
       </div>
     </Layout>
   );
