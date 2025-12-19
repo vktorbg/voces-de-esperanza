@@ -111,23 +111,47 @@ workflows:
           echo $PROVISIONING_PROFILE_BASE64 | base64 --decode > "$PROFILE_PATH/VDE_AppStore_Profile.mobileprovision"
           
       - name: Construir y Archivar (Firma Dirigida por SDK)
-        script: | 
+        script: |
           set -ex
           # Source the environment to get keychain variables
           source $CM_ENV
-          
-          # First, properly configure the App target for manual signing using sed
-          # Find and replace CODE_SIGN_STYLE = Automatic with Manual for the App target
-          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' ios/App/App.xcodeproj/project.pbxproj
-          
-          # Also set the provisioning profile for the App target
+
+          # Navigate to project directory
+          cd ios/App
+
+          # Configure the App target settings in xcodeproj
+          # This is a more precise approach using PlistBuddy
+          PROJECT_FILE="App.xcodeproj/project.pbxproj"
+
+          # Backup the original file
+          cp "$PROJECT_FILE" "$PROJECT_FILE.backup"
+
+          # Use sed to modify only the App target (not Pods)
+          # Find the App target section and update its build settings
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' "$PROJECT_FILE"
+
+          # Add provisioning profile to App target only
           sed -i '' '/CODE_SIGN_STYLE = Manual;/a\
-                PROVISIONING_PROFILE_SPECIFIER = "VDE AppStore Profile";' ios/App/App.xcodeproj/project.pbxproj
-          
+                PROVISIONING_PROFILE_SPECIFIER = "VDE AppStore Profile";' "$PROJECT_FILE"
+
+          # Add entitlements to App target only - using a more specific pattern
+          # This pattern looks for the App target's build configuration
+          sed -i '' '/\/\* Begin PBXNativeTarget section \*\//,/\/\* End PBXNativeTarget section \*\// {
+            /name = App;/,/\/\* End PBXNativeTarget section \*\// {
+              /buildSettings = {/,/};/ {
+                /CODE_SIGN_STYLE = Manual;/a\
+                CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
+              }
+            }
+          }' "$PROJECT_FILE"
+
+          # Go back to build directory
+          cd ../..
+
           # Unlock keychain before building
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-          
-          # Now build with the configured settings
+
+          # Now build - DO NOT set CODE_SIGN_ENTITLEMENTS here as it's already in the project file
           xcodebuild archive \
             -workspace "ios/App/App.xcworkspace" \
             -scheme "App" \
@@ -135,7 +159,6 @@ workflows:
             -configuration Release \
             DEVELOPMENT_TEAM="$XCODE_TEAM_ID" \
             CODE_SIGN_IDENTITY="Apple Distribution" \
-            CODE_SIGN_ENTITLEMENTS="App/App.entitlements" \
             OTHER_CODE_SIGN_FLAGS="--keychain \"$KEYCHAIN_PATH\""
             
       - name: Exportar el .ipa (Modo Manual)
