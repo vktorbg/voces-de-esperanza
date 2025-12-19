@@ -4,4 +4,6 @@
     <string name="title_activity_main">VocesDeEsperanza</string>
     <string name="package_name">com.vocesdeesperanza.app</string>
     <string name="custom_url_scheme">com.vocesdeesperanza.app</string>
+    <string name="default_notification_channel_id">devotional_notifications</string>
+    <string name="default_notification_channel_name">Devocionales Diarios</string>
 </resources>

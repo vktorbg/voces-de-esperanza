@@ -10,6 +10,7 @@ import { PushNotifications } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { StatusBar, Style } from '@capacitor/status-bar';
+import { Preferences } from '@capacitor/preferences';
 
 // Icons
 const BookOpenIcon = (props) => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}> <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /> </svg> );
@@ -74,34 +75,116 @@ export default function Layout({ children }) {
     }
   }, []);
 
-  // TODO: REACTIVAR CUANDO FIREBASE ESTÉ CONFIGURADO
-  // Push Notifications Registration - TEMPORALMENTE DESHABILITADO
-  // Para reactivar: descomentar este bloque después de añadir google-services.json
-  /*
+  // Push Notifications Registration
   React.useEffect(() => {
     if (Capacitor.isNativePlatform()) {
-      // Solicita permiso para notificaciones
-      PushNotifications.requestPermissions().then(result => {
-        if (result.receive === 'granted') {
-          // Si el permiso es otorgado, registra el dispositivo
-          PushNotifications.register();
+      const setupPushNotifications = async () => {
+        try {
+          const permResult = await PushNotifications.checkPermissions();
+
+          if (permResult.receive === 'prompt') {
+            const requestResult = await PushNotifications.requestPermissions();
+            if (requestResult.receive !== 'granted') {
+              console.log('Push notification permission denied');
+              return;
+            }
+          } else if (permResult.receive === 'denied') {
+            console.log('Push notification permission denied');
+            return;
+          }
+
+          await PushNotifications.register();
+
+          // Get current language and subscribe to topics
+          const { value } = await Preferences.get({ key: 'language' });
+          const userLang = value || 'es';
+          await subscribeToTopics(userLang);
+
+        } catch (error) {
+          console.error('Error setting up push notifications:', error);
         }
-      });
+      };
 
-      // Cuando el registro es exitoso, obtienes un token
-      PushNotifications.addListener('registration', (token) => {
-        console.log('Push registration success, token: ' + token.value);
-        // ¡IMPORTANTE! Envía este token a OneSignal
-        // Puedes usar el SDK de OneSignal para asociar este token a un usuario
-        // window.OneSignal.setExternalUserId(...) o similar
-      });
+      setupPushNotifications();
 
-      PushNotifications.addListener('registrationError', (error) => {
-        console.error('Error on registration: ' + JSON.stringify(error));
-      });
+      // Registration success listener
+      const registrationListener = PushNotifications.addListener(
+        'registration',
+        (token) => {
+          console.log('Push registration success, token:', token.value);
+          Preferences.set({ key: 'fcm_token', value: token.value });
+        }
+      );
+
+      // Registration error listener
+      const errorListener = PushNotifications.addListener(
+        'registrationError',
+        (error) => {
+          console.error('Error on registration:', JSON.stringify(error));
+        }
+      );
+
+      // Notification received (foreground)
+      const receivedListener = PushNotifications.addListener(
+        'pushNotificationReceived',
+        (notification) => {
+          console.log('Push notification received:', notification);
+        }
+      );
+
+      // Notification tapped
+      const actionListener = PushNotifications.addListener(
+        'pushNotificationActionPerformed',
+        (notification) => {
+          handleNotificationTap(notification);
+        }
+      );
+
+      return () => {
+        registrationListener.remove();
+        errorListener.remove();
+        receivedListener.remove();
+        actionListener.remove();
+      };
     }
   }, []);
-  */
+
+  // Subscribe to notification topics based on language
+  const subscribeToTopics = async (language) => {
+    try {
+      await Preferences.set({
+        key: 'notification_topics',
+        value: JSON.stringify({
+          daily_devotional: true,
+          new_videos: true,
+          special_resources: true,
+          language: language
+        })
+      });
+      console.log(`Subscribed to topics for language: ${language}`);
+    } catch (error) {
+      console.error('Error subscribing to topics:', error);
+    }
+  };
+
+  // Handle notification tap
+  const handleNotificationTap = (notificationAction) => {
+    const data = notificationAction.notification.data;
+
+    if (data.type === 'daily_devotional' && data.date) {
+      if (typeof window !== 'undefined') {
+        window.location.href = `/?date=${data.date}`;
+      }
+    } else if (data.type === 'new_video' && data.videoId) {
+      if (typeof window !== 'undefined') {
+        window.location.href = `/videos/?highlight=${data.videoId}`;
+      }
+    } else if (data.type === 'special_resource' && data.url) {
+      if (typeof window !== 'undefined') {
+        window.location.href = data.url;
+      }
+    }
+  };
 
   // ...previous code...
 

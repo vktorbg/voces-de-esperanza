@@ -24,6 +24,9 @@ end
 target 'App' do
   capacitor_pods
   # Add your Pods here
+
+  # Firebase Messaging for iOS
+  pod 'Firebase/Messaging', '~> 10.19.0'
 end
 
 post_install do |installer|

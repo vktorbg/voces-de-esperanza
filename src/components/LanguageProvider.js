@@ -97,6 +97,18 @@ export const LanguageProvider = ({ children }) => {
       await i18nInstance.changeLanguage(lng);
       setLanguage(lng);
       await Preferences.set({ key: 'language', value: lng });
+
+      // Update notification topics when language changes
+      if (Capacitor.isNativePlatform()) {
+        const { value } = await Preferences.get({ key: 'notification_topics' });
+        const topics = value ? JSON.parse(value) : {};
+        topics.language = lng;
+        await Preferences.set({
+          key: 'notification_topics',
+          value: JSON.stringify(topics)
+        });
+        console.log(`Notification language updated to: ${lng}`);
+      }
     } catch (e) {
       console.error('Error changing language:', e);
     }

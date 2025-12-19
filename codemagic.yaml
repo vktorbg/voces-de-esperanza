@@ -25,14 +25,18 @@ workflows:
         script: | 
           # Cambia 'npm run build' por 'npm run build:mobile'
           npm run build:mobile
+      - name: Decodificar google-services.json
+        script: |
+          echo $GOOGLE_SERVICES_JSON | base64 --decode > android/app/google-services.json
+
       - name: Sincronizar con Capacitor y actualizar Android
-        script: | 
+        script: |
           npx cap sync android
           npx cap update android
-      
+
       # --- PASO NUEVO Y CRUCIAL ---
       - name: Decodificar y guardar el Keystore
-        script: | 
+        script: |
           echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
           
       - name: Construir AAB de Android
@@ -70,11 +74,16 @@ workflows:
         script: | 
           cd ios/App && pod install
       - name: Construir el sitio Gatsby
-        script: | 
+        script: |
           # Cambia 'npm run build' por 'npm run build:mobile'
           npm run build:mobile
+
+      - name: Decodificar GoogleService-Info.plist
+        script: |
+          echo $GOOGLE_SERVICE_INFO_PLIST | base64 --decode > ios/App/App/GoogleService-Info.plist
+
       - name: Sincronizar con Capacitor y actualizar iOS
-        script: | 
+        script: |
           npx cap sync ios
           npx cap update ios
       - name: Configurar Llavero y Perfil de Aprovisionamiento

@@ -5,3 +5,8 @@ public
 voces-de-esperanza.keystore
 vde_distribution_certificate.p12
 VDE_AppStore_Profile.mobileprovision
+
+# Firebase config files - NEVER commit these
+android/app/google-services.json
+ios/App/App/GoogleService-Info.plist
+functions/.runtimeconfig.json
