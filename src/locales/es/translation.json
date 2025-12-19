@@ -204,5 +204,15 @@
       "about": "Conoce más sobre nuestra misión, visión y el equipo que hace posible Voces de Esperanza.",
       "resources": "Materiales y guías para fortalecer tu crecimiento espiritual y habilidades de liderazgo."
     }
-  }
+  },
+  "call_to_action_title": "Llamado a la Acción",
+  "call_to_action_subtitle": "Videos semanales que conectan la Palabra con acciones concretas para tu vida.",
+  "call_to_action_banner_alt": "Banner de Llamado a la Acción",
+  "call_to_action_intro": "Cada sábado, te invitamos a reflexionar sobre cómo aplicar las enseñanzas de la semana en acciones prácticas y transformadoras.",
+  "call_to_action_no_videos": "Próximamente videos de Llamado a la Acción",
+  "call_to_action_check_back": "Vuelve cada sábado para ver el nuevo video semanal.",
+  "call_to_action_visit_channel": "Visita Nuestro Canal en YouTube",
+  "call_to_action_section_title": "Llamado a la Acción",
+  "call_to_action_section_subtitle": "Video semanal: De la reflexión a la acción",
+  "call_to_action_view_all": "Ver todos los videos semanales"
 }

@@ -17,7 +17,58 @@ const ReloadIcon = (props) => (<svg xmlns="http://www.w3.org/2000/svg" fill="non
 
 const DevotionalSkeleton = () => (<div className="font-sans w-full max-w-md sm:max-w-2xl mx-auto p-4 sm:p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg animate-pulse" style={{ maxWidth: '95vw' }}> <div className="flex items-start mb-6"> <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg mr-4 bg-gray-200 dark:bg-gray-700"></div> <div className="flex-grow pt-2"> <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div> <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div> </div> </div> <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-5/6 mb-6"></div> <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg"> <div className="h-5 bg-gray-200 dark:bg-gray-600 rounded w-1/3 mb-2"></div> <div className="h-6 bg-gray-200 dark:bg-gray-600 rounded w-3/4"></div> </div> <div className="space-y-6"> <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div> <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div> <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div> </div> </div>);
 
-const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, setAudioLoading }) => {
+// Component for embedded Call to Action video on Saturdays
+const CallToActionVideoSection = ({ video, t, isSaturday }) => {
+  if (!video || !isSaturday) return null;
+
+  return (
+    <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+      {/* Section Header */}
+      <div className="mb-4 text-center">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+          <span role="img" aria-label="fire emoji" className="mr-2">🔥</span>
+          {t('call_to_action_section_title', 'Llamado a la Acción')}
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400">
+          {t('call_to_action_section_subtitle', 'Video semanal: De la reflexión a la acción')}
+        </p>
+      </div>
+
+      {/* Embedded YouTube Player with 16:9 aspect ratio */}
+      <div className="relative rounded-lg overflow-hidden shadow-lg mb-4"
+           style={{ paddingBottom: '56.25%', height: 0 }}>
+        <iframe
+          src={`https://www.youtube.com/embed/${video.videoId}?rel=0&modestbranding=1`}
+          title={video.title}
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="absolute top-0 left-0 w-full h-full"
+        />
+      </div>
+
+      {/* Video Title */}
+      <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 text-center">
+        {video.title}
+      </h3>
+
+      {/* CTA Button to Full Video Section */}
+      <div className="text-center">
+        <Link
+          to="/llamado-accion/"
+          className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition"
+        >
+          {t('call_to_action_view_all', 'Ver todos los videos semanales')}
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 ml-1">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, setAudioLoading, callToActionVideo, isSaturdayDevotional }) => {
   const { t } = useTranslation();
   const { playTrack } = useAudioPlayer();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -255,6 +306,13 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
             )}
           </div>
 
+          {/* Call to Action Video Section (only on Saturdays) */}
+          <CallToActionVideoSection
+            video={callToActionVideo}
+            t={t}
+            isSaturday={isSaturdayDevotional}
+          />
+
           <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center gap-4">
             <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={async () => {
               const textToShare = getShareText(devocional, t);
@@ -314,6 +372,14 @@ const IndexPage = ({ data }) => {
     return `${year}-${month}-${day}`;
   };
 
+  // Helper to check if a date string (YYYY-MM-DD) is Saturday
+  const isSaturday = (dateString) => {
+    if (!dateString) return false;
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.getDay() === 6; // 6 = Saturday (0 = Sunday)
+  };
+
   const getLocale = () => {
     if (isClient && window.location.hostname.includes("voices-of-hope")) {
       return "en-US";
@@ -356,6 +422,24 @@ const IndexPage = ({ data }) => {
       : null;
   }, [data, isClient]);
 
+  // Get the most recent Call to Action video
+  const callToActionVideo = useMemo(() => {
+    const videos = data.allContentfulVideo?.nodes || [];
+    if (videos.length === 0) return null;
+
+    // If we have a devotional and it's Saturday, try exact match by date
+    if (devocional?.fecha && isSaturday(devocional.fecha)) {
+      const exactMatch = videos.find(v => v.publicationDate === devocional.fecha);
+      if (exactMatch) return exactMatch;
+    }
+
+    // Fallback: return most recent video (already sorted DESC)
+    return videos[0];
+  }, [data, devocional]);
+
+  // Check if current devotional is for a Saturday
+  const isSaturdayDevotional = devocional?.fecha ? isSaturday(devocional.fecha) : false;
+
   if (!isClient) {
     return <DevotionalSkeleton />;
   }
@@ -369,6 +453,8 @@ const IndexPage = ({ data }) => {
           isClient={isClient}
           audioLoading={audioLoading}
           setAudioLoading={setAudioLoading}
+          callToActionVideo={callToActionVideo}
+          isSaturdayDevotional={isSaturdayDevotional}
         />
       ) : (
         <DevotionalSkeleton />
@@ -399,11 +485,11 @@ const IndexPage = ({ data }) => {
 
 export default IndexPage;
 
-// --- GraphQL Query (No changes here) ---
+// --- GraphQL Query ---
 export const query = graphql`
   query LatestDevotionalQuery {
     allContentfulDevotional(
-      sort: { fields: [date], order: DESC } 
+      sort: { fields: [date], order: DESC }
     ) {
       nodes {
         title
@@ -435,6 +521,18 @@ export const query = graphql`
           }
         }
         node_locale
+      }
+    }
+    allContentfulVideo(
+      filter: { videoType: { eq: "Llamado a la acción" } }
+      sort: { fields: publicationDate, order: DESC }
+      limit: 5
+    ) {
+      nodes {
+        title
+        videoId
+        videoType
+        publicationDate
       }
     }
   }

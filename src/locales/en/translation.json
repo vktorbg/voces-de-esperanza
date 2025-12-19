@@ -204,5 +204,15 @@
       "about": "Learn more about our mission, vision and the team that makes Voices of Hope possible.",
       "resources": "Materials and guides to strengthen your spiritual growth and leadership skills."
     }
-  }
+  },
+  "call_to_action_title": "Call to Action",
+  "call_to_action_subtitle": "Weekly videos connecting the Word with concrete actions for your life.",
+  "call_to_action_banner_alt": "Call to Action banner",
+  "call_to_action_intro": "Every Saturday, we invite you to reflect on how to apply the week's teachings into practical and transformative actions.",
+  "call_to_action_no_videos": "Call to Action videos coming soon",
+  "call_to_action_check_back": "Check back every Saturday for the new weekly video.",
+  "call_to_action_visit_channel": "Visit Our YouTube Channel",
+  "call_to_action_section_title": "Call to Action",
+  "call_to_action_section_subtitle": "Weekly video: From reflection to action",
+  "call_to_action_view_all": "View all weekly videos"
 }
