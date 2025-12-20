@@ -73,6 +73,7 @@ const CallToActionVideoSection = ({ video, t, isSaturday }) => {
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
             className="absolute top-0 left-0 w-full h-full"
             onLoad={() => setIframeLoaded(true)}
             onError={() => {
