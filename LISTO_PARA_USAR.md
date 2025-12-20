@@ -205,7 +205,7 @@ Para cambiar la duración del cache, edita:
 ```javascript
 // Línea 18
 const CACHE_DURATION = 12 * 60 * 60 * 1000; // 12 horas
-
+,
 // Ejemplos:
 const CACHE_DURATION = 6 * 60 * 60 * 1000;  // 6 horas
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 horas
