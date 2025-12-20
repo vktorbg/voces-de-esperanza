@@ -6,9 +6,10 @@ import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import { Link, graphql } from "gatsby";
 import { useTranslation } from "react-i18next";
 import { useAudioPlayer } from "../components/AudioPlayer";
-import { isEnglishSite } from "../components/LanguageProvider";
+import { isEnglishSite, useLanguage } from "../components/LanguageProvider";
 import { Share } from '@capacitor/share';
 import { fetchAudiosOnly } from '../services/contentful-sync';
+import { filterVideosByLanguage } from '../utils/videoFilters';
 
 // --- Icons (No changes here) ---
 const WhatsAppIcon = (props) => (<svg viewBox="0 0 32 32" fill="currentColor" width="1.5em" height="1.5em" {...props}> <path d="M16 3C9.373 3 4 8.373 4 15c0 2.65.87 5.1 2.36 7.09L4 29l7.18-2.32A12.94 12.94 0 0016 27c6.627 0 12-5.373 12-12S22.627 3 16 3zm0 22c-1.98 0-3.87-.52-5.5-1.5l-.39-.23-4.28 1.39 1.4-4.16-.25-.4A9.93 9.93 0 016 15c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10zm5.07-7.75c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.14-1.18-.44-2.24-1.4-.83-.74-1.39-1.65-1.56-1.93-.16-.28-.02-.43.12-.57.12-.12.28-.32.42-.48.14-.16.18-.28.28-.46.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47-.16-.01-.34-.01-.53-.01-.18 0-.48.07-.73.34-.25.28-.97.95-.97 2.3 0 1.35.99 2.65 1.13 2.83.14.18 1.95 2.98 4.73 4.06.66.28 1.18.45 1.58.57.66.21 1.26.18 1.74.11.53-.08 1.65-.67 1.88-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.18-.53-.32z" /> </svg>);
@@ -358,6 +359,7 @@ const IndexPage = ({ data }) => {
   const [showWhatsAppBox, setShowWhatsAppBox] = useState(false);
   const [audioLoading, setAudioLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const { language } = useLanguage();
 
   useEffect(() => {
     setIsClient(true);
@@ -424,7 +426,11 @@ const IndexPage = ({ data }) => {
 
   // Get the most recent Call to Action video
   const callToActionVideo = useMemo(() => {
-    const videos = data.allContentfulVideo?.nodes || [];
+    const allVideos = data.allContentfulVideo?.nodes || [];
+
+    // Filter videos by language first
+    const videos = filterVideosByLanguage(allVideos, language);
+
     if (videos.length === 0) return null;
 
     // If we have a devotional and it's Saturday, try exact match by date
@@ -435,7 +441,7 @@ const IndexPage = ({ data }) => {
 
     // Fallback: return most recent video (already sorted DESC)
     return videos[0];
-  }, [data, devocional]);
+  }, [data, devocional, language]);
 
   // Check if current devotional is for a Saturday
   const isSaturdayDevotional = devocional?.fecha ? isSaturday(devocional.fecha) : false;
@@ -533,6 +539,7 @@ export const query = graphql`
         videoId
         videoType
         publicationDate
+        idioma
       }
     }
   }

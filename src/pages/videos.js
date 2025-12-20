@@ -3,6 +3,8 @@
 import React from "react";
 import { graphql } from "gatsby";
 import { useTranslation } from "react-i18next";
+import { useLanguage } from "../components/LanguageProvider";
+import { filterVideosByLanguage } from "../utils/videoFilters";
 
 // --- Componente para una tarjeta de video individual ---
 const VideoCard = ({ videoId, title }) => {
@@ -44,30 +46,35 @@ const VideoRow = ({ title, videos }) => {
 // --- Componente principal de la página de videos ---
 const VideosPage = ({ data }) => {
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const youtubeIconUrl = "https://www.vectorlogo.zone/logos/youtube/youtube-icon.svg";
 
   // Procesar y clasificar los videos obtenidos de Contentful
   const allVideos = data?.allContentfulVideo?.nodes || [];
+
+  // Filtrar videos por idioma ANTES de clasificarlos
+  const videosFilteredByLang = filterVideosByLanguage(allVideos, language);
+
   // Primero, filtra los recomendados y elimina duplicados por videoId
   const videosRecomendados = Array.from(
     new Map(
-      allVideos.filter(v => v.isRecommended).map(v => [v.videoId, v])
+      videosFilteredByLang.filter(v => v.isRecommended).map(v => [v.videoId, v])
     ).values()
   );
   // Luego, excluye los recomendados de las otras listas
   const recomendadosIds = new Set(videosRecomendados.map(v => v.videoId));
   const shorts = Array.from(
     new Map(
-      allVideos.filter(v => v.videoType === 'Short' && !recomendadosIds.has(v.videoId)).map(v => [v.videoId, v])
+      videosFilteredByLang.filter(v => v.videoType === 'Short' && !recomendadosIds.has(v.videoId)).map(v => [v.videoId, v])
     ).values()
   );
   const videosLargos = Array.from(
     new Map(
-      allVideos.filter(v => v.videoType === 'Video Largo' && !recomendadosIds.has(v.videoId)).map(v => [v.videoId, v])
+      videosFilteredByLang.filter(v => v.videoType === 'Video Largo' && !recomendadosIds.has(v.videoId)).map(v => [v.videoId, v])
     ).values()
   );
 
-  const hasVideos = allVideos.length > 0;
+  const hasVideos = videosFilteredByLang.length > 0;
 
   return (
     // === AÑADIDO: contenedor con padding superior e inferior para safe-area ===
@@ -126,6 +133,7 @@ export const query = graphql`
         videoType
         isRecommended
         publicationDate
+        idioma
       }
     }
   }

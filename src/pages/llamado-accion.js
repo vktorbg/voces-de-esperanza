@@ -3,6 +3,8 @@
 import React from "react";
 import { graphql } from "gatsby";
 import { useTranslation } from "react-i18next";
+import { useLanguage } from "../components/LanguageProvider";
+import { filterVideosByLanguage } from "../utils/videoFilters";
 
 // --- Componente para una tarjeta de video individual ---
 const ActionVideoCard = ({ videoId, title, publicationDate }) => {
@@ -65,7 +67,12 @@ const ActionVideoCard = ({ videoId, title, publicationDate }) => {
 // --- Componente principal de la página ---
 const LlamadoAccionPage = ({ data }) => {
   const { t } = useTranslation();
-  const callToActionVideos = data?.allContentfulVideo?.nodes || [];
+  const { language } = useLanguage();
+  const allVideos = data?.allContentfulVideo?.nodes || [];
+
+  // Filtrar videos por idioma
+  const callToActionVideos = filterVideosByLanguage(allVideos, language);
+
   const youtubeIconUrl = "https://www.vectorlogo.zone/logos/youtube/youtube-icon.svg";
 
   return (
@@ -161,6 +168,7 @@ export const query = graphql`
         videoId
         videoType
         publicationDate
+        idioma
       }
     }
   }
