@@ -20,6 +20,9 @@ const DevotionalSkeleton = () => (<div className="font-sans w-full max-w-md sm:m
 
 // Component for embedded Call to Action video on Saturdays
 const CallToActionVideoSection = ({ video, t, isSaturday }) => {
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
   // Enhanced validation: check for video, isSaturday, and valid videoId
   if (!video || !isSaturday || !video.videoId || video.videoId.trim() === '') {
     console.log('CallToActionVideoSection not rendering:', {
@@ -27,6 +30,14 @@ const CallToActionVideoSection = ({ video, t, isSaturday }) => {
       isSaturday,
       videoId: video?.videoId
     });
+    return null;
+  }
+
+  // Sanitize videoId to prevent injection
+  const sanitizedVideoId = video.videoId.replace(/[^a-zA-Z0-9_-]/g, '');
+
+  if (sanitizedVideoId !== video.videoId) {
+    console.error('Invalid videoId detected:', video.videoId);
     return null;
   }
 
@@ -46,14 +57,30 @@ const CallToActionVideoSection = ({ video, t, isSaturday }) => {
       {/* Embedded YouTube Player with 16:9 aspect ratio */}
       <div className="relative rounded-lg overflow-hidden shadow-lg mb-4"
            style={{ paddingBottom: '56.25%', height: 0 }}>
-        <iframe
-          src={`https://www.youtube.com/embed/${video.videoId}?rel=0&modestbranding=1`}
-          title={video.title || 'Llamado a la Acción'}
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          className="absolute top-0 left-0 w-full h-full"
-        />
+        {!iframeLoaded && !hasError && (
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-700">
+            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
+        {hasError ? (
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+            <p>{t('video_load_error', 'Error al cargar el video')}</p>
+          </div>
+        ) : (
+          <iframe
+            src={`https://www.youtube.com/embed/${sanitizedVideoId}?rel=0&modestbranding=1`}
+            title={video.title || 'Llamado a la Acción'}
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="absolute top-0 left-0 w-full h-full"
+            onLoad={() => setIframeLoaded(true)}
+            onError={() => {
+              console.error('Error loading YouTube iframe for video:', sanitizedVideoId);
+              setHasError(true);
+            }}
+          />
+        )}
       </div>
 
       {/* Video Title */}
@@ -434,7 +461,13 @@ const IndexPage = ({ data }) => {
 
   // Get the most recent Call to Action video
   const callToActionVideo = useMemo(() => {
-    const allVideos = data.allContentfulVideo?.nodes || [];
+    // Early return if we don't have video data
+    if (!data?.allContentfulVideo?.nodes) {
+      console.log('⚠️ No video data available');
+      return null;
+    }
+
+    const allVideos = data.allContentfulVideo.nodes;
 
     console.log('🎥 CallToAction Video Selection Debug:', {
       totalVideos: allVideos.length,
@@ -447,25 +480,25 @@ const IndexPage = ({ data }) => {
 
     console.log('Filtered videos by language:', videos.length);
 
-    if (videos.length === 0) {
+    if (!videos || videos.length === 0) {
       console.log('⚠️ No videos found for language:', language);
       return null;
     }
 
     // If we have a devotional and it's Saturday, try exact match by date
     if (devocional?.fecha && isSaturday(devocional.fecha)) {
-      const exactMatch = videos.find(v => v.publicationDate === devocional.fecha);
-      if (exactMatch && exactMatch.videoId) {
+      const exactMatch = videos.find(v => v?.publicationDate === devocional.fecha && v?.videoId);
+      if (exactMatch) {
         console.log('✅ Found exact match video:', exactMatch.title, exactMatch.videoId);
         return exactMatch;
       }
     }
 
-    // Fallback: return most recent video (already sorted DESC)
-    const fallbackVideo = videos[0];
+    // Fallback: return most recent video with valid videoId (already sorted DESC)
+    const fallbackVideo = videos.find(v => v?.videoId && v.videoId.trim() !== '');
 
-    if (!fallbackVideo || !fallbackVideo.videoId) {
-      console.log('⚠️ Fallback video has no videoId:', fallbackVideo);
+    if (!fallbackVideo) {
+      console.log('⚠️ No valid video with videoId found');
       return null;
     }
 
