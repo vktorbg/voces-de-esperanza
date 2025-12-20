@@ -71,7 +71,16 @@ const LlamadoAccionPage = ({ data }) => {
   const allVideos = data?.allContentfulVideo?.nodes || [];
 
   // Filtrar videos por idioma
-  const callToActionVideos = filterVideosByLanguage(allVideos, language);
+  const filteredVideos = filterVideosByLanguage(allVideos, language);
+
+  // Deduplicar videos por videoId (en caso de que haya duplicados en Contentful)
+  const callToActionVideos = filteredVideos.reduce((acc, video) => {
+    const isDuplicate = acc.some(v => v.videoId === video.videoId);
+    if (!isDuplicate) {
+      acc.push(video);
+    }
+    return acc;
+  }, []);
 
   const youtubeIconUrl = "https://www.vectorlogo.zone/logos/youtube/youtube-icon.svg";
 
