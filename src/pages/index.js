@@ -20,7 +20,15 @@ const DevotionalSkeleton = () => (<div className="font-sans w-full max-w-md sm:m
 
 // Component for embedded Call to Action video on Saturdays
 const CallToActionVideoSection = ({ video, t, isSaturday }) => {
-  if (!video || !isSaturday) return null;
+  // Enhanced validation: check for video, isSaturday, and valid videoId
+  if (!video || !isSaturday || !video.videoId || video.videoId.trim() === '') {
+    console.log('CallToActionVideoSection not rendering:', {
+      hasVideo: !!video,
+      isSaturday,
+      videoId: video?.videoId
+    });
+    return null;
+  }
 
   return (
     <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
@@ -40,7 +48,7 @@ const CallToActionVideoSection = ({ video, t, isSaturday }) => {
            style={{ paddingBottom: '56.25%', height: 0 }}>
         <iframe
           src={`https://www.youtube.com/embed/${video.videoId}?rel=0&modestbranding=1`}
-          title={video.title}
+          title={video.title || 'Llamado a la Acción'}
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
@@ -428,19 +436,41 @@ const IndexPage = ({ data }) => {
   const callToActionVideo = useMemo(() => {
     const allVideos = data.allContentfulVideo?.nodes || [];
 
+    console.log('🎥 CallToAction Video Selection Debug:', {
+      totalVideos: allVideos.length,
+      language,
+      isSaturday: devocional?.fecha ? isSaturday(devocional.fecha) : false
+    });
+
     // Filter videos by language first
     const videos = filterVideosByLanguage(allVideos, language);
 
-    if (videos.length === 0) return null;
+    console.log('Filtered videos by language:', videos.length);
+
+    if (videos.length === 0) {
+      console.log('⚠️ No videos found for language:', language);
+      return null;
+    }
 
     // If we have a devotional and it's Saturday, try exact match by date
     if (devocional?.fecha && isSaturday(devocional.fecha)) {
       const exactMatch = videos.find(v => v.publicationDate === devocional.fecha);
-      if (exactMatch) return exactMatch;
+      if (exactMatch && exactMatch.videoId) {
+        console.log('✅ Found exact match video:', exactMatch.title, exactMatch.videoId);
+        return exactMatch;
+      }
     }
 
     // Fallback: return most recent video (already sorted DESC)
-    return videos[0];
+    const fallbackVideo = videos[0];
+
+    if (!fallbackVideo || !fallbackVideo.videoId) {
+      console.log('⚠️ Fallback video has no videoId:', fallbackVideo);
+      return null;
+    }
+
+    console.log('✅ Using fallback video:', fallbackVideo.title, fallbackVideo.videoId);
+    return fallbackVideo;
   }, [data, devocional, language]);
 
   // Check if current devotional is for a Saturday
