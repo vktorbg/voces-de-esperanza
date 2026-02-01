@@ -32,22 +32,36 @@ puts "Target found: #{target.name}"
 
 # Find the group 'App' (where AppDelegate.swift is usually located)
 # In Capacitor projects, usually main group -> App
-group = project.main_group.find_sub_group('App')
+# 'find_sub_group' does not exist in some versions, using [] operator or iteration
+group = project.main_group['App']
+
 if group.nil?
-    puts "Warning: 'App' group not found. Checking children of main group..."
-    project.main_group.children.each { |c| puts " - #{c.name}" }
-    puts "Adding directly to main group as fallback."
-    group = project.main_group
+    puts "Warning: 'App' group not found via []. Searching via iteration..."
+    project.main_group.children.each { |c| puts " - #{c.name} (#{c.isa})" }
+    
+    # Fallback search
+    group = project.main_group.children.find { |c| c.isa == 'PBXGroup' && c.name == 'App' }
+    
+    if group.nil?
+       puts "Adding directly to main group as fallback."
+       group = project.main_group
+    else
+       puts "Found 'App' group via iteration."
+    end
 end
 
+puts "Using group: #{group.name}"
+
 # Check if file is already in the group
-file_ref = group.find_file_by_path(plist_name)
+# We use simple iteration to be safe against API versions
+file_ref = group.files.find { |f| f.path == plist_name || f.name == plist_name }
 
 if file_ref
   puts "#{plist_name} reference already exists in project structure."
 else
   puts "Adding #{plist_name} reference to project..."
-  file_ref = group.new_reference(plist_name)
+  # new_file adds the file to the group and sets up the reference
+  file_ref = group.new_file(plist_name)
 end
 
 # Add to Resources build phase
