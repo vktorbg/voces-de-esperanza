@@ -80,7 +80,7 @@ He completado toda la implementación de código para las notificaciones push. E
 
 ---
 
-### PASO 2: Crear Iconos de Notificación Android (15 minutos)
+### PASO 2: Crear Iconos de Notificación Android (COMPLETO ✅)
 
 Android necesita iconos en varios tamaños. Usa esta herramienta online:
 👉 https://romannurik.github.io/AndroidAssetStudio/icons-notification.html
