@@ -26,7 +26,7 @@ target 'App' do
   # Add your Pods here
 
   # Firebase Messaging for iOS
-  pod 'Firebase/Messaging', '~> 10.19.0'
+  pod 'Firebase/Messaging', '>= 10.24.0'
 end
 
 post_install do |installer|
