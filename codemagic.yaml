@@ -78,9 +78,11 @@ workflows:
           # Cambia 'npm run build' por 'npm run build:mobile'
           npm run build:mobile
 
-      - name: Decodificar GoogleService-Info.plist
+      - name: Decodificar GoogleService-Info.plist y Agregar a Proyecto
         script: |
           echo $GOOGLE_SERVICE_INFO_PLIST | base64 --decode > ios/App/App/GoogleService-Info.plist
+          gem install xcodeproj --no-document
+          ruby scripts/ios-add-google-services.rb
 
       - name: Sincronizar con Capacitor y actualizar iOS
         script: |
