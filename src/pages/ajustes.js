@@ -5,7 +5,7 @@ import Layout from '../components/Layout';
 import { useLanguage } from '../components/LanguageProvider';
 
 export default function AjustesPage() {
-  const { t } = useLanguage();
+  const { t, i18n } = useLanguage();
   const [settings, setSettings] = useState({
     daily_devotional: true,
     new_videos: true,
@@ -28,15 +28,52 @@ export default function AjustesPage() {
   }, []);
 
   const handleToggle = async (key) => {
+    // 1. Update UI state optimistically
     const newSettings = { ...settings, [key]: !settings[key] };
+    const isSubscribing = newSettings[key];
     setSettings(newSettings);
 
-    const { value } = await Preferences.get({ key: 'notification_topics' });
-    const topics = value ? JSON.parse(value) : {};
-    await Preferences.set({
-      key: 'notification_topics',
-      value: JSON.stringify({ ...topics, ...newSettings })
-    });
+    try {
+      // 2. Save preferences
+      const { value: topicsValue } = await Preferences.get({ key: 'notification_topics' });
+      const topics = topicsValue ? JSON.parse(topicsValue) : {};
+      await Preferences.set({
+        key: 'notification_topics',
+        value: JSON.stringify({ ...topics, ...newSettings })
+      });
+
+      // 3. Update Cloud Subscription
+      const { value: token } = await Preferences.get({ key: 'fcm_token' });
+
+      if (token) {
+        const { functions } = await import('../services/firebase');
+        const { httpsCallable } = await import('firebase/functions');
+
+        const functionName = isSubscribing ? 'subscribeToTopic' : 'unsubscribeFromTopic';
+        const manageSubscription = httpsCallable(functions, functionName);
+
+        // Determine topic name based on language
+        // Use i18n.language or a fallback. 
+        // Note: Check if i18n is available from useLanguage, otherwise read preference
+        let langCode = 'es';
+        if (i18n && i18n.language) {
+          langCode = i18n.language.startsWith('en') ? 'en' : 'es';
+        } else {
+          const { value: savedLang } = await Preferences.get({ key: 'language' });
+          langCode = savedLang || 'es';
+        }
+
+        const topicName = `${key}_${langCode}`;
+
+        await manageSubscription({ token, topic: topicName });
+        console.log(`${isSubscribing ? 'Subscribed to' : 'Unsubscribed from'} ${topicName}`);
+      } else {
+        console.log('No token available. Preference saved locally.');
+      }
+    } catch (error) {
+      console.error('Error updating subscription:', error);
+      // Ideally revert the toggle in UI here if critical
+    }
   };
 
   if (!Capacitor.isNativePlatform()) {

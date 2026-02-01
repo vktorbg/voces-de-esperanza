@@ -95,11 +95,7 @@ export default function Layout({ children }) {
 
           await PushNotifications.register();
 
-          // Get current language and subscribe to topics
-          const { value } = await Preferences.get({ key: 'language' });
-          const userLang = value || 'es';
-          await subscribeToTopics(userLang);
-
+          // Get current language
         } catch (error) {
           console.error('Error setting up push notifications:', error);
         }
@@ -110,9 +106,13 @@ export default function Layout({ children }) {
       // Registration success listener
       const registrationListener = PushNotifications.addListener(
         'registration',
-        (token) => {
+        async (token) => {
           console.log('Push registration success, token:', token.value);
-          Preferences.set({ key: 'fcm_token', value: token.value });
+          await Preferences.set({ key: 'fcm_token', value: token.value });
+
+          const { value } = await Preferences.get({ key: 'language' });
+          const userLang = value || 'es';
+          subscribeToTopics(userLang, token.value);
         }
       );
 
@@ -149,9 +149,15 @@ export default function Layout({ children }) {
     }
   }, []);
 
-  // Subscribe to notification topics based on language
-  const subscribeToTopics = async (language) => {
+  // Subscribe to notification topics based on language and token
+  const subscribeToTopics = async (language, token) => {
     try {
+      if (!token) {
+        console.log('No token available for subscription');
+        return;
+      }
+
+      // Save preferences locally
       await Preferences.set({
         key: 'notification_topics',
         value: JSON.stringify({
@@ -161,6 +167,27 @@ export default function Layout({ children }) {
           language: language
         })
       });
+
+      // Call Cloud Function to subscribe to topics
+      const { functions } = await import('../services/firebase');
+      const { httpsCallable } = await import('firebase/functions');
+      const subscribeToTopic = httpsCallable(functions, 'subscribeToTopic');
+
+      const topics = [
+        `daily_devotional_${language === 'es' ? 'es' : 'en'}`,
+        `new_videos_${language === 'es' ? 'es' : 'en'}`,
+        `special_resources_${language === 'es' ? 'es' : 'en'}`
+      ];
+
+      for (const topic of topics) {
+        try {
+          await subscribeToTopic({ token, topic });
+          console.log(`Subscribed to ${topic}`);
+        } catch (e) {
+          console.error(`Failed to subscribe to ${topic}`, e);
+        }
+      }
+
       console.log(`Subscribed to topics for language: ${language}`);
     } catch (error) {
       console.error('Error subscribing to topics:', error);
