@@ -126,24 +126,43 @@ workflows:
           # Backup the original file
           cp "$PROJECT_FILE" "$PROJECT_FILE.backup"
 
-          # Use sed to modify only the App target (not Pods)
-          # Find the App target section and update its build settings
-          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' "$PROJECT_FILE"
-
-          # Add provisioning profile to App target only
-          sed -i '' '/CODE_SIGN_STYLE = Manual;/a\
-                PROVISIONING_PROFILE_SPECIFIER = "VDE AppStore Profile";' "$PROJECT_FILE"
-
-          # Add entitlements to App target only - using a more specific pattern
-          # This pattern looks for the App target's build configuration
-          sed -i '' '/\/\* Begin PBXNativeTarget section \*\//,/\/\* End PBXNativeTarget section \*\// {
-            /name = App;/,/\/\* End PBXNativeTarget section \*\// {
-              /buildSettings = {/,/};/ {
-                /CODE_SIGN_STYLE = Manual;/a\
-                CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
-              }
-            }
-          }' "$PROJECT_FILE"
+          # Use sed to modify ONLY the App target build settings
+          # We look for the App NativeTarget section and modify only within it
+          
+          # 1. Update CODE_SIGN_STYLE to Manual ONLY inside the App NativeTarget configurations
+          perl -i -pe 'BEGIN{undef $/;} s/(isa = PBXNativeTarget;[^}]*name = App;[^}]*buildConfigurationList = )([0-9A-F]+)( \/\* Build configuration list for PBXNativeTarget "App" \*\/;)/$1$2$3/g' "$PROJECT_FILE"
+          
+          # Getting the ID of the BuildConfigurationList for App
+          CONFIG_LIST_ID=$(grep -A 20 "isa = PBXNativeTarget;" "$PROJECT_FILE" | grep -A 5 "name = App;" | grep "buildConfigurationList =" | awk '{print $3}')
+          
+          # Now find the build configurations in that list (Debug/Release IDs)
+          # This is getting complicated with shell/sed. A safer "brute force" but limited scope is better:
+          
+          # Alternative safer sed: Match the specific lines we saw in your project file.
+          # We saw that the App target configs are named "Debug" and "Release" inside XCBuildConfiguration section
+          # But Pods also have Debug/Release.
+          
+          # Let simple sed do it but ONLY if we are careful.
+          # The "Invalid Binary" is likely due to Pods being forced to Manual without profile.
+          
+          # BETTER APPROACH: Do NOT force Manual signing in project file.
+          # Allow xcodebuild to handle it via the command line arguments provided:
+          # CODE_SIGN_IDENTITY="Apple Distribution"
+          # OTHER_CODE_SIGN_FLAGS="--keychain ..."
+          # PROVISIONING_PROFILE_SPECIFIER (added via flag instead of project modification)
+          
+          # So we will REMOVE the potentially destructive sed commands and pass PROVISIONING_PROFILE_SPECIFIER to xcodebuild directly.
+          
+          # 1. Update CODE_SIGN_STYLE to Manual and add settings ONLY for App Target (Release ID: 504EC3181FED79650016851F)
+          # We use the specific ID found in your project.pbxproj to avoid affecting Pods
+          
+          # For Release Configuration (App Target)
+          sed -i '' '/504EC3181FED79650016851F.*Release/,/}/ s/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/' "$PROJECT_FILE"
+          
+          # Add Provisioning Profile and Entitlements to Release
+          sed -i '' '/504EC3181FED79650016851F.*Release/,/}/ s/CODE_SIGN_STYLE = Manual;/CODE_SIGN_STYLE = Manual;\
+                PROVISIONING_PROFILE_SPECIFIER = "VDE AppStore Profile";\
+                CODE_SIGN_ENTITLEMENTS = App\/App.entitlements;/' "$PROJECT_FILE"
 
           # Go back to build directory
           cd ../..
@@ -151,7 +170,7 @@ workflows:
           # Unlock keychain before building
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
 
-          # Now build - DO NOT set CODE_SIGN_ENTITLEMENTS here as it's already in the project file
+          # Now build
           xcodebuild archive \
             -workspace "ios/App/App.xcworkspace" \
             -scheme "App" \
