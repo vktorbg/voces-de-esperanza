@@ -72,12 +72,12 @@ const DevotionalCard = ({ devotional, displayDate }) => {
     function getShareText(devotional, t, i18n) {
         const isSpanish = i18n.language === 'es';
         const url = isSpanish ? 'https://voces-de-esperanza.com' : 'https://voices-of-hope.com';
-        
+
         // Use the devotional date directly
         const fechaObj = new Date(devotional.fecha);
         const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
         const fechaFormateada = fechaObj.toLocaleDateString(isSpanish ? 'es-ES' : 'en-US', opcionesFecha);
-        
+
         let reflexionTexto = '';
         if (devotional.reflexion && typeof devotional.reflexion === 'object') {
             if (devotional.reflexion.content) {
@@ -88,13 +88,13 @@ const DevotionalCard = ({ devotional, displayDate }) => {
         } else {
             reflexionTexto = devotional.reflexion || '';
         }
-        
+
         const citaItalica = devotional.cita ? `\n${devotional.cita}` : '';
-        
+
         return (
             isSpanish ?
-            `¡Buenos días!\n\n${fechaFormateada}\n\n🌟 ${devotional.titulo}\n\n📖 Versículo Clave:\n${devotional.versiculo}${citaItalica}\n\n🙏 Reflexión:\n${reflexionTexto}\n\n🤔 Pregunta:\n${devotional.pregunta || ''}\n\n🔥 Aplicación:\n${devotional.aplicacion || ''}\n\nTe invitamos a visitar nuestra página: ${url}` :
-            `Good morning!\n\n${fechaFormateada}\n\n🌟 ${devotional.titulo}\n\n📖 Key Verse:\n${devotional.versiculo}${citaItalica}\n\n🙏 Reflection:\n${reflexionTexto}\n\n🤔 Question:\n${devotional.pregunta || ''}\n\n🔥 Application:\n${devotional.aplicacion || ''}\n\nWe invite you to visit our website: ${url}`
+                `¡Buenos días!\n\n${fechaFormateada}\n\n🌟 ${devotional.titulo}\n\n📖 Versículo Clave:\n${devotional.versiculo}${citaItalica}\n\n🙏 Reflexión:\n${reflexionTexto}\n\n🤔 Pregunta:\n${devotional.pregunta || ''}\n\n🔥 Aplicación:\n${devotional.aplicacion || ''}\n\nTe invitamos a visitar nuestra página: ${url}` :
+                `Good morning!\n\n${fechaFormateada}\n\n🌟 ${devotional.titulo}\n\n📖 Key Verse:\n${devotional.versiculo}${citaItalica}\n\n🙏 Reflection:\n${reflexionTexto}\n\n🤔 Question:\n${devotional.pregunta || ''}\n\n🔥 Application:\n${devotional.aplicacion || ''}\n\nWe invite you to visit our website: ${url}`
         );
     }
     return (
@@ -113,14 +113,14 @@ const DevotionalCard = ({ devotional, displayDate }) => {
                 {devotional.pregunta && <p><strong>{t('question')}:</strong> {devotional.pregunta}</p>}
                 {devotional.aplicacion && <p><strong>{t('application')}:</strong> {devotional.aplicacion}</p>}
             </div>
-            
+
             {/* Botón de compartir */}
             <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-center">
-                <button 
+                <button
                     className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2"
                     onClick={async () => {
                         const textToShare = getShareText(devotional, t, i18n);
-                        
+
                         // Intenta usar el Share nativo primero
                         try {
                             await Share.share({
@@ -147,10 +147,10 @@ const DevotionalCard = ({ devotional, displayDate }) => {
                         }
                     }}
                 >
-                    <img 
-                        src="/icons/share.png" 
-                        alt={t('share')} 
-                        className="w-5 h-5 mr-1" 
+                    <img
+                        src="/icons/share.png"
+                        alt={t('share')}
+                        className="w-5 h-5 mr-1"
                         style={{ display: "inline-block", verticalAlign: "middle" }}
                     />
                     {t('share_devotional')}
@@ -224,7 +224,7 @@ const HistorialPage = ({ data }) => {
     useEffect(() => {
         const loadHistory = async () => {
             setLoading(true);
-            
+
             try {
                 // La detección de red solo funciona en plataformas nativas
                 if (Capacitor.isNativePlatform()) {
@@ -243,7 +243,7 @@ const HistorialPage = ({ data }) => {
                                 key: 'devotionalHistory',
                                 value: JSON.stringify(onlineDevotionals)
                             });
-                            
+
                             // También guarda la fecha de caché
                             await Preferences.set({
                                 key: 'devotionalHistoryCacheDate',
@@ -288,14 +288,8 @@ const HistorialPage = ({ data }) => {
     }, [data]);
 
     // --- Lógica de filtrado igual que index.js ---
-    // Fix: Use direct hostname detection for consistent locale behavior
-    const getLocale = () => {
-        if (typeof window !== "undefined" && window.location.hostname.includes("voices-of-hope")) {
-            return "en-US";
-        }
-        return "es-MX";
-    };
-    const locale = getLocale();
+    // Determine locale based on the app's current language state
+    const locale = i18n.language === 'en' ? "en-US" : "es-MX";
 
     // Función para limpiar el título
     const cleanTitle = (title) => title.replace(/^\d{4}-\d{2}-\d{2}\s*-\s*/i, '');
@@ -350,15 +344,15 @@ const HistorialPage = ({ data }) => {
 
     const renderContent = () => {
         console.log('selectedDevotional:', selectedDevotional);
-        
+
         if (loading) {
             return <FullScreenLoader />;
         }
-        
+
         if (allDevotionals.length === 0 && isOffline) {
             return <NoHistoryMessage t={t} />;
         }
-        
+
         return selectedDevotional ? (
             <DevotionalCard devotional={selectedDevotional} displayDate={selectedDate} />
         ) : (
@@ -377,10 +371,10 @@ const HistorialPage = ({ data }) => {
 
             <main className="flex flex-col flex-grow items-center pt-16 pb-12 px-4"> {/* pt-16 para dejar espacio para el header, pb-12 para el scroll */}
                 <div className="w-full max-w-md sm:max-w-2xl mx-auto flex flex-col items-center flex-grow">
-                    
+
                     {/* Mensaje de offline si corresponde */}
                     {isOffline && allDevotionals.length > 0 && <OfflineHistoryMessage t={t} />}
-                    
+
                     {!loading && (
                         <div className="w-full my-4 flex items-center justify-center gap-2">
                             <div className="flex-grow">
@@ -394,7 +388,7 @@ const HistorialPage = ({ data }) => {
                             </div>
                         </div>
                     )}
-                    
+
                     <div className="flex-grow w-full mt-4">{renderContent()}</div>
                 </div>
             </main>

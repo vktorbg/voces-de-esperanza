@@ -56,7 +56,7 @@ const CallToActionVideoSection = ({ video, t, isSaturday }) => {
 
       {/* Embedded YouTube Player with 16:9 aspect ratio */}
       <div className="relative rounded-lg overflow-hidden shadow-lg mb-4"
-           style={{ paddingBottom: '56.25%', height: 0 }}>
+        style={{ paddingBottom: '56.25%', height: 0 }}>
         {!iframeLoaded && !hasError && (
           <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-700">
             <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
@@ -135,9 +135,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
 
       try {
         // Determine locale based on site
-        const locale = typeof window !== 'undefined' && window.location.hostname.includes("voices-of-hope")
-          ? "en-US"
-          : "es-MX";
+        const locale = isEnglishSite() ? "en-US" : "es-MX";
 
         console.log("Fetching audios from Contentful for:", devocional.fecha);
 
@@ -199,7 +197,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
   };
 
   function getShareText(devocional, t) {
-    const isEnglish = typeof window !== 'undefined' && window.location.hostname.includes("voices-of-hope");
+    const isEnglish = isEnglishSite();
     const isSpanish = !isEnglish;
     const url = isSpanish ? 'https://voces-de-esperanza.com' : 'https://voices-of-hope.com';
 
@@ -293,14 +291,14 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
                 )}
               </div>
             ) : fetchError ? (
-               <div className="flex-shrink-0 p-2 relative group">
-                  <div className="w-6 h-6 flex items-center justify-center text-red-500 cursor-help">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path fillRule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" /></svg>
-                  </div>
-                  <div className="absolute right-0 mt-2 w-48 bg-red-100 text-red-800 text-xs p-2 rounded shadow-lg z-50 invisible group-hover:visible dark:bg-red-900 dark:text-red-100">
-                    {fetchError}
-                  </div>
-               </div>
+              <div className="flex-shrink-0 p-2 relative group">
+                <div className="w-6 h-6 flex items-center justify-center text-red-500 cursor-help">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path fillRule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" /></svg>
+                </div>
+                <div className="absolute right-0 mt-2 w-48 bg-red-100 text-red-800 text-xs p-2 rounded shadow-lg z-50 invisible group-hover:visible dark:bg-red-900 dark:text-red-100">
+                  {fetchError}
+                </div>
+              </div>
             ) : null}
           </div>
 
@@ -418,15 +416,9 @@ const IndexPage = ({ data }) => {
     return date.getDay() === 6; // 6 = Saturday (0 = Sunday)
   };
 
-  const getLocale = () => {
-    if (isClient && window.location.hostname.includes("voices-of-hope")) {
-      return "en-US";
-    }
-    return "es-MX";
-  };
-
   const devocional = useMemo(() => {
-    const locale = getLocale();
+    // Determine locale based on the app's current language state
+    const locale = language === 'en' ? "en-US" : "es-MX";
     const todayStr = formatDateLocal(new Date());
 
     console.log('🔍 DEBUG: Looking for devotional');
@@ -458,7 +450,7 @@ const IndexPage = ({ data }) => {
         aplicacion: devotionalNode.application,
       }
       : null;
-  }, [data, isClient]);
+  }, [data, isClient, language]);
 
   // Get the most recent Call to Action video
   const callToActionVideo = useMemo(() => {
