@@ -97,6 +97,12 @@ const UploadPage = () => {
         const ffmpeg = ffmpegRef.current;
         if (!loaded) return;
 
+        // Double-check FFmpeg is actually loaded (not just the state)
+        if (!ffmpeg.loaded) {
+            addLog('⚠️ FFmpeg is still loading, please wait a moment...');
+            return;
+        }
+
         for (const file of files) {
             try {
                 const originalName = file.name;
@@ -279,10 +285,10 @@ const UploadPage = () => {
 
                                 <button
                                     onClick={convertAndUpload}
-                                    disabled={files.length === 0 || isLoading}
+                                    disabled={files.length === 0 || isLoading || !ffmpegRef.current?.loaded}
                                     className="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md active:scale-[0.99]"
                                 >
-                                    Convert & Upload All
+                                    {!ffmpegRef.current?.loaded && loaded ? 'Loading converter...' : 'Convert & Upload All'}
                                 </button>
 
                                 <div ref={messageRef} className="text-xs text-gray-400 font-mono mt-2 min-h-[1.5em]" />
