@@ -23,7 +23,10 @@ const UploadPage = () => {
     const messageRef = useRef(null);
 
     useEffect(() => {
-        ffmpegRef.current = new FFmpeg();
+        // Initialize FFmpeg instance only once
+        if (!ffmpegRef.current) {
+            ffmpegRef.current = new FFmpeg();
+        }
 
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
@@ -95,11 +98,8 @@ const UploadPage = () => {
 
     const convertAndUpload = async () => {
         const ffmpeg = ffmpegRef.current;
-        if (!loaded) return;
-
-        // Double-check FFmpeg is actually loaded (not just the state)
-        if (!ffmpeg.loaded) {
-            addLog('⚠️ FFmpeg is still loading, please wait a moment...');
+        if (!loaded) {
+            addLog('⚠️ FFmpeg is not loaded yet, please wait...');
             return;
         }
 
@@ -285,10 +285,10 @@ const UploadPage = () => {
 
                                 <button
                                     onClick={convertAndUpload}
-                                    disabled={files.length === 0 || isLoading || !ffmpegRef.current?.loaded}
+                                    disabled={files.length === 0 || isLoading}
                                     className="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md active:scale-[0.99]"
                                 >
-                                    {!ffmpegRef.current?.loaded && loaded ? 'Loading converter...' : 'Convert & Upload All'}
+                                    Convert & Upload All
                                 </button>
 
                                 <div ref={messageRef} className="text-xs text-gray-400 font-mono mt-2 min-h-[1.5em]" />
