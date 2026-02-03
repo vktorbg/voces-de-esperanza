@@ -6,7 +6,7 @@ import { storage, auth } from '../services/firebase'; // Added auth
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth'; // Auth methods
 import { Link } from 'gatsby';
-import { updateContentfulAudioField } from '../services/contentful-management';
+import { updateContentfulAudioField, publishMultipleEntries } from '../services/contentful-management';
 
 const UploadPage = () => {
     const [user, setUser] = useState(null);
@@ -103,6 +103,8 @@ const UploadPage = () => {
             return;
         }
 
+        const updatedEntryIds = []; // Track which entries were updated
+
         for (const file of files) {
             try {
                 const originalName = file.name;
@@ -145,10 +147,14 @@ const UploadPage = () => {
                         addLog(`Syncing to Contentful for ${devotionalDate} (${langCode})...`);
                         setUploadStatus(prev => ({ ...prev, [originalName]: 'syncing' }));
 
-                        // Update Contentful with Firebase URL
-                        await updateContentfulAudioField(devotionalDate, langCode, firebaseUrl);
+                        // Update Contentful with Firebase URL (but don't publish yet)
+                        const result = await updateContentfulAudioField(devotionalDate, langCode, firebaseUrl, false);
 
-                        addLog(`✅ Synced to Contentful: ${targetName}`);
+                        if (result.entryId) {
+                            updatedEntryIds.push(result.entryId);
+                        }
+
+                        addLog(`✅ Synced to Contentful: ${targetName} (not published yet)`);
                     } catch (contentfulError) {
                         console.error('Contentful sync error:', contentfulError);
                         addLog(`⚠️ Firebase upload OK but Contentful sync failed: ${contentfulError.message}`);
@@ -168,6 +174,22 @@ const UploadPage = () => {
                 console.error(err);
                 addLog(`Error processing ${file.name}: ${err.message}`);
                 setUploadStatus(prev => ({ ...prev, [file.name]: 'error' }));
+            }
+        }
+
+        // Now publish all updated entries at once (triggers only ONE Netlify build)
+        if (updatedEntryIds.length > 0) {
+            try {
+                addLog(`📢 Publishing ${updatedEntryIds.length} entries to trigger build...`);
+                const result = await publishMultipleEntries(updatedEntryIds);
+                addLog(`✅ Published ${result.published} entries successfully! Build will start soon.`);
+
+                if (result.failed > 0) {
+                    addLog(`⚠️ ${result.failed} entries failed to publish`);
+                }
+            } catch (publishError) {
+                console.error('Publish error:', publishError);
+                addLog(`⚠️ Error publishing entries: ${publishError.message}`);
             }
         }
     };

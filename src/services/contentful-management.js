@@ -42,9 +42,10 @@ const getManagementClient = () => {
  * @param {string} date - The devotional date (YYYY-MM-DD)
  * @param {string} langCode - Language code (es, en, nah)
  * @param {string} audioUrl - Firebase Storage URL or any external URL
+ * @param {boolean} autoPublish - Whether to publish immediately (default: false)
  * @returns {Promise<boolean>} - Success status
  */
-export const updateContentfulAudioField = async (date, langCode, audioUrl) => {
+export const updateContentfulAudioField = async (date, langCode, audioUrl, autoPublish = false) => {
   const client = getManagementClient();
   if (!client) {
     throw new Error('Contentful Management client not available');
@@ -173,13 +174,69 @@ export const updateContentfulAudioField = async (date, langCode, audioUrl) => {
     const updatedEntry = await entry.update();
     console.log(`✅ Updated ${fieldName} field in devotional entry`);
 
-    // Publish the entry
-    await updatedEntry.publish();
-    console.log('📢 Devotional entry published');
+    // Publish the entry only if autoPublish is true
+    if (autoPublish) {
+      await updatedEntry.publish();
+      console.log('📢 Devotional entry published');
+    } else {
+      console.log('⏸️ Entry updated but not published (autoPublish=false)');
+    }
 
-    return true;
+    return { success: true, entryId: entry.sys.id };
   } catch (error) {
     console.error('❌ Error updating Contentful audio field:', error);
+    throw error;
+  }
+};
+
+/**
+ * Publish multiple Contentful entries at once
+ * This triggers only ONE Netlify build instead of multiple
+ *
+ * @param {string[]} entryIds - Array of entry IDs to publish
+ * @returns {Promise<{published: number, failed: number}>}
+ */
+export const publishMultipleEntries = async (entryIds) => {
+  const client = getManagementClient();
+  if (!client) {
+    throw new Error('Contentful Management client not available');
+  }
+
+  const spaceId = process.env.GATSBY_CONTENTFUL_SPACE_ID || process.env.CONTENTFUL_SPACE_ID;
+  const environment = process.env.CONTENTFUL_ENVIRONMENT || 'master';
+
+  if (!spaceId) {
+    throw new Error('Contentful Space ID not found');
+  }
+
+  try {
+    const space = await client.getSpace(spaceId);
+    const env = await space.getEnvironment(environment);
+
+    // Get unique entry IDs
+    const uniqueEntryIds = [...new Set(entryIds)];
+    console.log(`📢 Publishing ${uniqueEntryIds.length} entries...`);
+
+    let published = 0;
+    let failed = 0;
+
+    // Publish all entries
+    for (const entryId of uniqueEntryIds) {
+      try {
+        const entry = await env.getEntry(entryId);
+        await entry.publish();
+        published++;
+        console.log(`✅ Published entry ${entryId}`);
+      } catch (error) {
+        failed++;
+        console.error(`❌ Failed to publish entry ${entryId}:`, error.message);
+      }
+    }
+
+    console.log(`📢 Batch publish complete: ${published} published, ${failed} failed`);
+    return { published, failed };
+  } catch (error) {
+    console.error('❌ Error in batch publish:', error);
     throw error;
   }
 };

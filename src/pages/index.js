@@ -223,11 +223,16 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
 
     const citaItalica = devocional.cita ? `\n${devocional.cita}` : '';
 
-    return (
-      isSpanish
-        ? `¡Buenos días!\n\n${fechaFormateada}\n\n🌟 ${devocional.titulo}\n\n📖 Versículo Clave:\n${devocional.versiculo}${citaItalica}\n\n🙏 Reflexión:\n${reflexionTexto}\n\n🤔 Pregunta:\n${devocional.pregunta?.question || ''}\n\n🔥 Aplicación:\n${devocional.aplicacion?.application || ''}\n\nTe invitamos a visitar nuestra página: ${url}`
-        : `Good morning!\n\n${fechaFormateada}\n\n🌟 ${devocional.titulo}\n\n📖 Key Verse:\n${devocional.versiculo}${citaItalica}\n\n🙏 Reflection:\n${reflexionTexto}\n\n🤔 Question:\n${devocional.pregunta?.question || ''}\n\n🔥 Application:\n${devocional.aplicacion?.application || ''}\n\nWe invite you to visit our website: ${url}`
-    );
+    const greeting = isSpanish ? '¡Buenos días!' : 'Good morning!';
+    const keyVerseLabel = t('key_verse');
+    const reflectionLabel = t('reflection');
+    const questionLabel = t('question');
+    const applicationLabel = t('application');
+    const invitationText = isSpanish
+      ? `Te invitamos a visitar nuestra página: ${url}`
+      : `We invite you to visit our website: ${url}`;
+
+    return `${greeting}\n\n${fechaFormateada}\n\n🌟 ${devocional.titulo}\n\n📖 ${keyVerseLabel}:\n${devocional.versiculo}${citaItalica}\n\n🙏 ${reflectionLabel}:\n${reflexionTexto}\n\n🤔 ${questionLabel}:\n${devocional.pregunta?.question || ''}\n\n🔥 ${applicationLabel}:\n${devocional.aplicacion?.application || ''}\n\n${invitationText}`;
   }
 
 
