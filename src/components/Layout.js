@@ -11,6 +11,7 @@ import { Capacitor } from '@capacitor/core';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { Preferences } from '@capacitor/preferences';
+import { FCM } from '@capacitor-community/fcm';
 
 // Icons
 const BookOpenIcon = (props) => (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}> <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /> </svg>);
@@ -107,12 +108,27 @@ export default function Layout({ children }) {
       const registrationListener = PushNotifications.addListener(
         'registration',
         async (token) => {
-          console.log('Push registration success, token:', token.value);
-          await Preferences.set({ key: 'fcm_token', value: token.value });
+          console.log('Push registration success, token (raw):', token.value);
+
+          let tokenForFirebase = token.value;
+
+          // On iOS, we need to convert the APNs token to an FCM token
+          if (Capacitor.getPlatform() === 'ios') {
+            try {
+              const fcm = await FCM.getToken();
+              tokenForFirebase = fcm.token;
+              console.log('FCM token obtained for iOS:', tokenForFirebase);
+            } catch (err) {
+              console.error('Error getting FCM token on iOS:', err);
+              // Fallback to raw token, though topic subscription might fail
+            }
+          }
+
+          await Preferences.set({ key: 'fcm_token', value: tokenForFirebase });
 
           const { value } = await Preferences.get({ key: 'language' });
           const userLang = value || 'es';
-          subscribeToTopics(userLang, token.value);
+          subscribeToTopics(userLang, tokenForFirebase);
         }
       );
 
