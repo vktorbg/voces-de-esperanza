@@ -105,7 +105,7 @@ const CallToActionVideoSection = ({ video, t, isSaturday }) => {
   );
 };
 
-const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, setAudioLoading, callToActionVideo, isSaturdayDevotional }) => {
+const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, setAudioLoading, callToActionVideo, isSaturdayDevotional, language }) => {
   const { t } = useTranslation();
   const { playTrack } = useAudioPlayer();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -196,8 +196,8 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
     setMenuOpen(false);
   };
 
-  function getShareText(devocional, t) {
-    const isEnglish = isEnglishSite();
+  function getShareText(devocional, t, language) {
+    const isEnglish = language === 'en';
     const isSpanish = !isEnglish;
     const url = isSpanish ? 'https://voces-de-esperanza.com' : 'https://voices-of-hope.com';
 
@@ -355,7 +355,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
 
           <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center gap-4">
             <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={async () => {
-              const textToShare = getShareText(devocional, t);
+              const textToShare = getShareText(devocional, t, language);
               try {
                 await Share.share({
                   title: devocional.titulo,
@@ -522,6 +522,7 @@ const IndexPage = ({ data }) => {
           setAudioLoading={setAudioLoading}
           callToActionVideo={callToActionVideo}
           isSaturdayDevotional={isSaturdayDevotional}
+          language={language}
         />
       ) : (
         <DevotionalSkeleton />
