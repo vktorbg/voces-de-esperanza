@@ -6,7 +6,7 @@ import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import { Link, graphql } from "gatsby";
 import { useTranslation } from "react-i18next";
 import { useAudioPlayer } from "../components/AudioPlayer";
-import { isEnglishSite, useLanguage } from "../components/LanguageProvider";
+import { useLanguage } from "../components/LanguageProvider";
 import { Share } from '@capacitor/share';
 import { fetchAudiosOnly } from '../services/contentful-sync';
 import { filterVideosByLanguage } from '../utils/videoFilters';
@@ -113,7 +113,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
   const [availableAudios, setAvailableAudios] = useState([]);
   const [fetchError, setFetchError] = useState(null); // New state for error debugging
 
-  const iconSrc = isEnglishSite() ? "/icon2.jpg" : "/icon.jpg";
+  const iconSrc = language === 'en' ? "/icon2.jpg" : "/icon.jpg";
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -135,7 +135,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
 
       try {
         // Determine locale based on site
-        const locale = isEnglishSite() ? "en-US" : "es-MX";
+        const locale = language === 'en' ? "en-US" : "es-MX";
 
         console.log("Fetching audios from Contentful for:", devocional.fecha);
 
@@ -246,7 +246,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
   if (devocional.fecha) {
     const fecha = parseDateLocal(devocional.fecha);
     if (!isNaN(fecha.getTime())) {
-      const localeForDate = isEnglishSite() ? 'en-US' : 'es-ES';
+      const localeForDate = language === 'en' ? 'en-US' : 'es-ES';
       // Automatically use the user's local timezone
       fechaFormateada = fecha.toLocaleDateString(localeForDate, { year: 'numeric', month: 'long', day: 'numeric' });
       // Capitalize the first letter of the formatted date
