@@ -90,6 +90,21 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
 }
 
+// MARK: - Remote notification token forwarding (required for FCM on iOS)
+extension AppDelegate {
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        // Forward APNs token to Firebase so it can exchange it for an FCM token
+        Messaging.messaging().apnsToken = deviceToken
+        // Also forward to Capacitor plugins
+        NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications, object: deviceToken)
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Failed to register for remote notifications: \(error)")
+        NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
+    }
+}
+
 // MARK: - MessagingDelegate
 extension AppDelegate: MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
