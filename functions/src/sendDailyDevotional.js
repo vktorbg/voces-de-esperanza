@@ -6,12 +6,15 @@ if (!admin.apps.length) {
   admin.initializeApp();
 }
 
-const contentfulClient = contentful.createClient({
-  space: 'kyqhj3vsed2t',
-  accessToken: functions.config().contentful.access_token,
-});
+function getContentfulClient() {
+  return contentful.createClient({
+    space: process.env.CONTENTFUL_SPACE_ID || 'kyqhj3vsed2t',
+    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
+  });
+}
 
 async function fetchTodaysDevotional(locale) {
+  const contentfulClient = getContentfulClient();
   try {
     const today = new Date().toLocaleString('en-US', {
       timeZone: 'America/Mexico_City',
@@ -58,7 +61,7 @@ async function sendNotificationToTopic(topic, notification, data) {
       notification: {
         channelId: 'devotional_notifications',
         sound: 'default',
-        icon: 'ic_notification',
+        icon: 'ic_launcher',
         color: '#2563eb',
       },
     },

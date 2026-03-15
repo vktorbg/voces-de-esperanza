@@ -11,6 +11,8 @@ export default function AjustesPage() {
     new_videos: true,
     special_resources: true,
   });
+  const [fcmToken, setFcmToken] = useState('');
+  const [tokenCopied, setTokenCopied] = useState(false);
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -23,9 +25,43 @@ export default function AjustesPage() {
           special_resources: parsed.special_resources ?? true,
         });
       }
+      const { value: token } = await Preferences.get({ key: 'fcm_token' });
+      if (token) setFcmToken(token);
     };
     loadSettings();
   }, []);
+
+  const copyToken = () => {
+    if (fcmToken && navigator.clipboard) {
+      navigator.clipboard.writeText(fcmToken).then(() => {
+        setTokenCopied(true);
+        setTimeout(() => setTokenCopied(false), 2000);
+      });
+    }
+  };
+
+  const [testSending, setTestSending] = useState(false);
+  const [testResult, setTestResult] = useState('');
+
+  const sendTestNotification = async () => {
+    if (!fcmToken) {
+      setTestResult('❌ No hay token FCM disponible.');
+      return;
+    }
+    setTestSending(true);
+    setTestResult('');
+    try {
+      const { functions } = await import('../services/firebase');
+      const { httpsCallable } = await import('firebase/functions');
+      const testNotification = httpsCallable(functions, 'testNotification');
+      await testNotification({ token: fcmToken });
+      setTestResult('✅ Notificación enviada. Deberías recibirla en segundos.');
+    } catch (e) {
+      setTestResult(`❌ Error: ${e.message}`);
+    } finally {
+      setTestSending(false);
+    }
+  };
 
   const handleToggle = async (key) => {
     // 1. Update UI state optimistically
@@ -153,6 +189,35 @@ export default function AjustesPage() {
             💡 <strong>Nota:</strong> Las notificaciones se enviarán en el idioma que tengas configurado en la aplicación.
           </p>
         </div>
+
+        {fcmToken ? (
+          <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3">
+            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">Token FCM (para pruebas)</p>
+            <button
+              onClick={copyToken}
+              className="w-full text-left text-xs text-gray-600 dark:text-gray-300 break-all font-mono bg-white dark:bg-gray-700 p-2 rounded border border-gray-200 dark:border-gray-600"
+            >
+              {fcmToken}
+            </button>
+            {tokenCopied && (
+              <p className="text-xs text-green-600 dark:text-green-400">✓ Copiado al portapapeles</p>
+            )}
+            <button
+              onClick={sendTestNotification}
+              disabled={testSending}
+              className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              {testSending ? 'Enviando...' : '🔔 Enviar notificación de prueba'}
+            </button>
+            {testResult && (
+              <p className="text-xs text-gray-700 dark:text-gray-300">{testResult}</p>
+            )}
+          </div>
+        ) : (
+          <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <p className="text-xs text-gray-500 dark:text-gray-400">Token FCM: no disponible aún. Asegúrate de haber otorgado permiso de notificaciones.</p>
+          </div>
+        )}
       </div>
     </Layout>
   );

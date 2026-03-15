@@ -12,6 +12,7 @@ import { Network } from '@capacitor/network';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
 import { isEnglishSite } from "../components/LanguageProvider";
+import { useAudioPlayer } from "../components/AudioPlayer";
 // === IMPORT: nuevo PageHeader component ===
 import PageHeader from "../components/PageHeader";
 
@@ -21,6 +22,7 @@ const ExclamationTriangleIcon = (props) => (<svg xmlns="http://www.w3.org/2000/s
 const ChevronLeftIcon = (props) => (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>);
 const ArrowLeftIcon = (props) => (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>);
 const ChevronRightIcon = (props) => (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>);
+const SpeakerWaveIcon = (props) => (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>);
 // Se elimina el SVG de TodayIcon que no funcionaba visualmente
 
 // --- COMPONENTES DE UI ---
@@ -49,8 +51,33 @@ const DateNavigator = ({ currentDate, onPrev, onNext, onOpenCalendar, isNextDisa
         </div>
     );
 };
-const DevotionalCard = ({ devotional, displayDate }) => {
+const DevotionalCard = ({ devotional, displayDate, language }) => {
     const { t, i18n } = useTranslation();
+    const { playTrack } = useAudioPlayer();
+    const [audioMenuOpen, setAudioMenuOpen] = useState(false);
+    const audioMenuRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (audioMenuRef.current && !audioMenuRef.current.contains(e.target)) setAudioMenuOpen(false);
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const availableAudios = useMemo(() => {
+        const audios = [];
+        if (devotional.audioEspanolUrl) audios.push({ lang: t('language_spanish'), url: devotional.audioEspanolUrl });
+        if (devotional.audioEnglishUrl) audios.push({ lang: t('language_english'), url: devotional.audioEnglishUrl });
+        if (devotional.audioNahuatlUrl) audios.push({ lang: t('language_nahuatl'), url: devotional.audioNahuatlUrl });
+        return audios;
+    }, [devotional, t]);
+
+    const handlePlay = (audio) => {
+        const iconSrc = language === 'en' ? '/icon2.jpg' : '/icon.jpg';
+        playTrack({ url: audio.url, title: `${audio.lang} - ${devotional.titulo}`, image: iconSrc });
+        setAudioMenuOpen(false);
+    };
     // Si la reflexión es un objeto Contentful rich text, renderizar correctamente
     let reflexionContent = null;
     if (devotional.reflexion) {
@@ -102,7 +129,32 @@ const DevotionalCard = ({ devotional, displayDate }) => {
             <div className="text-sm text-gray-500 dark:text-gray-400 mb-2 font-medium">
                 {format(new Date(displayDate), pattern, { locale })}
             </div>
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">🌟 {devotional.titulo}</h2>
+            <div className="flex justify-between items-start gap-4 mb-4">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">🌟 {devotional.titulo}</h2>
+                {availableAudios.length > 0 && (
+                    <div className="relative flex-shrink-0" ref={audioMenuRef}>
+                        <button
+                            onClick={() => setAudioMenuOpen(!audioMenuOpen)}
+                            className={`p-2 rounded-full transition focus:outline-none focus:ring-2 focus:ring-blue-500 ${audioMenuOpen ? 'bg-blue-100 dark:bg-blue-700' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                            aria-label={t('listen_devotional')}
+                            title={t('listen_devotional')}
+                        >
+                            <SpeakerWaveIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                        </button>
+                        {audioMenuOpen && (
+                            <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-700 rounded-md shadow-lg z-20 ring-1 ring-black ring-opacity-5">
+                                <div className="py-1">
+                                    {availableAudios.map(audio => (
+                                        <button key={audio.lang} onClick={() => handlePlay(audio)} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 transition">
+                                            {audio.lang}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
             <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-700">
                 <div className="font-semibold text-gray-700 dark:text-gray-200">📖 {t('key_verse')}:</div>
                 <div className="text-blue-600 dark:text-blue-400 uppercase font-semibold">{devotional.versiculo}</div>
@@ -302,6 +354,7 @@ const HistorialPage = ({ data }) => {
             if (!node.date) return;
             if (node.node_locale !== locale) return;
             const key = node.date; // formato YYYY-MM-DD
+            const buildUrl = (u) => u ? (u.startsWith('http') ? u : `https:${u}`) : null;
             map.set(key, {
                 titulo: cleanTitle(node.title),
                 fecha: node.date,
@@ -310,6 +363,9 @@ const HistorialPage = ({ data }) => {
                 reflexion: node.reflection?.raw ? JSON.parse(node.reflection.raw) : node.reflection,
                 pregunta: node.question?.question,
                 aplicacion: node.application?.application,
+                audioEspanolUrl: buildUrl(node.audioEspanol?.file?.url),
+                audioEnglishUrl: buildUrl(node.audioEnglish?.file?.url),
+                audioNahuatlUrl: buildUrl(node.audioNahuatl?.file?.url),
             });
         });
         return map;
@@ -340,7 +396,6 @@ const HistorialPage = ({ data }) => {
         setCalendarOpen(false);
     };
 
-    const isNextDayDisabled = useMemo(() => isToday(selectedDate) || selectedDate > new Date(), [selectedDate]);
 
     const renderContent = () => {
         console.log('selectedDevotional:', selectedDevotional);
@@ -354,7 +409,7 @@ const HistorialPage = ({ data }) => {
         }
 
         return selectedDevotional ? (
-            <DevotionalCard devotional={selectedDevotional} displayDate={selectedDate} />
+            <DevotionalCard devotional={selectedDevotional} displayDate={selectedDate} language={i18n.language} />
         ) : (
             <div className="text-center mt-6 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
                 <p className="font-semibold text-gray-700 dark:text-gray-200">{t('history_no_devotional')}</p>
