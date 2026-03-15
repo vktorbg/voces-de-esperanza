@@ -12,6 +12,8 @@ import { SplashScreen } from '@capacitor/splash-screen';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { Preferences } from '@capacitor/preferences';
 import { FCM } from '@capacitor-community/fcm';
+import { functions } from '../services/firebase';
+import { httpsCallable } from 'firebase/functions';
 
 // Icons
 const BookOpenIcon = (props) => (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}> <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /> </svg>);
@@ -19,6 +21,9 @@ const PlayCircleIcon = (props) => (<svg xmlns="http://www.w3.org/2000/svg" fill=
 const UsersIcon = (props) => (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}> <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /> </svg>);
 const DocumentTextIcon = (props) => (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}> <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /> </svg>);
 
+
+const AcademicCapIcon = (props) => (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" /></svg>);
+const UserCircleIcon = (props) => (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>);
 
 export default function Layout({ children }) {
   const { track } = useAudioPlayer();
@@ -185,8 +190,6 @@ export default function Layout({ children }) {
       });
 
       // Call Cloud Function to subscribe to topics
-      const { functions } = await import('../services/firebase');
-      const { httpsCallable } = await import('firebase/functions');
       const subscribeToTopic = httpsCallable(functions, 'subscribeToTopic');
 
       const topics = [
@@ -238,8 +241,9 @@ export default function Layout({ children }) {
   const navItems = [
     { name: t('navigation.devotionals'), path: "/", icon: BookOpenIcon },
     { name: t('navigation.videos'), path: "/videos/", icon: PlayCircleIcon },
-    { name: t('navigation.about'), path: "/quienes-somos/", icon: UsersIcon },
-    { name: t('navigation.resources'), path: "/recursos/", icon: DocumentTextIcon }
+    { name: t('studies.nav'), path: "/estudios/", icon: AcademicCapIcon },
+    { name: t('navigation.resources'), path: "/recursos/", icon: DocumentTextIcon },
+    { name: t('auth.myAccount'), path: "/mi-cuenta/", icon: UserCircleIcon },
   ];
 
   const navHeight = 'pb-[57px] sm:pb-[65px]';
@@ -293,7 +297,7 @@ export default function Layout({ children }) {
       <footer className="fixed bottom-0 left-0 right-0 z-50">
         <PlayerUI />
         <nav className={`w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-top-lg ${isNativeApp ? 'pb-[env(safe-area-inset-bottom)]' : navPadding}`}>
-          <div className="flex justify-around max-w-md mx-auto">
+          <div className="flex justify-around max-w-lg mx-auto">
             {navItems.map((item) => {
               const Icon = item.icon;
               return (

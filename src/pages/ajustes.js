@@ -3,6 +3,8 @@ import { Preferences } from '@capacitor/preferences';
 import { Capacitor } from '@capacitor/core';
 import Layout from '../components/Layout';
 import { useLanguage } from '../components/LanguageProvider';
+import { functions } from '../services/firebase';
+import { httpsCallable } from 'firebase/functions';
 
 export default function AjustesPage() {
   const { t, i18n } = useLanguage();
@@ -51,10 +53,8 @@ export default function AjustesPage() {
     setTestSending(true);
     setTestResult('');
     try {
-      const { functions } = await import('../services/firebase');
-      const { httpsCallable } = await import('firebase/functions');
-      const testNotification = httpsCallable(functions, 'testNotification');
-      await testNotification({ token: fcmToken });
+      const testNotificationFn = httpsCallable(functions, 'testNotification');
+      await testNotificationFn({ token: fcmToken });
       setTestResult('✅ Notificación enviada. Deberías recibirla en segundos.');
     } catch (e) {
       setTestResult(`❌ Error: ${e.message}`);
@@ -82,9 +82,6 @@ export default function AjustesPage() {
       const { value: token } = await Preferences.get({ key: 'fcm_token' });
 
       if (token) {
-        const { functions } = await import('../services/firebase');
-        const { httpsCallable } = await import('firebase/functions');
-
         const functionName = isSubscribing ? 'subscribeToTopic' : 'unsubscribeFromTopic';
         const manageSubscription = httpsCallable(functions, functionName);
 

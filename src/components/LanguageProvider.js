@@ -8,6 +8,8 @@ import { Capacitor } from '@capacitor/core';
 // Import translation files
 import esTranslation from '../locales/es/translation.json';
 import enTranslation from '../locales/en/translation.json';
+import esProgramas from '../locales/es/programs.json';
+import enProgramas from '../locales/en/programs.json';
 
 // Create Language Context
 const LanguageContext = createContext();
@@ -18,10 +20,10 @@ i18n
   .init({
     resources: {
       es: {
-        translation: esTranslation,
+        translation: { ...esTranslation, ...esProgramas },
       },
       en: {
-        translation: enTranslation,
+        translation: { ...enTranslation, ...enProgramas },
       },
     },
     lng: 'es', // Default language

@@ -2,13 +2,16 @@
 import React from 'react';
 import { AudioPlayerProvider } from './src/components/AudioPlayer';
 import LanguageProvider from './src/components/LanguageProvider';
+import { AuthProvider } from './src/components/AuthProvider';
 import Layout from './src/components/Layout';
 
 // Wraps the entire app with the Audio Context
 export const wrapRootElement = ({ element }) => {
   return (
     <LanguageProvider>
-      <AudioPlayerProvider>{element}</AudioPlayerProvider>
+      <AuthProvider>
+        <AudioPlayerProvider>{element}</AudioPlayerProvider>
+      </AuthProvider>
     </LanguageProvider>
   );
 };

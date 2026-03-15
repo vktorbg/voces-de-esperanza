@@ -2,6 +2,7 @@
 import React from 'react';
 import { AudioPlayerProvider } from './src/components/AudioPlayer';
 import LanguageProvider from './src/components/LanguageProvider';
+import { AuthProvider } from './src/components/AuthProvider';
 import Layout from './src/components/Layout';
 import './src/styles/global.css';
 
@@ -9,7 +10,9 @@ import './src/styles/global.css';
 export const wrapRootElement = ({ element }) => {
   return (
     <LanguageProvider>
-      <AudioPlayerProvider>{element}</AudioPlayerProvider>
+      <AuthProvider>
+        <AudioPlayerProvider>{element}</AudioPlayerProvider>
+      </AuthProvider>
     </LanguageProvider>
   );
 };
