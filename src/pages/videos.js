@@ -1,7 +1,7 @@
 // File: voces-de-esperanza/src/pages/videos.js
 
 import React from "react";
-import { graphql } from "gatsby";
+import { graphql, Link } from "gatsby";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../components/LanguageProvider";
 import { filterVideosByLanguage } from "../utils/videoFilters";
@@ -24,6 +24,31 @@ const VideoCard = ({ videoId, title }) => {
         <h3 className="text-white text-sm font-semibold truncate" title={title}>{title}</h3>
       </div>
     </a>
+  );
+};
+
+// --- Fila especial para Llamado a la Acción con botón "Ver todos" ---
+const CallToActionRow = ({ title, videos, linkTo, linkLabel }) => {
+  if (!videos || videos.length === 0) return null;
+  return (
+    <div className="mb-12">
+      <div className="flex items-center justify-between mb-4 px-4 sm:px-0">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">{title}</h2>
+        <Link
+          to={linkTo}
+          className="flex-shrink-0 inline-flex items-center gap-1 text-sm font-semibold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+        >
+          {linkLabel}
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
+        </Link>
+      </div>
+      <div className="flex overflow-x-auto space-x-4 sm:space-x-6 pb-4 pl-4 sm:pl-0 -mb-4" style={{ scrollbarWidth: 'thin' }}>
+        {videos.map((video, idx) => <VideoCard key={`${video.videoId}-${idx}`} videoId={video.videoId} title={video.title} />)}
+        <div className="flex-shrink-0 w-1"></div>
+      </div>
+    </div>
   );
 };
 
@@ -51,9 +76,17 @@ const VideosPage = ({ data }) => {
 
   // Procesar y clasificar los videos obtenidos de Contentful
   const allVideos = data?.allContentfulVideo?.nodes || [];
+  const allCallToActionVideos = data?.callToAction?.nodes || [];
 
   // Filtrar videos por idioma ANTES de clasificarlos
   const videosFilteredByLang = filterVideosByLanguage(allVideos, language);
+
+  // Videos de Llamado a la Acción: filtrar por idioma, deduplicar y tomar los últimos 3
+  const callToActionVideos = Array.from(
+    new Map(
+      filterVideosByLanguage(allCallToActionVideos, language).map(v => [v.videoId, v])
+    ).values()
+  ).slice(0, 3);
 
   // Primero, filtra los recomendados y elimina duplicados por videoId
   const videosRecomendados = Array.from(
@@ -96,6 +129,12 @@ const VideosPage = ({ data }) => {
             <VideoRow title={t('videos_shorts_title', 'Reflexiones en Corto')} videos={shorts} />
             <VideoRow title={t('videos_long_form_title', 'Estudios y Mensajes')} videos={videosLargos} />
             <VideoRow title={t('videos_recommended_title', 'Recomendados para ti')} videos={videosRecomendados} />
+            <CallToActionRow
+              title={t('videos_call_to_action_title', 'Llamado a la Acción')}
+              videos={callToActionVideos}
+              linkTo="/llamado-accion"
+              linkLabel={t('videos_call_to_action_see_all', 'Ver todos')}
+            />
           </>
         ) : (
           <div className="text-center py-16 flex flex-col items-center justify-center">
@@ -126,12 +165,27 @@ export default VideosPage;
 // --- Consulta GraphQL para obtener los videos de Contentful ---
 export const query = graphql`
   query VideosPageQuery {
-    allContentfulVideo(sort: { fields: publicationDate, order: DESC }) {
+    allContentfulVideo(
+      filter: { videoType: { ne: "Llamado a la acción" } }
+      sort: { fields: publicationDate, order: DESC }
+    ) {
       nodes {
         title
         videoId
         videoType
         isRecommended
+        publicationDate
+        idioma
+      }
+    }
+    callToAction: allContentfulVideo(
+      filter: { videoType: { eq: "Llamado a la acción" } }
+      sort: { fields: publicationDate, order: DESC }
+    ) {
+      nodes {
+        title
+        videoId
+        videoType
         publicationDate
         idioma
       }

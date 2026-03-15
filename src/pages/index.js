@@ -105,7 +105,7 @@ const CallToActionVideoSection = ({ video, t, isSaturday }) => {
   );
 };
 
-const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, setAudioLoading, callToActionVideo, isSaturdayDevotional, language }) => {
+const DevotionalView = ({ devocional, onWhatsAppClick, onQRClick, isClient, audioLoading, setAudioLoading, callToActionVideo, isSaturdayDevotional, language }) => {
   const { t } = useTranslation();
   const { playTrack } = useAudioPlayer();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -196,7 +196,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
     setMenuOpen(false);
   };
 
-  function getShareText(devocional, t, language) {
+  function getShareText(devocional, t, language, callToActionVideo, isSaturdayDevotional) {
     const isEnglish = language === 'en';
     const isSpanish = !isEnglish;
     const url = isSpanish ? 'https://voces-de-esperanza.com' : 'https://voices-of-hope.com';
@@ -232,7 +232,13 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
       ? `Te invitamos a visitar nuestra página: ${url}`
       : `We invite you to visit our website: ${url}`;
 
-    return `${greeting}\n\n${fechaFormateada}\n\n🌟 ${devocional.titulo}\n\n📖 ${keyVerseLabel}:\n${devocional.versiculo}${citaItalica}\n\n🙏 ${reflectionLabel}:\n${reflexionTexto}\n\n🤔 ${questionLabel}:\n${devocional.pregunta?.question || ''}\n\n🔥 ${applicationLabel}:\n${devocional.aplicacion?.application || ''}\n\n${invitationText}`;
+    const videoLine = isSaturdayDevotional && callToActionVideo?.videoId
+      ? '\n\n' + (isSpanish
+          ? `🎥 Video de esta semana: https://youtu.be/${callToActionVideo.videoId}`
+          : `🎥 This week's video: https://youtu.be/${callToActionVideo.videoId}`)
+      : '';
+
+    return `${greeting}\n\n${fechaFormateada}\n\n🌟 ${devocional.titulo}\n\n📖 ${keyVerseLabel}:\n${devocional.versiculo}${citaItalica}\n\n🙏 ${reflectionLabel}:\n${reflexionTexto}\n\n🤔 ${questionLabel}:\n${devocional.pregunta?.question || ''}\n\n🔥 ${applicationLabel}:\n${devocional.aplicacion?.application || ''}\n\n${invitationText}${videoLine}`;
   }
 
 
@@ -354,8 +360,21 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
           />
 
           <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center gap-4">
+            <button
+              className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto"
+              onClick={onQRClick}
+              type="button"
+              aria-label={t('qr_code')}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
+              </svg>
+              {t('qr_code')}
+            </button>
+
             <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 inline-flex items-center gap-2 w-full sm:w-auto" onClick={async () => {
-              const textToShare = getShareText(devocional, t, language);
+              const textToShare = getShareText(devocional, t, language, callToActionVideo, isSaturdayDevotional);
               try {
                 await Share.share({
                   title: devocional.titulo,
@@ -396,6 +415,7 @@ const DevotionalView = ({ devocional, onWhatsAppClick, isClient, audioLoading, s
 const IndexPage = ({ data }) => {
   const { t } = useTranslation();
   const [showWhatsAppBox, setShowWhatsAppBox] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
   const [audioLoading, setAudioLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const { language } = useLanguage();
@@ -517,6 +537,7 @@ const IndexPage = ({ data }) => {
         <DevotionalView
           devocional={devocional}
           onWhatsAppClick={() => setShowWhatsAppBox(true)}
+          onQRClick={() => setShowQRModal(true)}
           isClient={isClient}
           audioLoading={audioLoading}
           setAudioLoading={setAudioLoading}
@@ -526,6 +547,14 @@ const IndexPage = ({ data }) => {
         />
       ) : (
         <DevotionalSkeleton />
+      )}
+      {showQRModal && (
+        <div className="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center" onClick={() => setShowQRModal(false)}>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-5 w-[90vw] max-w-xs animate-fade-in flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
+            <img src="/QR.jpeg" alt={t('qr_code')} className="w-full rounded-lg" />
+            <button className="mt-4 w-full text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition" onClick={() => setShowQRModal(false)}>{t('close')}</button>
+          </div>
+        </div>
       )}
       {showWhatsAppBox && (
         <div className="fixed inset-0 bg-black/40 z-[60] flex items-center justify-center" onClick={() => setShowWhatsAppBox(false)}>
