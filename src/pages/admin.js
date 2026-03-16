@@ -67,7 +67,7 @@ function UserRow({ user, mentors, onUpdate }) {
           </select>
         </div>
 
-        {/* Mentor selector (only for students) */}
+        {/* Mentor selector */}
         <div>
           <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
             Mentor asignado
@@ -75,7 +75,6 @@ function UserRow({ user, mentors, onUpdate }) {
           <select
             value={mentorId}
             onChange={(e) => setMentorId(e.target.value)}
-            disabled={role !== "student"}
             className="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-40"
           >
             <option value="">— Sin mentor —</option>
