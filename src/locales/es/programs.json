@@ -6,35 +6,275 @@
 
       "s1": {
         "title": "Semana 1: Entendiendo las Emociones Negativas y su Origen",
-        "d1":  { "title": "Día 1: Dios conoce tu historia" },
-        "d2":  { "title": "Día 2: El origen de las emociones negativas" },
-        "d3":  { "title": "Día 3: Mentiras instaladas por el abuso" },
-        "d4":  { "title": "Día 4: El poder de la confesión" },
-        "d5":  { "title": "Día 5: Rompiendo con las mentiras" }
+        "d1": {
+          "title": "Día 1: Dios conoce tu historia",
+          "reference": "Proverbios 4:23 (NBLA)",
+          "verse": "Con toda diligencia guarda tu corazón, porque de él brotan los manantiales de la vida.",
+          "text1": "Tu corazón es el registro de tu historia — protégelo con verdad.",
+          "text2": "Tu corazón (mente/emociones) ha almacenado toda tu historia: lo que te hicieron, lo que hiciste, y lo que creíste. Hoy comienza el proceso de abrir tu corazón para que Dios te muestre lo que aún está controlando tus reacciones.",
+          "text3": "Tu sistema de creencias guía tus emociones. Para sanar, debes permitir que Dios revele lo que hay en tu corazón.",
+          "q1": "¿Qué recuerdos o emociones te afectan profundamente?",
+          "q2": "¿Qué mentiras has creído sobre ti mismo basadas en el abuso o rechazo?",
+          "q3": "Escribe una descripción de cómo te sientes hoy y una experiencia que marcó tu niñez emocionalmente.",
+          "affirmation": "Dios está sanando mi historia.",
+          "prayer": "Padre, te entrego mi corazón. Ayúdame a ver con claridad lo que he creído y lo que me ha hecho daño. Quiero empezar un camino de verdad contigo."
+        },
+        "d2": {
+          "title": "Día 2: El origen de las emociones negativas",
+          "reference": "Mateo 15:19 (NBLA)",
+          "verse": "Del corazón provienen malos pensamientos… fornicaciones… calumnias.",
+          "text1": "Tus emociones no vienen del momento — vienen de lo que creíste.",
+          "text2": "Las emociones negativas actuales como vergüenza, confusión sexual, o enojo, tienen raíz en eventos pasados y en lo que creíste sobre ti mismo.",
+          "text3": "Las emociones negativas se alimentan de mentiras profundas, no solo de eventos.",
+          "q1": "¿Cuáles emociones negativas experimentas frecuentemente?",
+          "q2": "¿Cuál es el primer recuerdo donde sentiste eso?",
+          "q3": "Comienza una lista de emociones que te controlan. Añade recuerdos o eventos que asocias con ellas.",
+          "affirmation": "Puedo mirar mi pasado con la verdad de Dios.",
+          "prayer": "Jesús, muéstrame la verdad detrás de mis emociones. Ayúdame a reconocer lo que no he querido enfrentar."
+        },
+        "d3": {
+          "title": "Día 3: Mentiras instaladas por el abuso",
+          "reference": "Proverbios 23:7 (NBLA)",
+          "verse": "Como piensa dentro de sí, así es él.",
+          "text1": "Tu identidad no la define el abuso — la define Dios.",
+          "text2": "Muchas personas abusadas creen mentiras como \"estoy sucio\", \"nadie me va a amar\", o \"esto fue mi culpa\". Estas mentiras necesitan ser identificadas para poder sanarlas.",
+          "text3": "Identificar la mentira es el primer paso para romper su poder.",
+          "q1": "¿Qué mentiras has repetido en tu mente por años?",
+          "q2": "¿Cuál fue la herida o persona que las inició?",
+          "q3": "Escribe frases que creíste sobre ti. Luego escríbelas de nuevo tachando cada mentira y escribe una verdad de Dios al lado.",
+          "affirmation": "Mi identidad está en Cristo, no en el abuso.",
+          "prayer": "Dios mío, revela las mentiras que han moldeado mi identidad. Declaro que Tú me diste un nuevo nombre y un nuevo corazón."
+        },
+        "d4": {
+          "title": "Día 4: El poder de la confesión",
+          "reference": "1 Juan 1:9 (NBLA)",
+          "verse": "Si confesamos nuestros pecados, Él es fiel… para limpiarnos de toda maldad.",
+          "text1": "La confesión no es vergüenza — es el comienzo de la libertad.",
+          "text2": "Confesar no solo tus reacciones, sino también los pecados que cometieron contra ti, rompe la prisión del silencio. Confesar es declarar lo que pasó y rendirlo a Dios.",
+          "text3": "Al declarar el dolor en voz alta, invitas a Dios a sanarlo.",
+          "q1": "¿Qué fue lo que más te dolió del abuso?",
+          "q2": "¿Qué quisieras decirle a tu ofensor en presencia de Dios?",
+          "q3": "Escribe una carta que nunca enviarás a tu agresor. Dila en voz alta como una oración frente a Jesús.",
+          "affirmation": "Mi voz tiene poder delante de Dios.",
+          "prayer": "Jesús, Tú viste todo. Hoy confieso delante de Ti lo que viví. Renuncio al silencio y recibo Tu consuelo."
+        },
+        "d5": {
+          "title": "Día 5: Rompiendo con las mentiras",
+          "reference": "Apocalipsis 12:11 (NBLA)",
+          "verse": "Ellos lo vencieron por medio de la sangre del Cordero y por la palabra del testimonio de ellos.",
+          "text1": "Renuncio a la mentira — declaro la verdad de Dios.",
+          "text2": "La sanidad no está completa hasta que las mentiras son reemplazadas con verdades. Hay poder en hablar lo que Dios dice de ti.",
+          "text3": "Dios te ha dado el poder para renunciar a las mentiras y vivir según la verdad.",
+          "q1": "¿Qué verdades necesitas declarar hoy?",
+          "q2": "¿Qué afirmación bíblica puedes repetir todos los días?",
+          "q3": "Crea una lista de declaraciones bíblicas que puedes leer cada mañana.",
+          "affirmation": "Soy limpio, amado y escogido por Dios.",
+          "prayer": "Declaro que soy libre en Cristo. Renuncio a la mentira que dice que estoy sucio. Soy limpiado por la sangre de Jesús."
+        }
       },
       "s2": {
         "title": "Semana 2: Sanando las Heridas del Pasado",
-        "d6":  { "title": "Día 6: Identifica las heridas que causaron tus emociones" },
-        "d7":  { "title": "Día 7: Revive con propósito, no con dolor" },
-        "d8":  { "title": "Día 8: Perdona al ofensor" },
-        "d9":  { "title": "Día 9: Entrégale la venganza a Dios" },
-        "d10": { "title": "Día 10: Di \"adiós\" al pasado" }
+        "d6": {
+          "title": "Día 6: Identifica las heridas que causaron tus emociones",
+          "reference": "Juan 8:32 (NBLA)",
+          "verse": "Y conocerán la verdad, y la verdad los hará libres.",
+          "text1": "Las emociones muestran el camino hacia las heridas que Dios quiere sanar.",
+          "text2": "Detrás de cada emoción fuerte hay una historia no resuelta. Tus heridas del pasado necesitan ser reconocidas, no enterradas.",
+          "text3": "Las heridas emocionales no desaparecen por ignorarlas — deben ser sanadas con verdad.",
+          "q1": "¿Qué eventos de tu infancia todavía te causan dolor?",
+          "q2": "¿Hay alguien que todavía evitas pensar por lo que te hizo?",
+          "q3": "Escribe una lista de personas o eventos que te hicieron daño. Sé honesto con los sentimientos que todavía provocan.",
+          "affirmation": "No tengo que esconder mis heridas — Dios quiere sanarlas.",
+          "prayer": "Padre, muéstrame las heridas que he ignorado. Quiero verlas contigo para que tú las sanes."
+        },
+        "d7": {
+          "title": "Día 7: Revive con propósito, no con dolor",
+          "reference": "Salmo 34:18 (NBLA)",
+          "verse": "El Señor está cerca de los quebrantados de corazón, y salva a los abatidos de espíritu.",
+          "text1": "Dios no te deja solo cuando vuelves al pasado — Él ya estaba allí.",
+          "text2": "Volver emocionalmente a recuerdos difíciles no es para sufrir más, sino para permitir que Dios entre a esa memoria y la sane.",
+          "text3": "No revives el pasado solo — Dios te acompaña en cada paso.",
+          "q1": "¿Qué te impide recordar sin temor?",
+          "q2": "¿Qué crees que Dios quiere mostrarte en ese recuerdo?",
+          "q3": "Escribe un recuerdo doloroso y lo que sentiste. Luego escribe cómo te imaginas a Jesús apareciendo en esa escena.",
+          "affirmation": "Dios me encuentra en mi dolor, no me abandona.",
+          "prayer": "Jesús, entra conmigo a mis recuerdos. Sana las imágenes que me persiguen y lléname con tu presencia."
+        },
+        "d8": {
+          "title": "Día 8: Perdona al ofensor",
+          "reference": "Lucas 23:34 (NBLA)",
+          "verse": "Padre, perdónalos, porque no saben lo que hacen.",
+          "text1": "El perdón no justifica lo que te hicieron — libera tu corazón del control del pasado.",
+          "text2": "Perdonar no es olvidar ni aprobar el daño. Es liberar el corazón del resentimiento que te mantiene atado.",
+          "text3": "El perdón es un regalo que te haces a ti mismo en la presencia de Dios.",
+          "q1": "¿Qué emociones sientes cuando piensas en quien te abusó?",
+          "q2": "¿Qué temes perder si perdonas?",
+          "q3": "Escribe una oración nombrando lo que te hicieron y decidiendo entregar esa carga a Dios.",
+          "affirmation": "Perdonar me libera, no me debilita.",
+          "prayer": "Dios mío, es difícil perdonar, pero hoy doy este paso. Libero mi alma del peso del rencor."
+        },
+        "d9": {
+          "title": "Día 9: Entrégale la venganza a Dios",
+          "reference": "Romanos 12:19 (NBLA)",
+          "verse": "Mía es la venganza, Yo pagaré, dice el Señor.",
+          "text1": "La justicia de Dios va más allá de la tuya — Él ve todo.",
+          "text2": "Liberarte del deseo de venganza te abre a recibir la sanidad completa. Dios no ignora el dolor; Él juzgará con justicia.",
+          "text3": "No tienes que ser juez — solo hijo sanado.",
+          "q1": "¿Has querido que tu ofensor sufra lo que tú sufriste?",
+          "q2": "¿Qué pasaría si dejaras la justicia completamente en manos de Dios?",
+          "q3": "Escribe lo que te gustaría que Dios hiciera con esa persona. Luego entrégaselo y di: \"Confío en tu justicia.\"",
+          "affirmation": "Dios es mi defensor.",
+          "prayer": "Señor, renuncio al deseo de venganza. Tú eres justo y fiel, yo confío en Ti."
+        },
+        "d10": {
+          "title": "Día 10: Di \"adiós\" al pasado",
+          "reference": "Filipenses 3:13 (NBLA)",
+          "verse": "Olvidando lo que queda atrás y extendiéndome a lo que está delante.",
+          "text1": "No puedes cambiar tu historia, pero sí puedes cambiar su poder sobre ti.",
+          "text2": "Decir adiós es un acto de fe. No borra el pasado, pero rompe su control.",
+          "text3": "El pasado ya no define tu presente cuando lo sueltas en Cristo.",
+          "q1": "¿Qué parte de tu historia sigues repitiendo en tu mente?",
+          "q2": "¿Qué te impide soltarla?",
+          "q3": "Escribe una despedida simbólica al pasado. Usa palabras como \"te libero\", \"me despido\", \"no me defines\".",
+          "affirmation": "Mi pasado está en las manos de Dios, no en las mías.",
+          "prayer": "Señor Jesús, hoy digo adiós al control de mi historia. Tú me llevas hacia adelante."
+        }
       },
       "s3": {
         "title": "Semana 3: Reemplazando Mentiras con la Verdad",
-        "d11": { "title": "Día 11: Identifica las mentiras que has creído" },
-        "d12": { "title": "Día 12: Renuncia a cada mentira" },
-        "d13": { "title": "Día 13: Reemplaza con la verdad de Dios" },
-        "d14": { "title": "Día 14: Recibe el perdón de Dios" },
-        "d15": { "title": "Día 15: Recupera lo que el enemigo te robó" }
+        "d11": {
+          "title": "Día 11: Identifica las mentiras que has creído",
+          "reference": "Juan 8:44 (NBLA)",
+          "verse": "El diablo… no hay verdad en él… porque es mentiroso y padre de mentira.",
+          "text1": "Las mentiras no son tuyas — fueron sembradas para destruirte.",
+          "text2": "Muchas mentiras fueron instaladas por experiencias dolorosas. Hoy es tiempo de identificarlas con la ayuda del Espíritu Santo.",
+          "text3": "Cada mentira que descubres, es una cadena que puedes romper.",
+          "q1": "¿Qué frases negativas repites sobre ti mismo?",
+          "q2": "¿Cuál fue la situación donde esas frases comenzaron a sonar verdad?",
+          "q3": "Escribe una lista de mentiras que has creído sobre ti, tu valor y tu sexualidad. Luego escríbelas nuevamente, añadiendo: \"Esta es una mentira, y hoy la rechazo.\"",
+          "affirmation": "Ya no acepto mentiras como parte de mi identidad.",
+          "prayer": "Espíritu Santo, tráeme a la mente las mentiras que he creído. No quiero vivir más en engaño."
+        },
+        "d12": {
+          "title": "Día 12: Renuncia a cada mentira",
+          "reference": "Efesios 4:27 (NBLA)",
+          "verse": "No den oportunidad al diablo.",
+          "text1": "Las mentiras pierden poder cuando tú las nombras y las rechazas.",
+          "text2": "Renunciar es soltar toda alianza con lo falso. Al hacerlo, cierras puertas al enemigo y preparas tu mente para la verdad.",
+          "text3": "Renunciar no es ignorar, es declarar guerra espiritual.",
+          "q1": "¿Qué mentira has tolerado por más tiempo?",
+          "q2": "¿Qué temes perder si dejas de creer esa mentira?",
+          "q3": "Escribe esta frase con cada mentira: \"Renuncio a la mentira que dice ___. Declaro que en Cristo, la verdad es ___.\"",
+          "affirmation": "Renuncio al engaño — recibo la verdad de Dios.",
+          "prayer": "Renuncio a la mentira que dice [nombre la mentira]. Esta no tiene autoridad sobre mí. Pertenezco a Cristo."
+        },
+        "d13": {
+          "title": "Día 13: Reemplaza con la verdad de Dios",
+          "reference": "Romanos 12:2 (NBLA)",
+          "verse": "Serán transformados mediante la renovación de su mente.",
+          "text1": "No basta con sacar la mentira — hay que llenarse de verdad.",
+          "text2": "Jesús usó la Escritura para resistir al enemigo. Tú también necesitas llenar tu mente con la verdad de Dios.",
+          "text3": "Reemplazar es llenar tu mente con la verdad que produce libertad.",
+          "q1": "¿Qué dice la Palabra de Dios sobre tu valor, tu cuerpo, y tu propósito?",
+          "q2": "¿Qué versículo puedes memorizar hoy como declaración personal?",
+          "q3": "Escribe tres verdades bíblicas que contradicen las mentiras que creías. Repítelas en voz alta.",
+          "affirmation": "Soy renovado por la verdad de Dios.",
+          "prayer": "Señor, llena mi mente con tu Palabra. Que la verdad sustituya cada mentira."
+        },
+        "d14": {
+          "title": "Día 14: Recibe el perdón de Dios",
+          "reference": "1 Juan 1:9 (NBLA)",
+          "verse": "Si confesamos nuestros pecados, Él es fiel y justo para perdonarnos.",
+          "text1": "El perdón no es un sentimiento — es una promesa.",
+          "text2": "Aunque luches con atracciones o comportamientos, el perdón de Dios está disponible si vienes con humildad y verdad.",
+          "text3": "El perdón es un regalo divino, no un premio por tu desempeño.",
+          "q1": "¿Sientes que hay cosas que Dios no puede perdonar?",
+          "q2": "¿Qué te impide recibir su perdón plenamente?",
+          "q3": "Escribe una carta a ti mismo desde la perspectiva de Dios, afirmando su perdón y amor incondicional.",
+          "affirmation": "Soy perdonado, limpio y amado por Dios.",
+          "prayer": "Señor, me acerco con lo que soy. Te confieso mis fallas y recibo tu perdón. Gracias por limpiarme."
+        },
+        "d15": {
+          "title": "Día 15: Recupera lo que el enemigo te robó",
+          "reference": "Juan 10:10 (NBLA)",
+          "verse": "El ladrón solo viene para robar, matar y destruir; Yo he venido para que tengan vida.",
+          "text1": "Dios quiere devolverte lo que el enemigo te robó.",
+          "text2": "Tu gozo, tu identidad, tu capacidad de amar y recibir amor — todo puede ser restaurado en Cristo.",
+          "text3": "El enemigo robó, pero Dios restaura con abundancia.",
+          "q1": "¿Qué te robó el abuso, el pecado o las mentiras?",
+          "q2": "¿Qué cosas deseas ver restauradas por Dios?",
+          "q3": "Escribe lo que deseas que Dios restaure. Haz una lista de oración de lo que anhelas recuperar con su ayuda.",
+          "affirmation": "Recupero lo que me pertenece como hijo de Dios.",
+          "prayer": "Padre, recupero mi dignidad, mi gozo, y mi libertad en Ti. Nada de lo que me quitaron es mayor que lo que tú me das."
+        }
       },
       "s4": {
         "title": "Semana 4: Vivir en Libertad y Verdad",
-        "d16": { "title": "Día 16: Rompe con el control de tu historia" },
-        "d17": { "title": "Día 17: Acepta las consecuencias con esperanza" },
-        "d18": { "title": "Día 18: Vive como trofeo de la sanidad de Dios" },
-        "d19": { "title": "Día 19: Ayuda a otros en su proceso de libertad" },
-        "d20": { "title": "Día 20: Proclama tu libertad todos los días" }
+        "d16": {
+          "title": "Día 16: Rompe con el control de tu historia",
+          "reference": "1 Juan 3:8 (NBLA)",
+          "verse": "El Hijo de Dios se manifestó para destruir las obras del diablo.",
+          "text1": "Tu historia ya no tiene que controlarte — Cristo es tu nueva raíz.",
+          "text2": "No puedes cambiar lo que ocurrió, pero puedes elegir que ya no te controle. Jesús destruyó el poder del pasado.",
+          "text3": "Romper con el control del pasado es posible en Cristo.",
+          "q1": "¿Qué parte de tu historia sigue teniendo poder sobre ti?",
+          "q2": "¿Cómo sería tu vida si ya no vivieras desde ese dolor?",
+          "q3": "Escribe la parte más difícil de tu historia. Luego escribe: \"Rompo con este control en el nombre de Jesús.\"",
+          "affirmation": "Mi historia ya no me controla — Cristo me hace libre.",
+          "prayer": "Señor, declaro que el pasado ya no me define. Rompo su poder en el nombre de Jesús."
+        },
+        "d17": {
+          "title": "Día 17: Acepta las consecuencias con esperanza",
+          "reference": "Génesis 50:20 (NBLA)",
+          "verse": "Ustedes pensaron hacerme mal, pero Dios lo cambió en bien.",
+          "text1": "Tus heridas no son tu final — son el inicio de tu propósito.",
+          "text2": "Aceptar las consecuencias no es resignarse, es confiar que Dios usará todo para tu bien.",
+          "text3": "Aceptar con esperanza te prepara para ser instrumento de Dios.",
+          "q1": "¿Qué pérdidas has sufrido por causa del abuso o pecado?",
+          "q2": "¿Puedes creer que Dios usará tu historia para bien?",
+          "q3": "Escribe tus pérdidas y luego escribe junto a cada una: \"Dios puede usar esto para bien.\"",
+          "affirmation": "Mi dolor se convierte en propósito.",
+          "prayer": "Padre, acepto las consecuencias de lo que viví. Transfórmalas en bendición para otros."
+        },
+        "d18": {
+          "title": "Día 18: Vive como trofeo de la sanidad de Dios",
+          "reference": "Mateo 5:16 (NBLA)",
+          "verse": "Así brille la luz de ustedes… y glorifiquen a su Padre.",
+          "text1": "Tu sanidad no es solo para ti — es para mostrar la gloria de Dios.",
+          "text2": "Cuando vives en libertad, otros pueden ver la obra de Dios en ti y buscar esa misma esperanza.",
+          "text3": "Tu vida restaurada es un testimonio vivo del poder de Dios.",
+          "q1": "¿Qué evidencia hay en tu vida de la sanidad de Dios?",
+          "q2": "¿Cómo puedes compartir tu testimonio sin vergüenza?",
+          "q3": "Escribe lo que te gustaría que otros supieran de tu proceso y lo que Dios ha hecho en ti.",
+          "affirmation": "Soy un trofeo de la sanidad de Dios.",
+          "prayer": "Señor, que mi historia redimida hable más fuerte que mi pasado."
+        },
+        "d19": {
+          "title": "Día 19: Ayuda a otros en su proceso de libertad",
+          "reference": "2 Corintios 1:4 (NBLA)",
+          "verse": "Consolamos a otros con el consuelo que hemos recibido.",
+          "text1": "Tu sanidad encuentra plenitud cuando ayudas a otros a sanar.",
+          "text2": "Compartir lo que Dios ha hecho en ti no solo bendice a otros — fortalece tu propia libertad.",
+          "text3": "Tu testimonio puede abrir la puerta de libertad para otros.",
+          "q1": "¿A quién podrías ayudar con tu historia?",
+          "q2": "¿Qué podrías decirles que les dé esperanza?",
+          "q3": "Escribe el nombre de alguien que necesita consuelo. Ora por él y anota lo que podrías compartir de tu historia.",
+          "affirmation": "Mi historia sanada es una herramienta de esperanza.",
+          "prayer": "Muéstrame, Señor, cómo usar mi historia para consolar a otros que sufren."
+        },
+        "d20": {
+          "title": "Día 20: Proclama tu libertad todos los días",
+          "reference": "Juan 8:32 (NBLA)",
+          "verse": "Conocerán la verdad, y la verdad los hará libres.",
+          "text1": "La libertad se alimenta todos los días con verdad.",
+          "text2": "No basta con haber sido sanado. La libertad se mantiene al caminar en verdad y renovar la mente constantemente.",
+          "text3": "La libertad en Cristo es continua y firme cuando se vive desde la verdad.",
+          "q1": "¿Qué prácticas necesitas seguir para mantener tu libertad?",
+          "q2": "¿Qué verdad necesitas declarar cada día?",
+          "q3": "Crea tu declaración de libertad personal con base en todo lo aprendido. Escríbela y léela en voz alta cada mañana.",
+          "affirmation": "Soy libre, y seguiré caminando en verdad.",
+          "prayer": "Padre, hoy proclamo mi libertad. No volveré atrás. Viviré en tu verdad."
+        }
       }
     },
 
@@ -46,8 +286,11 @@
         "les1": {
           "title": "Comunicación y Resolución de Conflictos",
           "intro": "La comunicación saludable construye confianza. El conflicto es inevitable, pero resolverlo requiere escuchar con humildad y amor. Las parejas deben hablar con verdad y gracia.",
+          "reference1": "Santiago 1:19",
           "verse1": "Todos deben ser pronto para oír, tardo para hablar y tardo para la ira.",
+          "reference2": "Efesios 4:29",
           "verse2": "No salga de la boca de ustedes ninguna palabra mala, sino solo la que sea buena para edificación.",
+          "reference3": "Proverbios 15:1",
           "verse3": "La suave respuesta aparta el furor.",
           "q1": "¿Cómo puedes mejorar tu forma de hablar y escuchar a tu cónyuge?",
           "q2": "Escribe una meta para comunicarte con más gracia esta semana. ¿Qué cambiarás en tu actitud o palabras?"
@@ -55,8 +298,11 @@
         "les2": {
           "title": "Perdón y Gracia",
           "intro": "El perdón sana las heridas del matrimonio. Así como Cristo nos perdona, debemos perdonarnos para restaurar la unidad y la paz.",
+          "reference1": "Colosenses 3:13",
           "verse1": "Así como el Señor los perdonó, así también háganlo ustedes.",
+          "reference2": "Efesios 4:32",
           "verse2": "Sean más bien amables unos con otros, misericordiosos, perdonándose.",
+          "reference3": "Mateo 18:21-22",
           "verse3": "No te digo hasta siete veces, sino hasta setenta veces siete.",
           "q1": "¿Hay algo que necesites perdonar o pedir perdón hoy?",
           "q2": "Ora juntos y pídanse perdón si es necesario. Anoten cómo esto les dio paz y unidad."
@@ -64,8 +310,11 @@
         "les3": {
           "title": "Roles y Responsabilidades en el Matrimonio",
           "intro": "Los roles bíblicos reflejan el amor y servicio de Cristo. El esposo lidera con amor, la esposa apoya con respeto. Ambos se sirven mutuamente con humildad.",
+          "reference1": "Efesios 5:22-33",
           "verse1": "Maridos, amen a sus esposas así como Cristo amó a la iglesia.",
+          "reference2": "1 Pedro 3:1-7",
           "verse2": "Vivan con sus esposas de manera comprensiva.",
+          "reference3": "Génesis 2:18",
           "verse3": "Haré una ayuda adecuada para él.",
           "q1": "¿Cómo están sirviendo el uno al otro? ¿Respetan sus roles con amor?",
           "q2": "Agradezcan a Dios por su cónyuge y escríbanse una nota de afirmación por su labor en el hogar."
@@ -76,8 +325,11 @@
         "les4": {
           "title": "Intimidad Sexual y Pureza",
           "intro": "La intimidad sexual es sagrada y une a la pareja. Debe cultivarse con amor, respeto y pureza. Refleja el pacto del matrimonio.",
+          "reference1": "Hebreos 13:4",
           "verse1": "Sea el matrimonio honroso en todos, y el lecho sin mancilla.",
+          "reference2": "1 Corintios 7:3-5",
           "verse2": "No se priven el uno al otro.",
+          "reference3": "Proverbios 5:18-19",
           "verse3": "Regocíjate con la esposa de tu juventud.",
           "q1": "¿Cómo pueden fortalecer su intimidad y confianza mutua?",
           "q2": "Tengan una conversación abierta y amorosa sobre sus necesidades y expectativas en la intimidad."
@@ -85,8 +337,11 @@
         "les5": {
           "title": "Unidad en el Crecimiento Espiritual y Propósito",
           "intro": "La unidad espiritual fortalece el matrimonio. Las parejas que oran y sirven a Dios juntas crecen en amor y propósito.",
+          "reference1": "Eclesiastés 4:12",
           "verse1": "El cordón de tres hilos no se rompe fácilmente.",
+          "reference2": "Mateo 6:33",
           "verse2": "Busquen primero su reino y su justicia.",
+          "reference3": "Josué 24:15",
           "verse3": "Pero yo y mi casa serviremos al Señor.",
           "q1": "¿Qué lugar tiene Dios en su matrimonio diario?",
           "q2": "Establezcan un tiempo para orar juntos cada día esta semana y anoten lo que Dios les muestra."
@@ -94,8 +349,11 @@
         "les6": {
           "title": "Mayordomía y Finanzas",
           "intro": "Las finanzas suelen causar tensión en el matrimonio. Dios llama a las parejas a ser generosas, evitar deudas y administrar con sabiduría y unidad.",
+          "reference1": "Mateo 6:24",
           "verse1": "No pueden servir a Dios y a las riquezas.",
+          "reference2": "Proverbios 21:5",
           "verse2": "Los planes del diligente ciertamente tienden a la abundancia.",
+          "reference3": "1 Timoteo 6:6-10",
           "verse3": "El amor al dinero es raíz de toda clase de males.",
           "q1": "¿Están administrando su dinero con sabiduría y propósito?",
           "q2": "Revisen juntos su presupuesto y hagan un compromiso de fidelidad en sus finanzas delante de Dios."
@@ -111,7 +369,9 @@
         "les1": {
           "title": "Trampa #1: ¡Demasiado Rápido!",
           "intro": "Casarse rápidamente por miedo, soledad o deseo de ser amado es peligroso. El amor perfecto echa fuera el temor.",
+          "reference1": "1 Juan 4:18",
           "verse1": "El amor perfecto echa fuera el temor.",
+          "reference2": "Filipenses 2:13",
           "verse2": "Dios obra en nosotros para hacer Su voluntad.",
           "q1": "¿Qué señales de advertencia puedo identificar en esta trampa en mi propia vida o relación?",
           "q2": "¿Cómo puedo practicar la paciencia de Salmo 37:7 esta semana mientras evalúo mi madurez espiritual y emocional?"
@@ -119,7 +379,9 @@
         "les2": {
           "title": "Trampa #2: ¡Demasiado Joven!",
           "intro": "Casarse antes de desarrollar identidad personal y metas de vida lleva a la frustración. Amar es obedecer, no solo sentir.",
+          "reference1": "Juan 14:15",
           "verse1": "Amar es obedecer, no solo sentir.",
+          "reference2": "Santiago 1:2-4",
           "verse2": "Las pruebas producen madurez.",
           "q1": "¿Tengo claridad sobre quién soy en Cristo y cuáles son mis metas espirituales, personales y familiares?",
           "q2": "Define por escrito tus metas espirituales y personales antes de comprometerte."
@@ -127,7 +389,9 @@
         "les3": {
           "title": "Trampa #3: Demasiadas Ganas de Casarse",
           "intro": "El apuro por casarse muchas veces oculta dolor emocional o inseguridad. Solo Jesús puede saciar el alma.",
+          "reference1": "Santiago 1:2-4",
           "verse1": "La paciencia obra madurez.",
+          "reference2": "Juan 4:14",
           "verse2": "Solo Jesús sacia el alma.",
           "q1": "¿Qué estoy evitando o tratando de arreglar con la prisa por casarme?",
           "q2": "¿Qué pasos concretos puedo dar para sanar mi interior antes de comprometer mi futuro?"
@@ -135,7 +399,9 @@
         "les4": {
           "title": "Trampa #4: Para Agradar a Otros",
           "intro": "Casarse para complacer a otros termina en resentimiento. Cada uno dará cuentas a Dios, no a los demás.",
+          "reference1": "2 Corintios 5:10",
           "verse1": "Cada uno dará cuentas a Dios.",
+          "reference2": "Proverbios 19:20",
           "verse2": "Busca consejo sabio.",
           "q1": "¿Estoy tomando esta decisión por obediencia a Dios o por presión de otros?",
           "q2": "Haz una lista de 10 cosas que buscas en un cónyuge y 10 que no tolerarías."
@@ -143,7 +409,9 @@
         "les5": {
           "title": "Trampa #5: Poca Experiencia de Vida en Común",
           "intro": "No compartir diversas experiencias impide conocer profundamente al otro. La intimidad física prematura nubla el juicio.",
+          "reference1": "Proverbios 22:24",
           "verse1": "Evita amistades con personas airadas.",
+          "reference2": "Gálatas 5:19",
           "verse2": "El pecado sexual trae consecuencias.",
           "q1": "¿Hemos resuelto conflictos juntos? ¿Nos hemos conocido en situaciones diversas?",
           "q2": "¿Cómo podemos retrasar la intimidad física para conocernos verdaderamente primero?"
@@ -154,7 +422,9 @@
         "les6": {
           "title": "Trampa #6: Expectativas Irreales",
           "intro": "Esperar que tu pareja sane tus heridas o cambie después del matrimonio es peligroso. Solo Dios transforma.",
+          "reference1": "Filipenses 2:13",
           "verse1": "Solo Dios transforma.",
+          "reference2": "1 Corintios 13:11",
           "verse2": "Deja lo infantil antes del matrimonio.",
           "q1": "¿Cuáles son mis expectativas sobre el matrimonio? ¿Son realistas o idealizadas?",
           "q2": "¿Cómo puedo dejar que el amor motive crecimiento en lugar de encubrir dolor no resuelto?"
@@ -162,7 +432,9 @@
         "les7": {
           "title": "Trampa #7: Problemas Personales No Resueltos",
           "intro": "Problemas no tratados antes del matrimonio empeorarán con el tiempo. Control, adicciones, ira o celos no desaparecen solos.",
+          "reference1": "Éxodo 20:5",
           "verse1": "Pecados generacionales.",
+          "reference2": "1 Pedro 3:7",
           "verse2": "Traten a sus esposas con honra.",
           "q1": "¿Hay conductas en mí o en mi pareja (control, ira, celos, adicciones) que necesitan sanidad antes del matrimonio?",
           "q2": "El perdón se da, pero la confianza se gana con tiempo y frutos. ¿Cómo aplico esto?"
@@ -170,7 +442,9 @@
         "les8": {
           "title": "Trampa #8: Minimizar la Compatibilidad Espiritual",
           "intro": "Las diferencias espirituales causarán conflicto profundo. No os unáis en yugo desigual.",
+          "reference1": "2 Corintios 6:14",
           "verse1": "No os unáis en yugo desigual.",
+          "reference2": "Efesios 2:1-5",
           "verse2": "Solo los creyentes están vivos espiritualmente.",
           "q1": "¿Cuál es la madurez espiritual real de mi pareja? ¿Compartimos los mismos valores y prioridades en Cristo?",
           "q2": "¿Estoy dispuesto/a a no conformarme con menos de lo que Dios quiere darme?"
@@ -178,7 +452,9 @@
         "les9": {
           "title": "Trampa #9: No Tener Reglas de Comunicación",
           "intro": "Una mala comunicación arruina la relación antes de comenzar. Es esencial establecer un estilo sano desde el noviazgo.",
+          "reference1": "Gálatas 6:2",
           "verse1": "Carguen los unos las cargas de los otros.",
+          "reference2": "Romanos 12:18",
           "verse2": "Vivir en paz con todos, si es posible.",
           "q1": "¿Cómo nos comunicamos cuando hay desacuerdo? ¿Escuchamos sin interrumpir y hablamos con respeto?",
           "q2": "¿Qué reglas concretas de comunicación podemos establecer desde hoy en nuestra relación?"
@@ -186,6 +462,7 @@
         "les10": {
           "title": "Reflexión Final: Bondad de Amor vs. Bondad de Temor",
           "intro": "La bondad de amor está basada en la verdad, confianza y libertad. La bondad de temor está basada en el miedo, control y manipulación. El amor echa fuera el temor.",
+          "reference1": "1 Juan 4:18",
           "verse1": "El amor echa fuera el temor.",
           "q1": "¿Cuál de estas 9 trampas he visto o experimentado personalmente?",
           "q2": "¿Cómo estoy creciendo en madurez emocional y espiritual?",
@@ -202,8 +479,11 @@
         "title": "Semana 1: Introducción al Liderazgo Cristiano",
         "les1": {
           "title": "Fundamentos del Liderazgo Cristiano",
+          "reference1": "Proverbios 3:5-6",
           "verse1": "Confía en el Señor con todo tu corazón y no te apoyes en tu propio entendimiento. Reconócelo en todos tus caminos, y Él enderezará tus sendas.",
+          "reference2": "Mateo 20:25-28",
           "verse2": "El que quiera llegar a ser grande entre ustedes, será su servidor; y el que quiera ser el primero entre ustedes, será su esclavo; así como el Hijo del Hombre no vino para ser servido, sino para servir.",
+          "reference3": "1 Timoteo 3:1-7",
           "verse3": "Un obispo debe ser irreprensible, marido de una sola mujer, sobrio, prudente, de conducta decorosa, hospitalario, apto para enseñar.",
           "objectives": "Objetivos: (1) Comprender los fundamentos bíblicos del liderazgo cristiano. (2) Contrastar el liderazgo servicial con la autoridad del mundo. (3) Evaluar el carácter personal según las cualificaciones bíblicas.",
           "q1": "¿Qué te llama la atención sobre la definición de grandeza de Jesús en Mateo 20?",
@@ -216,8 +496,11 @@
         "title": "Semana 2: El Líder Empoderado por el Espíritu",
         "les1": {
           "title": "El Espíritu Santo en el Liderazgo",
+          "reference1": "Hechos 1:8",
           "verse1": "Recibirán poder cuando el Espíritu Santo venga sobre ustedes; y serán Mis testigos hasta los confines de la tierra.",
+          "reference2": "Gálatas 5:22-25",
           "verse2": "El fruto del Espíritu es amor, gozo, paz, paciencia, benignidad, bondad, fidelidad, humildad, dominio propio.",
+          "reference3": "Romanos 8:14",
           "verse3": "Todos los que son guiados por el Espíritu de Dios, los tales son hijos de Dios.",
           "objectives": "Objetivos: (1) Comprender cómo el Espíritu Santo capacita el liderazgo cristiano. (2) Identificar la diferencia entre dones espirituales y fruto espiritual. (3) Aprender a escuchar la guía del Espíritu en decisiones cotidianas.",
           "q1": "¿Qué papel juega el Espíritu Santo en tu liderazgo diario?",
@@ -230,8 +513,11 @@
         "title": "Semana 3: El Líder Centrado en el Evangelio",
         "les1": {
           "title": "El Evangelio Define el Liderazgo",
+          "reference1": "Juan 13:12-17",
           "verse1": "Si Yo, el Señor y el Maestro, les lavé los pies, ustedes también deben lavarse los pies unos a otros. Porque les he dado ejemplo.",
+          "reference2": "Marcos 10:42-45",
           "verse2": "Cualquiera de ustedes que desee llegar a ser grande será su servidor; y cualquiera que desee ser el primero será siervo de todos.",
+          "reference3": "Filipenses 2:5-8",
           "verse3": "Haya en ustedes esta actitud que hubo también en Cristo Jesús, quien se despojó a Sí mismo tomando forma de siervo.",
           "objectives": "Objetivos: (1) Descubrir cómo el Evangelio define y transforma el liderazgo. (2) Comprender la humildad como base de la influencia cristiana. (3) Identificar formas prácticas de liderar mediante servicio sacrificial.",
           "q1": "¿Cómo desafía Jesús tus motivos para liderar?",
@@ -244,8 +530,11 @@
         "title": "Semana 4: Misión y Evangelismo",
         "les1": {
           "title": "El Mandato Misionero",
+          "reference1": "Mateo 28:18-20",
           "verse1": "Vayan, pues, y hagan discípulos de todas las naciones... enseñándoles a guardar todo lo que les he mandado; y recuerden, Yo estoy con ustedes todos los días.",
+          "reference2": "Hechos 1:8",
           "verse2": "Recibirán poder cuando el Espíritu Santo venga sobre ustedes; y serán Mis testigos hasta los confines de la tierra.",
+          "reference3": "Romanos 10:13-15",
           "verse3": "¿Cómo predicarán si no son enviados? ¡Cuán hermosos son los pies de los que anuncian el evangelio del bien!",
           "objectives": "Objetivos: (1) Entender el mandato de la Gran Comisión como llamado personal y comunitario. (2) Identificar el papel del Espíritu Santo en el evangelismo. (3) Desarrollar confianza y claridad para compartir el evangelio.",
           "q1": "¿Qué temores tienes al compartir tu fe?",
@@ -258,8 +547,11 @@
         "title": "Semana 5: Identidad y Llamado",
         "les1": {
           "title": "Nuestra Identidad en Cristo",
+          "reference1": "Efesios 2:8-10",
           "verse1": "Somos hechura suya, creados en Cristo Jesús para hacer buenas obras, las cuales Dios preparó de antemano para que anduviéramos en ellas.",
+          "reference2": "Jeremías 1:5",
           "verse2": "Antes que Yo te formara en el seno materno, te conocí, y antes que nacieras, te consagré; te puse por profeta a las naciones.",
+          "reference3": "2 Timoteo 1:9",
           "verse3": "Quien nos ha salvado y nos ha llamado con un llamamiento santo, no conforme a nuestras obras, sino según Su propósito y por la gracia.",
           "objectives": "Objetivos: (1) Comprender que nuestra identidad está en Cristo, no en el desempeño. (2) Reconocer que el llamado comienza con 'ser' antes de 'hacer'. (3) Explorar los dones, pasiones y contextos como señales de propósito.",
           "q1": "¿Dónde has estado tratando de definirte por tu actividad en lugar de por tu identidad en Cristo?",
@@ -272,8 +564,11 @@
         "title": "Semana 6: Formación Espiritual",
         "les1": {
           "title": "Disciplinas Espirituales y Transformación",
+          "reference1": "Romanos 12:1-2",
           "verse1": "No se adapten a este mundo, sino transfórmense mediante la renovación de su mente, para que verifiquen cuál es la voluntad de Dios.",
+          "reference2": "1 Timoteo 4:7-8",
           "verse2": "Disciplínate a ti mismo para la piedad; porque el ejercicio físico aprovecha poco, pero la piedad es provechosa para todo.",
+          "reference3": "Juan 15:4-5",
           "verse3": "Permanezcan en Mí, y Yo en ustedes. Como el sarmiento no puede dar fruto por sí mismo si no permanece en la vid.",
           "objectives": "Objetivos: (1) Comprender la formación espiritual como transformación continua. (2) Explorar disciplinas espirituales como herramientas de comunión con Dios. (3) Evaluar áreas personales de crecimiento espiritual.",
           "q1": "¿Qué hábitos te están formando más que la Palabra de Dios?",
@@ -286,8 +581,11 @@
         "title": "Semana 7: Liderazgo Relacional",
         "les1": {
           "title": "Liderazgo en Comunidad",
+          "reference1": "Juan 13:34-35",
           "verse1": "Un mandamiento nuevo les doy: que se amen los unos a los otros. En esto conocerán todos que son Mis discípulos.",
+          "reference2": "Efesios 4:2-3",
           "verse2": "Con toda humildad y mansedumbre, con paciencia, soportándose unos a otros en amor, procurando guardar la unidad del Espíritu.",
+          "reference3": "Proverbios 27:17",
           "verse3": "Hierro con hierro se afila, y así un hombre afila a otro.",
           "objectives": "Objetivos: (1) Entender que el liderazgo espiritual se vive en comunidad. (2) Desarrollar habilidades para relaciones saludables en el ministerio. (3) Aprender a dar y recibir corrección en amor.",
           "q1": "¿Estás liderando desde relaciones o desde funciones?",
@@ -300,8 +598,11 @@
         "title": "Semana 8: Liderazgo en la Iglesia Local",
         "les1": {
           "title": "El Cuerpo de Cristo en Acción",
+          "reference1": "Hechos 2:42-47",
           "verse1": "Se dedicaban continuamente a las enseñanzas de los apóstoles, a la comunión, al partimiento del pan y a la oración... Y el Señor añadía cada día los que iban siendo salvos.",
+          "reference2": "Efesios 4:11-13",
           "verse2": "Él dio a algunos el ser apóstoles, a otros profetas, a otros evangelistas, a otros pastores y maestros, a fin de capacitar a los santos para la obra del ministerio.",
+          "reference3": "1 Pedro 5:1-3",
           "verse3": "Pastoreen el rebaño de Dios entre ustedes, velando por él, no por obligación, sino voluntariamente... demostrando ser ejemplos del rebaño.",
           "objectives": "Objetivos: (1) Comprender el propósito de la iglesia local como cuerpo y comunidad. (2) Identificar los roles de liderazgo en la iglesia según el Nuevo Testamento. (3) Evaluar cómo servir y crecer dentro de la iglesia local.",
           "q1": "¿Cómo puedes honrar y apoyar el liderazgo de tu iglesia local?",
@@ -314,8 +615,11 @@
         "title": "Semana 9: Liderazgo en Servicio",
         "les1": {
           "title": "El Camino del Siervo",
+          "reference1": "Marcos 10:43-45",
           "verse1": "Cualquiera de ustedes que desee llegar a ser grande será su servidor... Porque ni aun el Hijo del Hombre vino para ser servido, sino para servir y para dar Su vida en rescate.",
+          "reference2": "Juan 13:12-15",
           "verse2": "Si Yo, el Señor y el Maestro, les lavé los pies, ustedes también deben lavarse los pies unos a otros. Porque les he dado ejemplo.",
+          "reference3": "Filipenses 2:3-4",
           "verse3": "No hagan nada por egoísmo o vanagloria, sino que con actitud humilde cada uno considere al otro como más importante que a sí mismo.",
           "objectives": "Objetivos: (1) Entender el servicio como el camino del liderazgo bíblico. (2) Identificar las actitudes que reflejan un corazón de siervo. (3) Desarrollar acciones prácticas de liderazgo servicial.",
           "q1": "¿A qué parte del ejemplo de servicio de Jesús te resistes más?",
@@ -328,8 +632,11 @@
         "title": "Semana 10: Liderazgo con Integridad",
         "les1": {
           "title": "Vida Pública y Vida Privada",
+          "reference1": "Proverbios 11:3",
           "verse1": "La integridad de los rectos los guiará, pero la perversidad de los pérfidos los destruirá.",
+          "reference2": "Salmo 101:2-3",
           "verse2": "Andaré en la integridad de mi corazón dentro de mi casa. No pondré cosa indigna delante de mis ojos.",
+          "reference3": "Tito 2:7-8",
           "verse3": "Muéstrate en todo como ejemplo de buenas obras, con pureza de doctrina, con dignidad, con palabra sana e irreprochable.",
           "objectives": "Objetivos: (1) Definir integridad bíblicamente y su papel en el liderazgo. (2) Identificar áreas personales que necesitan consistencia entre lo privado y lo público. (3) Establecer prácticas para cultivar una vida íntegra.",
           "q1": "¿Dónde necesitas alinear tu vida privada con lo que enseñas públicamente?",
@@ -342,8 +649,11 @@
         "title": "Semana 11: Resolución de Conflictos Bíblica",
         "les1": {
           "title": "Confrontación y Reconciliación",
+          "reference1": "Mateo 18:15-17",
           "verse1": "Si tu hermano peca, ve y repréndelo a solas. Si te escucha, has ganado a tu hermano.",
+          "reference2": "Romanos 12:17-18",
           "verse2": "No paguen a nadie mal por mal. Si es posible, en cuanto de ustedes dependa, estén en paz con todos los hombres.",
+          "reference3": "Efesios 4:26-27",
           "verse3": "Enójense, pero no pequen; no se ponga el sol sobre su enojo, ni den oportunidad al diablo.",
           "objectives": "Objetivos: (1) Comprender el modelo bíblico de confrontación y reconciliación. (2) Desarrollar habilidades para resolver conflictos con gracia y verdad. (3) Evaluar actitudes personales que alimentan el conflicto.",
           "q1": "¿Cómo reaccionas usualmente ante el conflicto? ¿Evitas, enfrentas, o te callas?",
@@ -356,8 +666,11 @@
         "title": "Semana 12: Liderazgo con Sabiduría",
         "les1": {
           "title": "La Sabiduría de lo Alto",
+          "reference1": "Santiago 1:5",
           "verse1": "Si alguno de ustedes se ve falto de sabiduría, que la pida a Dios, quien da a todos abundantemente y sin reproche, y le será dada.",
+          "reference2": "Proverbios 3:13-18",
           "verse2": "Bienaventurado el hombre que halla sabiduría... Ella es árbol de vida para los que de ella echan mano.",
+          "reference3": "1 Reyes 3:9-12",
           "verse3": "Da, pues, a Tu siervo un corazón con entendimiento para juzgar a Tu pueblo y para discernir entre el bien y el mal.",
           "objectives": "Objetivos: (1) Comprender la sabiduría como un don espiritual y una práctica diaria. (2) Distinguir entre sabiduría humana y sabiduría de lo alto. (3) Aprender a tomar decisiones basadas en principios bíblicos.",
           "q1": "¿En qué áreas necesitas urgentemente la sabiduría de Dios?",
@@ -370,8 +683,11 @@
         "title": "Semana 13: Liderazgo Multiplicador",
         "les1": {
           "title": "Discipulado y Reproducción",
+          "reference1": "2 Timoteo 2:2",
           "verse1": "Lo que has oído de mí en la presencia de muchos testigos, eso encarga a hombres fieles que sean idóneos para enseñar también a otros.",
+          "reference2": "Mateo 28:19-20",
           "verse2": "Vayan, pues, y hagan discípulos de todas las naciones... enseñándoles a guardar todo lo que les he mandado.",
+          "reference3": "Hechos 6:1-4",
           "verse3": "Busquen de entre ustedes a siete hombres de buena reputación, llenos del Espíritu y de sabiduría, a quienes podamos encargar esta tarea.",
           "objectives": "Objetivos: (1) Comprender el liderazgo como una misión multiplicadora. (2) Identificar y discipular a otros para reproducir líderes fieles. (3) Delegar con sabiduría, visión y confianza en el Espíritu Santo.",
           "q1": "¿Estás liderando de forma que otros puedan ser entrenados y enviados?",
@@ -384,8 +700,11 @@
         "title": "Semana 14: Liderazgo Bajo Presión",
         "les1": {
           "title": "Resiliencia Espiritual",
+          "reference1": "2 Corintios 4:7-9",
           "verse1": "Afligidos en todo, pero no agobiados; perplejos, pero no desesperados; perseguidos, pero no abandonados; derribados, pero no destruidos.",
+          "reference2": "Filipenses 4:6-7",
           "verse2": "Por nada estén afanosos, sino que en todo, mediante oración y súplica con acción de gracias... la paz de Dios guardará sus corazones y sus mentes.",
+          "reference3": "Salmo 46:1-2",
           "verse3": "Dios es nuestro refugio y fortaleza, nuestro pronto auxilio en las tribulaciones. Por tanto, no temeremos.",
           "objectives": "Objetivos: (1) Reconocer que la presión es parte del llamado al liderazgo. (2) Aprender a responder con fe, oración y dependencia del Espíritu. (3) Identificar prácticas para cultivar resiliencia espiritual.",
           "q1": "¿Qué situaciones recientes han puesto presión sobre tu liderazgo?",
@@ -398,8 +717,11 @@
         "title": "Semana 15: Liderazgo Financiero y Generosidad",
         "les1": {
           "title": "Mayordomía y Generosidad",
+          "reference1": "Lucas 16:10-11",
           "verse1": "El que es fiel en lo muy poco, también es fiel en lo mucho. Por tanto, si no han sido fieles en el uso de las riquezas injustas, ¿quién les confiará las riquezas verdaderas?",
+          "reference2": "2 Corintios 9:6-8",
           "verse2": "El que siembra generosamente, generosamente también segará... Dios puede hacer que toda gracia abunde para ustedes.",
+          "reference3": "Mateo 6:24",
           "verse3": "Nadie puede servir a dos señores... No pueden servir a Dios y a las riquezas.",
           "objectives": "Objetivos: (1) Comprender el manejo del dinero como un tema espiritual y de liderazgo. (2) Identificar principios bíblicos para la administración y la generosidad. (3) Practicar decisiones financieras que reflejan fe y fidelidad.",
           "q1": "¿Qué lugar tiene el dinero en tu vida y tu liderazgo?",
@@ -412,8 +734,11 @@
         "title": "Semana 16: Perseverancia y Final con Propósito",
         "les1": {
           "title": "Corriendo con los Ojos en la Meta",
+          "reference1": "Hebreos 12:1-3",
           "verse1": "Despojémonos de todo peso y del pecado... y corramos con paciencia la carrera que tenemos por delante, puestos los ojos en Jesús, el autor y consumador de la fe.",
+          "reference2": "2 Timoteo 4:7-8",
           "verse2": "He peleado la buena batalla, he terminado la carrera, he guardado la fe. En el futuro me está reservada la corona de justicia.",
+          "reference3": "Gálatas 6:9",
           "verse3": "Y no nos cansemos de hacer el bien, pues a su tiempo, si no nos cansamos, segaremos.",
           "objectives": "Objetivos: (1) Valorar la perseverancia como virtud esencial del liderazgo cristiano. (2) Prepararse para terminar con fidelidad el camino ministerial. (3) Renovar la visión con enfoque en Cristo y recompensa eterna.",
           "q1": "¿Qué obstáculos amenazan con hacerte rendirte en tu liderazgo?",

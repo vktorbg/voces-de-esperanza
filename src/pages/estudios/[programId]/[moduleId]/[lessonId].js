@@ -20,10 +20,11 @@ import {
 // ─── Content block renderers ──────────────────────────────────────────────────
 
 function VerseBlock({ block, t }) {
+  const displayRef = block.referenceKey ? t(block.referenceKey) : block.reference;
   return (
     <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-400 rounded-r-xl px-5 py-4 my-4">
       <p className="text-xs font-semibold uppercase tracking-wide text-blue-500 dark:text-blue-400 mb-1">
-        {t("studies.verse")} — {block.reference}
+        {t("studies.verse")} — {displayRef}
       </p>
       <p className="text-gray-800 dark:text-gray-100 italic leading-relaxed">
         {block.textKey ? t(block.textKey) : block.text || ""}
@@ -167,7 +168,7 @@ function MultipleChoiceQuestion({ question, savedAnswer, onSave, t }) {
 
 function LessonContent({ params }) {
   const { programId, moduleId, lessonId } = params;
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { user } = useAuth();
 
   const program = getProgramById(programId);
@@ -193,7 +194,7 @@ function LessonContent({ params }) {
   const handleSave = useCallback(
     async (questionId, answer) => {
       if (!user) return;
-      await saveResponse(user.uid, programId, lessonId, questionId, answer, moduleId);
+      await saveResponse(user.uid, programId, lessonId, questionId, answer, moduleId, language);
       setResponses((prev) => ({
         ...prev,
         [questionId]: { ...prev[questionId], answer },
@@ -305,6 +306,30 @@ function LessonContent({ params }) {
         }
         return null;
       })}
+
+      {/* Affirmation */}
+      {(lesson.affirmationKey || lesson.affirmation) && (
+        <div className="mt-6 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-2xl px-5 py-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400 mb-1">
+            {t("studies.affirmation")}
+          </p>
+          <p className="text-gray-800 dark:text-gray-100 font-medium leading-relaxed">
+            {lesson.affirmationKey ? t(lesson.affirmationKey) : lesson.affirmation}
+          </p>
+        </div>
+      )}
+
+      {/* Prayer */}
+      {(lesson.prayerKey || lesson.prayer) && (
+        <div className="mt-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700 rounded-2xl px-5 py-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-purple-600 dark:text-purple-400 mb-1">
+            {t("studies.prayer")}
+          </p>
+          <p className="text-gray-700 dark:text-gray-200 italic leading-relaxed">
+            {lesson.prayerKey ? t(lesson.prayerKey) : lesson.prayer}
+          </p>
+        </div>
+      )}
 
       {/* Complete / Next button */}
       <div className="mt-8 flex flex-col gap-3">

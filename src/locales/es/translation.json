@@ -280,6 +280,8 @@
     "wrongAnswer": "Respuesta incorrecta, intenta de nuevo",
     "lessonLocked": "Completa la lección anterior para continuar.",
     "enrollSuccess": "¡Te has inscrito exitosamente!",
-    "enrollError": "No se pudo completar la inscripción."
+    "enrollError": "No se pudo completar la inscripción.",
+    "affirmation": "Afirmación",
+    "prayer": "Oración"
   }
 }

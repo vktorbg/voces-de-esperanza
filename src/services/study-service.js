@@ -85,8 +85,9 @@ export async function markLessonComplete(userId, programId, lessonId, totalLesso
 
 /**
  * Save (or overwrite) a student's answer to a question.
+ * language: 'es' | 'en' — the language the student was using when answering.
  */
-export async function saveResponse(userId, programId, lessonId, questionId, answer, moduleId) {
+export async function saveResponse(userId, programId, lessonId, questionId, answer, moduleId, language = "es") {
   const qId = questionId.toLowerCase();
   const responseId = `${userId}_${programId}_${lessonId}_${qId}`;
   await setDoc(
@@ -98,6 +99,7 @@ export async function saveResponse(userId, programId, lessonId, questionId, answ
       lessonId,
       questionId: qId,
       answer,
+      language,
       savedAt: serverTimestamp(),
     },
     { merge: true }

@@ -6,35 +6,275 @@
 
       "s1": {
         "title": "Week 1: Understanding Negative Emotions and Their Origin",
-        "d1":  { "title": "Day 1: God knows your story" },
-        "d2":  { "title": "Day 2: The origin of negative emotions" },
-        "d3":  { "title": "Day 3: Lies planted by abuse" },
-        "d4":  { "title": "Day 4: The power of confession" },
-        "d5":  { "title": "Day 5: Breaking free from lies" }
+        "d1": {
+          "title": "Day 1: God knows your story",
+          "reference": "Proverbs 4:23 (NLT)",
+          "verse": "Guard your heart above all else, for it determines the course of your life.",
+          "text1": "Your heart is the record of your story — protect it with truth.",
+          "text2": "Your heart (mind and emotions) has stored your entire story: what was done to you, what you did, and what you believed. Today begins the process of opening your heart so God can show you what is still controlling your reactions.",
+          "text3": "Your belief system guides your emotions. To heal, you must allow God to reveal what is in your heart.",
+          "q1": "What memories or emotions affect you deeply?",
+          "q2": "What lies have you believed about yourself based on abuse or rejection?",
+          "q3": "Write a description of how you feel today and an experience that emotionally marked your childhood.",
+          "affirmation": "God is healing my story.",
+          "prayer": "Father, I give you my heart. Help me see clearly what I have believed and what has hurt me. I want to begin a journey of truth with you."
+        },
+        "d2": {
+          "title": "Day 2: The origin of negative emotions",
+          "reference": "Matthew 15:19 (NLT)",
+          "verse": "For from the heart come evil thoughts, murder, adultery, all sexual immorality, theft, lying, and slander.",
+          "text1": "Your emotions don't come from the moment — they come from what you believed.",
+          "text2": "Current negative emotions such as shame, sexual confusion, or anger are rooted in past events and in what you believed about yourself.",
+          "text3": "Negative emotions are fueled by deep lies, not just events.",
+          "q1": "What negative emotions do you frequently experience?",
+          "q2": "What is the first memory where you felt that way?",
+          "q3": "Start a list of emotions that control you. Add memories or events you associate with them.",
+          "affirmation": "I can look at my past through God's truth.",
+          "prayer": "Jesus, show me the truth behind my emotions. Help me acknowledge what I have not wanted to face."
+        },
+        "d3": {
+          "title": "Day 3: Lies planted by abuse",
+          "reference": "Proverbs 23:7 (NLT)",
+          "verse": "For as he thinks in his heart, so is he.",
+          "text1": "Your identity is not defined by abuse — it is defined by God.",
+          "text2": "Many abused people believe lies such as \"I am dirty,\" \"no one will ever love me,\" or \"this was my fault.\" These lies need to be identified so they can be healed.",
+          "text3": "Identifying the lie is the first step to breaking its power.",
+          "q1": "What lies have you repeated in your mind for years?",
+          "q2": "What wound or person started them?",
+          "q3": "Write phrases you believed about yourself. Then rewrite them, crossing out each lie and writing a truth from God beside it.",
+          "affirmation": "My identity is in Christ, not in the abuse.",
+          "prayer": "God, reveal the lies that have shaped my identity. I declare that You gave me a new name and a new heart."
+        },
+        "d4": {
+          "title": "Day 4: The power of confession",
+          "reference": "1 John 1:9 (NLT)",
+          "verse": "But if we confess our sins to him, he is faithful and just to forgive us our sins and to cleanse us from all wickedness.",
+          "text1": "Confession is not shame — it is the beginning of freedom.",
+          "text2": "Confessing not only your reactions, but also the sins committed against you, breaks the prison of silence. To confess is to declare what happened and surrender it to God.",
+          "text3": "When you declare pain out loud, you invite God to heal it.",
+          "q1": "What hurt you most about the abuse?",
+          "q2": "What would you want to say to your offender in God's presence?",
+          "q3": "Write a letter you will never send to your abuser. Read it aloud as a prayer before Jesus.",
+          "affirmation": "My voice has power before God.",
+          "prayer": "Jesus, You saw everything. Today I confess before You what I lived through. I renounce silence and receive Your comfort."
+        },
+        "d5": {
+          "title": "Day 5: Breaking free from lies",
+          "reference": "Revelation 12:11 (NLT)",
+          "verse": "And they have defeated him by the blood of the Lamb and by their testimony.",
+          "text1": "I renounce the lie — I declare God's truth.",
+          "text2": "Healing is not complete until lies are replaced with truths. There is power in speaking what God says about you.",
+          "text3": "God has given you the power to renounce lies and live according to truth.",
+          "q1": "What truths do you need to declare today?",
+          "q2": "What biblical affirmation can you repeat every day?",
+          "q3": "Create a list of biblical declarations you can read each morning.",
+          "affirmation": "I am clean, loved, and chosen by God.",
+          "prayer": "I declare that I am free in Christ. I renounce the lie that says I am dirty. I am cleansed by the blood of Jesus."
+        }
       },
       "s2": {
         "title": "Week 2: Healing the Wounds of the Past",
-        "d6":  { "title": "Day 6: Identify the wounds behind your emotions" },
-        "d7":  { "title": "Day 7: Revisit with purpose, not pain" },
-        "d8":  { "title": "Day 8: Forgive the offender" },
-        "d9":  { "title": "Day 9: Surrender vengeance to God" },
-        "d10": { "title": "Day 10: Say goodbye to the past" }
+        "d6": {
+          "title": "Day 6: Identify the wounds behind your emotions",
+          "reference": "John 8:32 (NLT)",
+          "verse": "And you will know the truth, and the truth will set you free.",
+          "text1": "Emotions point the way to the wounds God wants to heal.",
+          "text2": "Behind every strong emotion is an unresolved story. Your past wounds need to be acknowledged, not buried.",
+          "text3": "Emotional wounds don't disappear by ignoring them — they must be healed with truth.",
+          "q1": "What events from your childhood still cause you pain?",
+          "q2": "Is there someone you still avoid thinking about because of what they did to you?",
+          "q3": "Write a list of people or events that hurt you. Be honest about the feelings they still provoke.",
+          "affirmation": "I don't have to hide my wounds — God wants to heal them.",
+          "prayer": "Father, show me the wounds I have ignored. I want to see them with You so that You can heal them."
+        },
+        "d7": {
+          "title": "Day 7: Revisit with purpose, not pain",
+          "reference": "Psalm 34:18 (NLT)",
+          "verse": "The Lord is close to the brokenhearted; he rescues those whose spirits are crushed.",
+          "text1": "God doesn't leave you alone when you return to the past — He was already there.",
+          "text2": "Going back emotionally to difficult memories is not to suffer more, but to allow God to enter that memory and heal it.",
+          "text3": "You don't relive the past alone — God accompanies you every step of the way.",
+          "q1": "What keeps you from remembering without fear?",
+          "q2": "What do you think God wants to show you in that memory?",
+          "q3": "Write a painful memory and how you felt. Then write how you imagine Jesus appearing in that scene.",
+          "affirmation": "God meets me in my pain — He does not abandon me.",
+          "prayer": "Jesus, come with me into my memories. Heal the images that haunt me and fill me with Your presence."
+        },
+        "d8": {
+          "title": "Day 8: Forgive the offender",
+          "reference": "Luke 23:34 (NLT)",
+          "verse": "Jesus said, \"Father, forgive them, for they don't know what they are doing.\"",
+          "text1": "Forgiveness doesn't justify what was done to you — it frees your heart from the past's control.",
+          "text2": "To forgive is not to forget or approve the harm. It is releasing your heart from the resentment that keeps you bound.",
+          "text3": "Forgiveness is a gift you give yourself in the presence of God.",
+          "q1": "What emotions do you feel when you think about the person who abused you?",
+          "q2": "What do you fear losing if you forgive?",
+          "q3": "Write a prayer naming what was done to you and deciding to surrender that burden to God.",
+          "affirmation": "Forgiving sets me free — it does not weaken me.",
+          "prayer": "God, it is hard to forgive, but today I take this step. I release my soul from the weight of bitterness."
+        },
+        "d9": {
+          "title": "Day 9: Surrender vengeance to God",
+          "reference": "Romans 12:19 (NLT)",
+          "verse": "Dear friends, never take revenge. Leave that to the righteous anger of God. For the Scriptures say, \"I will take revenge; I will pay them back,\" says the Lord.",
+          "text1": "God's justice goes beyond yours — He sees everything.",
+          "text2": "Freeing yourself from the desire for revenge opens you to receive complete healing. God does not ignore pain; He will judge with justice.",
+          "text3": "You don't have to be the judge — just a healed child of God.",
+          "q1": "Have you wanted your offender to suffer what you suffered?",
+          "q2": "What would happen if you left justice completely in God's hands?",
+          "q3": "Write what you would like God to do with that person. Then surrender it and say: \"I trust in Your justice.\"",
+          "affirmation": "God is my defender.",
+          "prayer": "Lord, I renounce the desire for revenge. You are just and faithful — I trust in You."
+        },
+        "d10": {
+          "title": "Day 10: Say goodbye to the past",
+          "reference": "Philippians 3:13 (NLT)",
+          "verse": "Forgetting the past and looking forward to what lies ahead.",
+          "text1": "You cannot change your story, but you can change its power over you.",
+          "text2": "Saying goodbye is an act of faith. It doesn't erase the past, but it breaks its control.",
+          "text3": "The past no longer defines your present when you release it to Christ.",
+          "q1": "What part of your story do you keep replaying in your mind?",
+          "q2": "What keeps you from letting it go?",
+          "q3": "Write a symbolic farewell to the past. Use words like \"I release you,\" \"I say goodbye,\" \"you do not define me.\"",
+          "affirmation": "My past is in God's hands, not mine.",
+          "prayer": "Lord Jesus, today I say goodbye to my story's control. You are leading me forward."
+        }
       },
       "s3": {
         "title": "Week 3: Replacing Lies with Truth",
-        "d11": { "title": "Day 11: Identify the lies you have believed" },
-        "d12": { "title": "Day 12: Renounce every lie" },
-        "d13": { "title": "Day 13: Replace with God's truth" },
-        "d14": { "title": "Day 14: Receive God's forgiveness" },
-        "d15": { "title": "Day 15: Recover what the enemy stole" }
+        "d11": {
+          "title": "Day 11: Identify the lies you have believed",
+          "reference": "John 8:44 (NLT)",
+          "verse": "He has always hated the truth, because there is no truth in him. When he lies, it is consistent with his character; for he is a liar and the father of lies.",
+          "text1": "The lies are not yours — they were planted to destroy you.",
+          "text2": "Many lies were installed by painful experiences. Today it is time to identify them with the help of the Holy Spirit.",
+          "text3": "Every lie you discover is a chain you can break.",
+          "q1": "What negative phrases do you repeat about yourself?",
+          "q2": "What was the situation where those phrases began to sound like the truth?",
+          "q3": "Write a list of lies you have believed about yourself, your worth, and your sexuality. Then rewrite them, adding: \"This is a lie, and today I reject it.\"",
+          "affirmation": "I no longer accept lies as part of my identity.",
+          "prayer": "Holy Spirit, bring to my mind the lies I have believed. I no longer want to live in deception."
+        },
+        "d12": {
+          "title": "Day 12: Renounce every lie",
+          "reference": "Ephesians 4:27 (NLT)",
+          "verse": "For anger gives a foothold to the devil.",
+          "text1": "Lies lose their power when you name them and reject them.",
+          "text2": "To renounce is to release every alliance with what is false. In doing so, you close doors to the enemy and prepare your mind for truth.",
+          "text3": "To renounce is not to ignore — it is to declare spiritual war.",
+          "q1": "What lie have you tolerated the longest?",
+          "q2": "What do you fear losing if you stop believing that lie?",
+          "q3": "Write this phrase for each lie: \"I renounce the lie that says ___. I declare that in Christ, the truth is ___.\"",
+          "affirmation": "I renounce deception — I receive God's truth.",
+          "prayer": "I renounce the lie that says [name the lie]. It has no authority over me. I belong to Christ."
+        },
+        "d13": {
+          "title": "Day 13: Replace with God's truth",
+          "reference": "Romans 12:2 (NLT)",
+          "verse": "Let God transform you into a new person by changing the way you think.",
+          "text1": "It is not enough to remove the lie — you must be filled with truth.",
+          "text2": "Jesus used Scripture to resist the enemy. You also need to fill your mind with God's truth.",
+          "text3": "To replace is to fill your mind with the truth that produces freedom.",
+          "q1": "What does God's Word say about your worth, your body, and your purpose?",
+          "q2": "What verse can you memorize today as a personal declaration?",
+          "q3": "Write three biblical truths that contradict the lies you believed. Repeat them out loud.",
+          "affirmation": "I am renewed by God's truth.",
+          "prayer": "Lord, fill my mind with Your Word. Let truth replace every lie."
+        },
+        "d14": {
+          "title": "Day 14: Receive God's forgiveness",
+          "reference": "1 John 1:9 (NLT)",
+          "verse": "But if we confess our sins to him, he is faithful and just to forgive us our sins and to cleanse us from all wickedness.",
+          "text1": "Forgiveness is not a feeling — it is a promise.",
+          "text2": "Even if you struggle with attractions or behaviors, God's forgiveness is available if you come with humility and truth.",
+          "text3": "Forgiveness is a divine gift, not a reward for your performance.",
+          "q1": "Do you feel there are things God cannot forgive?",
+          "q2": "What keeps you from fully receiving His forgiveness?",
+          "q3": "Write a letter to yourself from God's perspective, affirming His unconditional forgiveness and love.",
+          "affirmation": "I am forgiven, clean, and loved by God.",
+          "prayer": "Lord, I come to You as I am. I confess my failures and receive Your forgiveness. Thank You for cleansing me."
+        },
+        "d15": {
+          "title": "Day 15: Recover what the enemy stole",
+          "reference": "John 10:10 (NLT)",
+          "verse": "The thief's purpose is to steal and kill and destroy. My purpose is to give them a rich and satisfying life.",
+          "text1": "God wants to give back what the enemy took from you.",
+          "text2": "Your joy, your identity, your ability to love and receive love — all of it can be restored in Christ.",
+          "text3": "The enemy stole, but God restores with abundance.",
+          "q1": "What did the abuse, sin, or lies steal from you?",
+          "q2": "What things do you want God to restore?",
+          "q3": "Write what you want God to restore. Make a prayer list of what you long to recover with His help.",
+          "affirmation": "I reclaim what belongs to me as a child of God.",
+          "prayer": "Father, I reclaim my dignity, my joy, and my freedom in You. Nothing they took from me is greater than what You give."
+        }
       },
       "s4": {
         "title": "Week 4: Living in Freedom and Truth",
-        "d16": { "title": "Day 16: Break free from your story's control" },
-        "d17": { "title": "Day 17: Accept the consequences with hope" },
-        "d18": { "title": "Day 18: Live as a trophy of God's healing" },
-        "d19": { "title": "Day 19: Help others in their freedom journey" },
-        "d20": { "title": "Day 20: Proclaim your freedom every day" }
+        "d16": {
+          "title": "Day 16: Break free from your story's control",
+          "reference": "1 John 3:8 (NLT)",
+          "verse": "But the Son of God came to destroy the works of the devil.",
+          "text1": "Your story no longer has to control you — Christ is your new root.",
+          "text2": "You cannot change what happened, but you can choose that it no longer controls you. Jesus destroyed the power of the past.",
+          "text3": "Breaking free from the past's control is possible in Christ.",
+          "q1": "What part of your story still has power over you?",
+          "q2": "What would your life look like if you no longer lived from that pain?",
+          "q3": "Write the hardest part of your story. Then write: \"I break this control in the name of Jesus.\"",
+          "affirmation": "My story no longer controls me — Christ sets me free.",
+          "prayer": "Lord, I declare that the past no longer defines me. I break its power in the name of Jesus."
+        },
+        "d17": {
+          "title": "Day 17: Accept the consequences with hope",
+          "reference": "Genesis 50:20 (NLT)",
+          "verse": "You intended to harm me, but God intended it all for good.",
+          "text1": "Your wounds are not your end — they are the beginning of your purpose.",
+          "text2": "Accepting the consequences is not resignation; it is trusting that God will use everything for your good.",
+          "text3": "Accepting with hope prepares you to be an instrument of God.",
+          "q1": "What losses have you suffered because of abuse or sin?",
+          "q2": "Can you believe that God will use your story for good?",
+          "q3": "Write your losses and then write beside each one: \"God can use this for good.\"",
+          "affirmation": "My pain is becoming purpose.",
+          "prayer": "Father, I accept the consequences of what I lived through. Transform them into a blessing for others."
+        },
+        "d18": {
+          "title": "Day 18: Live as a trophy of God's healing",
+          "reference": "Matthew 5:16 (NLT)",
+          "verse": "Let your good deeds shine out for all to see, so that everyone will praise your heavenly Father.",
+          "text1": "Your healing is not just for you — it is to show the glory of God.",
+          "text2": "When you live in freedom, others can see God's work in you and seek that same hope.",
+          "text3": "Your restored life is a living testimony of God's power.",
+          "q1": "What evidence is there in your life of God's healing?",
+          "q2": "How can you share your testimony without shame?",
+          "q3": "Write what you would like others to know about your journey and what God has done in you.",
+          "affirmation": "I am a trophy of God's healing.",
+          "prayer": "Lord, let my redeemed story speak louder than my past."
+        },
+        "d19": {
+          "title": "Day 19: Help others in their freedom journey",
+          "reference": "2 Corinthians 1:4 (NLT)",
+          "verse": "He comforts us in all our troubles so that we can comfort others.",
+          "text1": "Your healing finds fulfillment when you help others heal.",
+          "text2": "Sharing what God has done in you not only blesses others — it strengthens your own freedom.",
+          "text3": "Your testimony can open the door of freedom for others.",
+          "q1": "Who could you help with your story?",
+          "q2": "What could you tell them that gives hope?",
+          "q3": "Write the name of someone who needs comfort. Pray for them and write what you could share from your story.",
+          "affirmation": "My healed story is a tool of hope.",
+          "prayer": "Show me, Lord, how to use my story to comfort others who are suffering."
+        },
+        "d20": {
+          "title": "Day 20: Proclaim your freedom every day",
+          "reference": "John 8:32 (NLT)",
+          "verse": "And you will know the truth, and the truth will set you free.",
+          "text1": "Freedom is fed every day with truth.",
+          "text2": "It is not enough to have been healed. Freedom is maintained by walking in truth and constantly renewing the mind.",
+          "text3": "Freedom in Christ is continuous and firm when lived from truth.",
+          "q1": "What practices do you need to continue in order to maintain your freedom?",
+          "q2": "What truth do you need to declare every day?",
+          "q3": "Create your personal freedom declaration based on everything you have learned. Write it down and read it aloud every morning.",
+          "affirmation": "I am free, and I will keep walking in truth.",
+          "prayer": "Father, today I proclaim my freedom. I will not go back. I will live in Your truth."
+        }
       }
     },
 
@@ -46,8 +286,11 @@
         "les1": {
           "title": "Communication and Conflict Resolution",
           "intro": "Healthy communication builds trust. Conflict is inevitable, but resolving it requires listening with humility and love. Couples must speak with truth and grace.",
+          "reference1": "James 1:19 (NLT)",
           "verse1": "Everyone should be quick to listen, slow to speak, and slow to anger.",
+          "reference2": "Ephesians 4:29 (NLT)",
           "verse2": "Do not let any unwholesome talk come out of your mouths, but only what is helpful for building others up.",
+          "reference3": "Proverbs 15:1 (NLT)",
           "verse3": "A gentle answer turns away wrath.",
           "q1": "How can you improve the way you speak and listen to your spouse?",
           "q2": "Write a goal to communicate with more grace this week. What will you change in your attitude or words?"
@@ -55,8 +298,11 @@
         "les2": {
           "title": "Forgiveness and Grace",
           "intro": "Forgiveness heals the wounds of marriage. Just as Christ forgives us, we must forgive each other to restore unity and peace.",
+          "reference1": "Colossians 3:13 (NLT)",
           "verse1": "Forgive as the Lord forgave you.",
+          "reference2": "Ephesians 4:32 (NLT)",
           "verse2": "Be kind and compassionate to one another, forgiving each other.",
+          "reference3": "Matthew 18:21-22 (NLT)",
           "verse3": "Not seven times, but seventy-seven times.",
           "q1": "Is there something you need to forgive or ask forgiveness for today?",
           "q2": "Pray together and ask each other for forgiveness if needed. Note how this brought you peace and unity."
@@ -64,8 +310,11 @@
         "les3": {
           "title": "Roles and Responsibilities in Marriage",
           "intro": "Biblical roles reflect the love and service of Christ. The husband leads with love, the wife supports with respect. Both serve each other with humility.",
+          "reference1": "Ephesians 5:22-33 (NLT)",
           "verse1": "Husbands, love your wives, just as Christ loved the church.",
+          "reference2": "1 Peter 3:1-7 (NLT)",
           "verse2": "Live with your wives in an understanding way.",
+          "reference3": "Genesis 2:18 (NLT)",
           "verse3": "I will make a helper suitable for him.",
           "q1": "How are you serving one another? Do you honor your roles with love?",
           "q2": "Thank God for your spouse and write each other a note of affirmation for their work in the home."
@@ -76,8 +325,11 @@
         "les4": {
           "title": "Sexual Intimacy and Purity",
           "intro": "Sexual intimacy is sacred and unites the couple. It must be cultivated with love, respect and purity. It reflects the marriage covenant.",
+          "reference1": "Hebrews 13:4 (NLT)",
           "verse1": "Marriage should be honored by all, and the marriage bed kept pure.",
+          "reference2": "1 Corinthians 7:3-5 (NLT)",
           "verse2": "Do not deprive each other.",
+          "reference3": "Proverbs 5:18-19 (NLT)",
           "verse3": "Rejoice with the wife of your youth.",
           "q1": "How can you strengthen your intimacy and mutual trust?",
           "q2": "Have an open and loving conversation about your needs and expectations in intimacy."
@@ -85,8 +337,11 @@
         "les5": {
           "title": "Unity in Spiritual Growth and Purpose",
           "intro": "Spiritual unity strengthens marriage. Couples who pray and serve God together grow in love and purpose.",
+          "reference1": "Ecclesiastes 4:12 (NLT)",
           "verse1": "A cord of three strands is not quickly broken.",
+          "reference2": "Matthew 6:33 (NLT)",
           "verse2": "Seek first his kingdom and his righteousness.",
+          "reference3": "Joshua 24:15 (NLT)",
           "verse3": "As for me and my household, we will serve the Lord.",
           "q1": "What place does God have in your daily marriage?",
           "q2": "Set a time to pray together each day this week and note what God shows you."
@@ -94,8 +349,11 @@
         "les6": {
           "title": "Stewardship and Finances",
           "intro": "Finances often cause tension in marriage. God calls couples to be generous, avoid debt, and manage with wisdom and unity.",
+          "reference1": "Matthew 6:24 (NLT)",
           "verse1": "You cannot serve both God and money.",
+          "reference2": "Proverbs 21:5 (NLT)",
           "verse2": "The plans of the diligent lead to profit.",
+          "reference3": "1 Timothy 6:6-10 (NLT)",
           "verse3": "The love of money is a root of all kinds of evil.",
           "q1": "Are you managing your money with wisdom and purpose?",
           "q2": "Review your budget together and make a commitment of faithfulness in your finances before God."
@@ -111,7 +369,9 @@
         "les1": {
           "title": "Trap #1: Too Fast!",
           "intro": "Marrying quickly out of fear, loneliness, or a desire to be loved is dangerous. Perfect love drives out fear.",
+          "reference1": "1 John 4:18 (NLT)",
           "verse1": "Perfect love drives out fear.",
+          "reference2": "Philippians 2:13 (NLT)",
           "verse2": "God works in you to will and to act in order to fulfill his good purpose.",
           "q1": "What warning signs can I identify from this trap in my own life or relationship?",
           "q2": "How can I practice the patience of Psalm 37:7 this week while evaluating my spiritual and emotional maturity?"
@@ -119,7 +379,9 @@
         "les2": {
           "title": "Trap #2: Too Young!",
           "intro": "Marrying before developing personal identity and life goals leads to frustration. To love is to obey, not just to feel.",
+          "reference1": "John 14:15 (NLT)",
           "verse1": "To love is to obey, not just to feel.",
+          "reference2": "James 1:2-4 (NLT)",
           "verse2": "The testing of your faith produces perseverance.",
           "q1": "Do I have clarity about who I am in Christ and what my spiritual, personal and family goals are?",
           "q2": "Write down your spiritual and personal goals before making a commitment."
@@ -127,7 +389,9 @@
         "les3": {
           "title": "Trap #3: Too Eager to Marry",
           "intro": "The rush to marry often hides emotional pain or insecurity. Only Jesus can satisfy the soul.",
+          "reference1": "James 1:2-4 (NLT)",
           "verse1": "Perseverance produces maturity.",
+          "reference2": "John 4:14 (NLT)",
           "verse2": "Only Jesus satisfies the soul.",
           "q1": "What am I trying to avoid or fix by rushing into marriage?",
           "q2": "What concrete steps can I take to heal my inner life before committing my future?"
@@ -135,7 +399,9 @@
         "les4": {
           "title": "Trap #4: To Please Others",
           "intro": "Marrying to please others ends in resentment. Each person will give an account to God, not to others.",
+          "reference1": "2 Corinthians 5:10 (NLT)",
           "verse1": "Each of us will give an account to God.",
+          "reference2": "Proverbs 19:20 (NLT)",
           "verse2": "Listen to advice and accept instruction.",
           "q1": "Am I making this decision out of obedience to God or pressure from others?",
           "q2": "Make a list of 10 things you are looking for in a spouse and 10 things you would not tolerate."
@@ -143,7 +409,9 @@
         "les5": {
           "title": "Trap #5: Too Little Shared Life Experience",
           "intro": "Not sharing diverse experiences prevents deeply knowing the other person. Premature physical intimacy clouds judgment.",
+          "reference1": "Proverbs 22:24 (NLT)",
           "verse1": "Do not make friends with a hot-tempered person.",
+          "reference2": "Galatians 5:19 (NLT)",
           "verse2": "Sexual sin brings consequences.",
           "q1": "Have we resolved conflicts together? Have we gotten to know each other in diverse situations?",
           "q2": "How can we delay physical intimacy to truly get to know each other first?"
@@ -154,7 +422,9 @@
         "les6": {
           "title": "Trap #6: Unrealistic Expectations",
           "intro": "Expecting your partner to heal your wounds or change after marriage is dangerous. Only God transforms.",
+          "reference1": "Philippians 2:13 (NLT)",
           "verse1": "Only God transforms.",
+          "reference2": "1 Corinthians 13:11 (NLT)",
           "verse2": "Put childish ways behind you before marriage.",
           "q1": "What are my expectations about marriage? Are they realistic or idealized?",
           "q2": "How can I let love motivate growth rather than cover unresolved pain?"
@@ -162,7 +432,9 @@
         "les7": {
           "title": "Trap #7: Unresolved Personal Problems",
           "intro": "Problems not addressed before marriage will get worse over time. Control, addictions, anger or jealousy do not disappear on their own.",
+          "reference1": "Exodus 20:5 (NLT)",
           "verse1": "Generational sins.",
+          "reference2": "1 Peter 3:7 (NLT)",
           "verse2": "Treat your wives with honor.",
           "q1": "Are there behaviors in me or my partner (control, anger, jealousy, addictions) that need healing before marriage?",
           "q2": "Forgiveness is given, but trust is earned with time and fruit. How do I apply this?"
@@ -170,7 +442,9 @@
         "les8": {
           "title": "Trap #8: Minimizing Spiritual Compatibility",
           "intro": "Spiritual differences will cause deep conflict. Do not be unequally yoked.",
+          "reference1": "2 Corinthians 6:14 (NLT)",
           "verse1": "Do not be unequally yoked with unbelievers.",
+          "reference2": "Ephesians 2:1-5 (NLT)",
           "verse2": "Only believers are spiritually alive.",
           "q1": "What is the real spiritual maturity of my partner? Do we share the same values and priorities in Christ?",
           "q2": "Am I willing not to settle for less than what God wants to give me?"
@@ -178,7 +452,9 @@
         "les9": {
           "title": "Trap #9: No Communication Rules",
           "intro": "Poor communication ruins the relationship before it starts. It is essential to establish a healthy style from the beginning of dating.",
+          "reference1": "Galatians 6:2 (NLT)",
           "verse1": "Carry each other's burdens.",
+          "reference2": "Romans 12:18 (NLT)",
           "verse2": "If it is possible, as far as it depends on you, live at peace with everyone.",
           "q1": "How do we communicate when there is disagreement? Do we listen without interrupting and speak with respect?",
           "q2": "What specific communication rules can we establish from today in our relationship?"
@@ -186,6 +462,7 @@
         "les10": {
           "title": "Final Reflection: Love-Kindness vs. Fear-Kindness",
           "intro": "Love-kindness is based on truth, trust and freedom. Fear-kindness is based on fear, control and manipulation. Love drives out fear.",
+          "reference1": "1 John 4:18 (NLT)",
           "verse1": "Perfect love drives out fear.",
           "q1": "Which of these 9 traps have I seen or experienced personally?",
           "q2": "How am I growing in emotional and spiritual maturity?",
@@ -202,8 +479,11 @@
         "title": "Week 1: Introduction to Christian Leadership",
         "les1": {
           "title": "Foundations of Christian Leadership",
+          "reference1": "Proverbs 3:5-6 (NLT)",
           "verse1": "Trust in the Lord with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight.",
+          "reference2": "Matthew 20:25-28 (NLT)",
           "verse2": "Whoever wants to become great among you must be your servant... just as the Son of Man did not come to be served, but to serve.",
+          "reference3": "1 Timothy 3:1-7 (NLT)",
           "verse3": "An overseer must be above reproach, faithful to his wife, temperate, self-controlled, respectable, hospitable, able to teach.",
           "objectives": "Objectives: (1) Understand the biblical foundations of Christian leadership. (2) Contrast servant leadership with worldly authority. (3) Evaluate personal character according to biblical qualifications.",
           "q1": "What stands out to you about Jesus' definition of greatness in Matthew 20?",
@@ -216,8 +496,11 @@
         "title": "Week 2: The Spirit-Empowered Leader",
         "les1": {
           "title": "The Holy Spirit in Leadership",
+          "reference1": "Acts 1:8 (NLT)",
           "verse1": "You will receive power when the Holy Spirit comes on you; and you will be my witnesses to the ends of the earth.",
+          "reference2": "Galatians 5:22-25 (NLT)",
           "verse2": "The fruit of the Spirit is love, joy, peace, forbearance, kindness, goodness, faithfulness, gentleness, and self-control.",
+          "reference3": "Romans 8:14 (NLT)",
           "verse3": "Those who are led by the Spirit of God are the children of God.",
           "objectives": "Objectives: (1) Understand how the Holy Spirit empowers Christian leadership. (2) Identify the difference between spiritual gifts and spiritual fruit. (3) Learn to listen to the Spirit's guidance in daily leadership decisions.",
           "q1": "What role does the Holy Spirit play in your daily leadership?",
@@ -230,8 +513,11 @@
         "title": "Week 3: The Gospel-Centered Leader",
         "les1": {
           "title": "The Gospel Defines Leadership",
+          "reference1": "John 13:12-17 (NLT)",
           "verse1": "If I, your Lord and Teacher, have washed your feet, you also should wash one another's feet. I have set you an example.",
+          "reference2": "Mark 10:42-45 (NLT)",
           "verse2": "Whoever wants to become great among you must be your servant... even the Son of Man did not come to be served, but to serve.",
+          "reference3": "Philippians 2:5-8 (NLT)",
           "verse3": "Have the same mindset as Christ Jesus, who made himself nothing by taking the very nature of a servant.",
           "objectives": "Objectives: (1) Discover how the Gospel defines and transforms leadership. (2) Understand humility as the foundation of Christian influence. (3) Identify practical ways to lead through sacrificial service.",
           "q1": "How does Jesus challenge your motives for leading?",
@@ -244,8 +530,11 @@
         "title": "Week 4: Mission and Evangelism",
         "les1": {
           "title": "The Great Commission Mandate",
+          "reference1": "Matthew 28:18-20 (NLT)",
           "verse1": "Go and make disciples of all nations... teaching them to obey everything I have commanded you. And surely I am with you always, to the very end of the age.",
+          "reference2": "Acts 1:8 (NLT)",
           "verse2": "You will receive power when the Holy Spirit comes on you; and you will be my witnesses to the ends of the earth.",
+          "reference3": "Romans 10:13-15 (NLT)",
           "verse3": "How beautiful are the feet of those who bring good news!",
           "objectives": "Objectives: (1) Understand the Great Commission as a personal and communal calling. (2) Identify the Holy Spirit's role in evangelism. (3) Develop confidence and clarity to share the gospel.",
           "q1": "What fears do you have about sharing your faith?",
@@ -258,8 +547,11 @@
         "title": "Week 5: Identity and Calling",
         "les1": {
           "title": "Our Identity in Christ",
+          "reference1": "Ephesians 2:8-10 (NLT)",
           "verse1": "We are God's handiwork, created in Christ Jesus to do good works, which God prepared in advance for us to do.",
+          "reference2": "Jeremiah 1:5 (NLT)",
           "verse2": "Before I formed you in the womb I knew you, before you were born I set you apart; I appointed you as a prophet to the nations.",
+          "reference3": "2 Timothy 1:9 (NLT)",
           "verse3": "He has saved us and called us to a holy life — not because of anything we have done but because of his own purpose and grace.",
           "objectives": "Objectives: (1) Understand that our identity is in Christ, not in performance. (2) Recognize that calling begins with 'being' before 'doing'. (3) Explore gifts, passions, and contexts as signs of purpose.",
           "q1": "Where have you been trying to define yourself by your activity rather than your identity in Christ?",
@@ -272,8 +564,11 @@
         "title": "Week 6: Spiritual Formation",
         "les1": {
           "title": "Spiritual Disciplines and Transformation",
+          "reference1": "Romans 12:1-2 (NLT)",
           "verse1": "Do not conform to the pattern of this world, but be transformed by the renewing of your mind, so that you can discern what God's will is.",
+          "reference2": "1 Timothy 4:7-8 (NLT)",
           "verse2": "Train yourself to be godly. For physical training is of some value, but godliness has value for all things.",
+          "reference3": "John 15:4-5 (NLT)",
           "verse3": "Remain in me, as I also remain in you. No branch can bear fruit by itself; it must remain in the vine.",
           "objectives": "Objectives: (1) Understand spiritual formation as continuous transformation. (2) Explore spiritual disciplines as tools for communion with God. (3) Evaluate personal areas of spiritual growth.",
           "q1": "What habits are shaping you more than the Word of God?",
@@ -286,8 +581,11 @@
         "title": "Week 7: Relational Leadership",
         "les1": {
           "title": "Leadership in Community",
+          "reference1": "John 13:34-35 (NLT)",
           "verse1": "A new command I give you: Love one another. By this everyone will know that you are my disciples.",
+          "reference2": "Ephesians 4:2-3 (NLT)",
           "verse2": "Be completely humble and gentle; be patient, bearing with one another in love... to keep the unity of the Spirit through the bond of peace.",
+          "reference3": "Proverbs 27:17 (NLT)",
           "verse3": "As iron sharpens iron, so one person sharpens another.",
           "objectives": "Objectives: (1) Understand that spiritual leadership is lived in community. (2) Develop skills for healthy relationships in ministry. (3) Learn to give and receive correction in love.",
           "q1": "Are you leading from relationships or from functions?",
@@ -300,8 +598,11 @@
         "title": "Week 8: Leadership in the Local Church",
         "les1": {
           "title": "The Body of Christ in Action",
+          "reference1": "Acts 2:42-47 (NLT)",
           "verse1": "They devoted themselves to the apostles' teaching and to fellowship, to the breaking of bread and to prayer... And the Lord added to their number daily those who were being saved.",
+          "reference2": "Ephesians 4:11-13 (NLT)",
           "verse2": "Christ himself gave the apostles, the prophets, the evangelists, the pastors and teachers, to equip his people for works of service.",
+          "reference3": "1 Peter 5:1-3 (NLT)",
           "verse3": "Be shepherds of God's flock that is under your care, watching over them... not lording it over those entrusted to you, but being examples to the flock.",
           "objectives": "Objectives: (1) Understand the purpose of the local church as body and community. (2) Identify leadership roles in the church according to the New Testament. (3) Evaluate how to serve and grow within the local church.",
           "q1": "How can you honor and support the leadership of your local church?",

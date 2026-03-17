@@ -70,7 +70,7 @@ function FeedbackCard({ response, questionPrompt, t }) {
 
 // ─── Lesson group: title + all its responses ──────────────────────────────────
 
-function LessonGroup({ lessonId, moduleId, responses, program, t }) {
+function LessonGroup({ lessonId, moduleId, responses, program, t, i18n }) {
   // Find module+lesson — use moduleId if available, otherwise search all modules
   let mod = program?.modules?.find((m) => m.id === moduleId);
   let lesson = mod?.lessons?.find((l) => l.id === lessonId);
@@ -110,8 +110,10 @@ function LessonGroup({ lessonId, moduleId, responses, program, t }) {
       <div className="p-5 space-y-4">
         {sorted.map((resp) => {
           const qDef = questionMap[resp.questionId?.toLowerCase()];
+          // Show question text in the language the student used when answering
+          const tStudent = i18n.getFixedT(resp.language || "es");
           const prompt = qDef
-            ? (qDef.promptKey ? t(qDef.promptKey) : qDef.prompt || null)
+            ? (qDef.promptKey ? tStudent(qDef.promptKey) : qDef.prompt || null)
             : null;
           return (
             <FeedbackCard
@@ -131,7 +133,7 @@ function LessonGroup({ lessonId, moduleId, responses, program, t }) {
 
 function MentorStudentContent({ params }) {
   const { studentId } = params;
-  const { t } = useLanguage();
+  const { t, i18n } = useLanguage();
   const { user } = useAuth();
 
   const [student, setStudent] = useState(null);
@@ -250,6 +252,7 @@ function MentorStudentContent({ params }) {
                   responses={g.items}
                   program={program}
                   t={t}
+                  i18n={i18n}
                 />
               );
             })}

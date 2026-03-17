@@ -280,6 +280,8 @@
     "wrongAnswer": "Incorrect, try again",
     "lessonLocked": "Complete the previous lesson to continue.",
     "enrollSuccess": "You have successfully enrolled!",
-    "enrollError": "Could not complete enrollment."
+    "enrollError": "Could not complete enrollment.",
+    "affirmation": "Affirmation",
+    "prayer": "Prayer"
   }
 }

@@ -20,11 +20,13 @@ export default {
             {
               type: "verse",
               reference: "1 Juan 4:18",
+              referenceKey: "programs.guia_decision_matrimonio.mod1.les1.reference1",
               textKey: "programs.guia_decision_matrimonio.mod1.les1.verse1",
             },
             {
               type: "verse",
               reference: "Filipenses 2:13",
+              referenceKey: "programs.guia_decision_matrimonio.mod1.les1.reference2",
               textKey: "programs.guia_decision_matrimonio.mod1.les1.verse2",
             },
           ],
@@ -52,11 +54,13 @@ export default {
             {
               type: "verse",
               reference: "Juan 14:15",
+              referenceKey: "programs.guia_decision_matrimonio.mod1.les2.reference1",
               textKey: "programs.guia_decision_matrimonio.mod1.les2.verse1",
             },
             {
               type: "verse",
               reference: "Santiago 1:2-4",
+              referenceKey: "programs.guia_decision_matrimonio.mod1.les2.reference2",
               textKey: "programs.guia_decision_matrimonio.mod1.les2.verse2",
             },
           ],
@@ -84,11 +88,13 @@ export default {
             {
               type: "verse",
               reference: "Santiago 1:2-4",
+              referenceKey: "programs.guia_decision_matrimonio.mod1.les3.reference1",
               textKey: "programs.guia_decision_matrimonio.mod1.les3.verse1",
             },
             {
               type: "verse",
               reference: "Juan 4:14",
+              referenceKey: "programs.guia_decision_matrimonio.mod1.les3.reference2",
               textKey: "programs.guia_decision_matrimonio.mod1.les3.verse2",
             },
           ],
@@ -116,11 +122,13 @@ export default {
             {
               type: "verse",
               reference: "2 Corintios 5:10",
+              referenceKey: "programs.guia_decision_matrimonio.mod1.les4.reference1",
               textKey: "programs.guia_decision_matrimonio.mod1.les4.verse1",
             },
             {
               type: "verse",
               reference: "Proverbios 19:20",
+              referenceKey: "programs.guia_decision_matrimonio.mod1.les4.reference2",
               textKey: "programs.guia_decision_matrimonio.mod1.les4.verse2",
             },
           ],
@@ -148,11 +156,13 @@ export default {
             {
               type: "verse",
               reference: "Proverbios 22:24",
+              referenceKey: "programs.guia_decision_matrimonio.mod1.les5.reference1",
               textKey: "programs.guia_decision_matrimonio.mod1.les5.verse1",
             },
             {
               type: "verse",
               reference: "Gálatas 5:19",
+              referenceKey: "programs.guia_decision_matrimonio.mod1.les5.reference2",
               textKey: "programs.guia_decision_matrimonio.mod1.les5.verse2",
             },
           ],
@@ -186,11 +196,13 @@ export default {
             {
               type: "verse",
               reference: "Filipenses 2:13",
+              referenceKey: "programs.guia_decision_matrimonio.mod2.les6.reference1",
               textKey: "programs.guia_decision_matrimonio.mod2.les6.verse1",
             },
             {
               type: "verse",
               reference: "1 Corintios 13:11",
+              referenceKey: "programs.guia_decision_matrimonio.mod2.les6.reference2",
               textKey: "programs.guia_decision_matrimonio.mod2.les6.verse2",
             },
           ],
@@ -218,11 +230,13 @@ export default {
             {
               type: "verse",
               reference: "Éxodo 20:5",
+              referenceKey: "programs.guia_decision_matrimonio.mod2.les7.reference1",
               textKey: "programs.guia_decision_matrimonio.mod2.les7.verse1",
             },
             {
               type: "verse",
               reference: "1 Pedro 3:7",
+              referenceKey: "programs.guia_decision_matrimonio.mod2.les7.reference2",
               textKey: "programs.guia_decision_matrimonio.mod2.les7.verse2",
             },
           ],
@@ -250,11 +264,13 @@ export default {
             {
               type: "verse",
               reference: "2 Corintios 6:14",
+              referenceKey: "programs.guia_decision_matrimonio.mod2.les8.reference1",
               textKey: "programs.guia_decision_matrimonio.mod2.les8.verse1",
             },
             {
               type: "verse",
               reference: "Efesios 2:1-5",
+              referenceKey: "programs.guia_decision_matrimonio.mod2.les8.reference2",
               textKey: "programs.guia_decision_matrimonio.mod2.les8.verse2",
             },
           ],
@@ -282,11 +298,13 @@ export default {
             {
               type: "verse",
               reference: "Gálatas 6:2",
+              referenceKey: "programs.guia_decision_matrimonio.mod2.les9.reference1",
               textKey: "programs.guia_decision_matrimonio.mod2.les9.verse1",
             },
             {
               type: "verse",
               reference: "Romanos 12:18",
+              referenceKey: "programs.guia_decision_matrimonio.mod2.les9.reference2",
               textKey: "programs.guia_decision_matrimonio.mod2.les9.verse2",
             },
           ],
@@ -314,6 +332,7 @@ export default {
             {
               type: "verse",
               reference: "1 Juan 4:18",
+              referenceKey: "programs.guia_decision_matrimonio.mod2.les10.reference1",
               textKey: "programs.guia_decision_matrimonio.mod2.les10.verse1",
             },
           ],

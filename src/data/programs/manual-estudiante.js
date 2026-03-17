@@ -13,9 +13,9 @@ export default {
           id: "les-1",
           titleKey: "programs.manual_estudiante.semana1.les1.title",
           contentBlocks: [
-            { type: "verse", reference: "Proverbios 3:5-6", textKey: "programs.manual_estudiante.semana1.les1.verse1" },
-            { type: "verse", reference: "Mateo 20:25-28", textKey: "programs.manual_estudiante.semana1.les1.verse2" },
-            { type: "verse", reference: "1 Timoteo 3:1-7", textKey: "programs.manual_estudiante.semana1.les1.verse3" },
+            { type: "verse", reference: "Proverbios 3:5-6", referenceKey: "programs.manual_estudiante.semana1.les1.reference1", textKey: "programs.manual_estudiante.semana1.les1.verse1" },
+            { type: "verse", reference: "Mateo 20:25-28", referenceKey: "programs.manual_estudiante.semana1.les1.reference2", textKey: "programs.manual_estudiante.semana1.les1.verse2" },
+            { type: "verse", reference: "1 Timoteo 3:1-7", referenceKey: "programs.manual_estudiante.semana1.les1.reference3", textKey: "programs.manual_estudiante.semana1.les1.verse3" },
             { type: "text", textKey: "programs.manual_estudiante.semana1.les1.objectives" },
           ],
           questions: [
@@ -35,9 +35,9 @@ export default {
           id: "les-1",
           titleKey: "programs.manual_estudiante.semana2.les1.title",
           contentBlocks: [
-            { type: "verse", reference: "Hechos 1:8", textKey: "programs.manual_estudiante.semana2.les1.verse1" },
-            { type: "verse", reference: "Gálatas 5:22-25", textKey: "programs.manual_estudiante.semana2.les1.verse2" },
-            { type: "verse", reference: "Romanos 8:14", textKey: "programs.manual_estudiante.semana2.les1.verse3" },
+            { type: "verse", reference: "Hechos 1:8", referenceKey: "programs.manual_estudiante.semana2.les1.reference1", textKey: "programs.manual_estudiante.semana2.les1.verse1" },
+            { type: "verse", reference: "Gálatas 5:22-25", referenceKey: "programs.manual_estudiante.semana2.les1.reference2", textKey: "programs.manual_estudiante.semana2.les1.verse2" },
+            { type: "verse", reference: "Romanos 8:14", referenceKey: "programs.manual_estudiante.semana2.les1.reference3", textKey: "programs.manual_estudiante.semana2.les1.verse3" },
             { type: "text", textKey: "programs.manual_estudiante.semana2.les1.objectives" },
           ],
           questions: [
@@ -57,9 +57,9 @@ export default {
           id: "les-1",
           titleKey: "programs.manual_estudiante.semana3.les1.title",
           contentBlocks: [
-            { type: "verse", reference: "Juan 13:12-17", textKey: "programs.manual_estudiante.semana3.les1.verse1" },
-            { type: "verse", reference: "Marcos 10:42-45", textKey: "programs.manual_estudiante.semana3.les1.verse2" },
-            { type: "verse", reference: "Filipenses 2:5-8", textKey: "programs.manual_estudiante.semana3.les1.verse3" },
+            { type: "verse", reference: "Juan 13:12-17", referenceKey: "programs.manual_estudiante.semana3.les1.reference1", textKey: "programs.manual_estudiante.semana3.les1.verse1" },
+            { type: "verse", reference: "Marcos 10:42-45", referenceKey: "programs.manual_estudiante.semana3.les1.reference2", textKey: "programs.manual_estudiante.semana3.les1.verse2" },
+            { type: "verse", reference: "Filipenses 2:5-8", referenceKey: "programs.manual_estudiante.semana3.les1.reference3", textKey: "programs.manual_estudiante.semana3.les1.verse3" },
             { type: "text", textKey: "programs.manual_estudiante.semana3.les1.objectives" },
           ],
           questions: [
@@ -79,9 +79,9 @@ export default {
           id: "les-1",
           titleKey: "programs.manual_estudiante.semana4.les1.title",
           contentBlocks: [
-            { type: "verse", reference: "Mateo 28:18-20", textKey: "programs.manual_estudiante.semana4.les1.verse1" },
-            { type: "verse", reference: "Hechos 1:8", textKey: "programs.manual_estudiante.semana4.les1.verse2" },
-            { type: "verse", reference: "Romanos 10:13-15", textKey: "programs.manual_estudiante.semana4.les1.verse3" },
+            { type: "verse", reference: "Mateo 28:18-20", referenceKey: "programs.manual_estudiante.semana4.les1.reference1", textKey: "programs.manual_estudiante.semana4.les1.verse1" },
+            { type: "verse", reference: "Hechos 1:8", referenceKey: "programs.manual_estudiante.semana4.les1.reference2", textKey: "programs.manual_estudiante.semana4.les1.verse2" },
+            { type: "verse", reference: "Romanos 10:13-15", referenceKey: "programs.manual_estudiante.semana4.les1.reference3", textKey: "programs.manual_estudiante.semana4.les1.verse3" },
             { type: "text", textKey: "programs.manual_estudiante.semana4.les1.objectives" },
           ],
           questions: [
@@ -101,9 +101,9 @@ export default {
           id: "les-1",
           titleKey: "programs.manual_estudiante.semana5.les1.title",
           contentBlocks: [
-            { type: "verse", reference: "Efesios 2:8-10", textKey: "programs.manual_estudiante.semana5.les1.verse1" },
-            { type: "verse", reference: "Jeremías 1:5", textKey: "programs.manual_estudiante.semana5.les1.verse2" },
-            { type: "verse", reference: "2 Timoteo 1:9", textKey: "programs.manual_estudiante.semana5.les1.verse3" },
+            { type: "verse", reference: "Efesios 2:8-10", referenceKey: "programs.manual_estudiante.semana5.les1.reference1", textKey: "programs.manual_estudiante.semana5.les1.verse1" },
+            { type: "verse", reference: "Jeremías 1:5", referenceKey: "programs.manual_estudiante.semana5.les1.reference2", textKey: "programs.manual_estudiante.semana5.les1.verse2" },
+            { type: "verse", reference: "2 Timoteo 1:9", referenceKey: "programs.manual_estudiante.semana5.les1.reference3", textKey: "programs.manual_estudiante.semana5.les1.verse3" },
             { type: "text", textKey: "programs.manual_estudiante.semana5.les1.objectives" },
           ],
           questions: [
@@ -123,9 +123,9 @@ export default {
           id: "les-1",
           titleKey: "programs.manual_estudiante.semana6.les1.title",
           contentBlocks: [
-            { type: "verse", reference: "Romanos 12:1-2", textKey: "programs.manual_estudiante.semana6.les1.verse1" },
-            { type: "verse", reference: "1 Timoteo 4:7-8", textKey: "programs.manual_estudiante.semana6.les1.verse2" },
-            { type: "verse", reference: "Juan 15:4-5", textKey: "programs.manual_estudiante.semana6.les1.verse3" },
+            { type: "verse", reference: "Romanos 12:1-2", referenceKey: "programs.manual_estudiante.semana6.les1.reference1", textKey: "programs.manual_estudiante.semana6.les1.verse1" },
+            { type: "verse", reference: "1 Timoteo 4:7-8", referenceKey: "programs.manual_estudiante.semana6.les1.reference2", textKey: "programs.manual_estudiante.semana6.les1.verse2" },
+            { type: "verse", reference: "Juan 15:4-5", referenceKey: "programs.manual_estudiante.semana6.les1.reference3", textKey: "programs.manual_estudiante.semana6.les1.verse3" },
             { type: "text", textKey: "programs.manual_estudiante.semana6.les1.objectives" },
           ],
           questions: [
@@ -145,9 +145,9 @@ export default {
           id: "les-1",
           titleKey: "programs.manual_estudiante.semana7.les1.title",
           contentBlocks: [
-            { type: "verse", reference: "Juan 13:34-35", textKey: "programs.manual_estudiante.semana7.les1.verse1" },
-            { type: "verse", reference: "Efesios 4:2-3", textKey: "programs.manual_estudiante.semana7.les1.verse2" },
-            { type: "verse", reference: "Proverbios 27:17", textKey: "programs.manual_estudiante.semana7.les1.verse3" },
+            { type: "verse", reference: "Juan 13:34-35", referenceKey: "programs.manual_estudiante.semana7.les1.reference1", textKey: "programs.manual_estudiante.semana7.les1.verse1" },
+            { type: "verse", reference: "Efesios 4:2-3", referenceKey: "programs.manual_estudiante.semana7.les1.reference2", textKey: "programs.manual_estudiante.semana7.les1.verse2" },
+            { type: "verse", reference: "Proverbios 27:17", referenceKey: "programs.manual_estudiante.semana7.les1.reference3", textKey: "programs.manual_estudiante.semana7.les1.verse3" },
             { type: "text", textKey: "programs.manual_estudiante.semana7.les1.objectives" },
           ],
           questions: [
@@ -167,9 +167,9 @@ export default {
           id: "les-1",
           titleKey: "programs.manual_estudiante.semana8.les1.title",
           contentBlocks: [
-            { type: "verse", reference: "Hechos 2:42-47", textKey: "programs.manual_estudiante.semana8.les1.verse1" },
-            { type: "verse", reference: "Efesios 4:11-13", textKey: "programs.manual_estudiante.semana8.les1.verse2" },
-            { type: "verse", reference: "1 Pedro 5:1-3", textKey: "programs.manual_estudiante.semana8.les1.verse3" },
+            { type: "verse", reference: "Hechos 2:42-47", referenceKey: "programs.manual_estudiante.semana8.les1.reference1", textKey: "programs.manual_estudiante.semana8.les1.verse1" },
+            { type: "verse", reference: "Efesios 4:11-13", referenceKey: "programs.manual_estudiante.semana8.les1.reference2", textKey: "programs.manual_estudiante.semana8.les1.verse2" },
+            { type: "verse", reference: "1 Pedro 5:1-3", referenceKey: "programs.manual_estudiante.semana8.les1.reference3", textKey: "programs.manual_estudiante.semana8.les1.verse3" },
             { type: "text", textKey: "programs.manual_estudiante.semana8.les1.objectives" },
           ],
           questions: [
@@ -189,9 +189,9 @@ export default {
           id: "les-1",
           titleKey: "programs.manual_estudiante.semana9.les1.title",
           contentBlocks: [
-            { type: "verse", reference: "Marcos 10:43-45", textKey: "programs.manual_estudiante.semana9.les1.verse1" },
-            { type: "verse", reference: "Juan 13:12-15", textKey: "programs.manual_estudiante.semana9.les1.verse2" },
-            { type: "verse", reference: "Filipenses 2:3-4", textKey: "programs.manual_estudiante.semana9.les1.verse3" },
+            { type: "verse", reference: "Marcos 10:43-45", referenceKey: "programs.manual_estudiante.semana9.les1.reference1", textKey: "programs.manual_estudiante.semana9.les1.verse1" },
+            { type: "verse", reference: "Juan 13:12-15", referenceKey: "programs.manual_estudiante.semana9.les1.reference2", textKey: "programs.manual_estudiante.semana9.les1.verse2" },
+            { type: "verse", reference: "Filipenses 2:3-4", referenceKey: "programs.manual_estudiante.semana9.les1.reference3", textKey: "programs.manual_estudiante.semana9.les1.verse3" },
             { type: "text", textKey: "programs.manual_estudiante.semana9.les1.objectives" },
           ],
           questions: [
@@ -211,9 +211,9 @@ export default {
           id: "les-1",
           titleKey: "programs.manual_estudiante.semana10.les1.title",
           contentBlocks: [
-            { type: "verse", reference: "Proverbios 11:3", textKey: "programs.manual_estudiante.semana10.les1.verse1" },
-            { type: "verse", reference: "Salmo 101:2-3", textKey: "programs.manual_estudiante.semana10.les1.verse2" },
-            { type: "verse", reference: "Tito 2:7-8", textKey: "programs.manual_estudiante.semana10.les1.verse3" },
+            { type: "verse", reference: "Proverbios 11:3", referenceKey: "programs.manual_estudiante.semana10.les1.reference1", textKey: "programs.manual_estudiante.semana10.les1.verse1" },
+            { type: "verse", reference: "Salmo 101:2-3", referenceKey: "programs.manual_estudiante.semana10.les1.reference2", textKey: "programs.manual_estudiante.semana10.les1.verse2" },
+            { type: "verse", reference: "Tito 2:7-8", referenceKey: "programs.manual_estudiante.semana10.les1.reference3", textKey: "programs.manual_estudiante.semana10.les1.verse3" },
             { type: "text", textKey: "programs.manual_estudiante.semana10.les1.objectives" },
           ],
           questions: [
@@ -233,9 +233,9 @@ export default {
           id: "les-1",
           titleKey: "programs.manual_estudiante.semana11.les1.title",
           contentBlocks: [
-            { type: "verse", reference: "Mateo 18:15-17", textKey: "programs.manual_estudiante.semana11.les1.verse1" },
-            { type: "verse", reference: "Romanos 12:17-18", textKey: "programs.manual_estudiante.semana11.les1.verse2" },
-            { type: "verse", reference: "Efesios 4:26-27", textKey: "programs.manual_estudiante.semana11.les1.verse3" },
+            { type: "verse", reference: "Mateo 18:15-17", referenceKey: "programs.manual_estudiante.semana11.les1.reference1", textKey: "programs.manual_estudiante.semana11.les1.verse1" },
+            { type: "verse", reference: "Romanos 12:17-18", referenceKey: "programs.manual_estudiante.semana11.les1.reference2", textKey: "programs.manual_estudiante.semana11.les1.verse2" },
+            { type: "verse", reference: "Efesios 4:26-27", referenceKey: "programs.manual_estudiante.semana11.les1.reference3", textKey: "programs.manual_estudiante.semana11.les1.verse3" },
             { type: "text", textKey: "programs.manual_estudiante.semana11.les1.objectives" },
           ],
           questions: [
@@ -255,9 +255,9 @@ export default {
           id: "les-1",
           titleKey: "programs.manual_estudiante.semana12.les1.title",
           contentBlocks: [
-            { type: "verse", reference: "Santiago 1:5", textKey: "programs.manual_estudiante.semana12.les1.verse1" },
-            { type: "verse", reference: "Proverbios 3:13-18", textKey: "programs.manual_estudiante.semana12.les1.verse2" },
-            { type: "verse", reference: "1 Reyes 3:9-12", textKey: "programs.manual_estudiante.semana12.les1.verse3" },
+            { type: "verse", reference: "Santiago 1:5", referenceKey: "programs.manual_estudiante.semana12.les1.reference1", textKey: "programs.manual_estudiante.semana12.les1.verse1" },
+            { type: "verse", reference: "Proverbios 3:13-18", referenceKey: "programs.manual_estudiante.semana12.les1.reference2", textKey: "programs.manual_estudiante.semana12.les1.verse2" },
+            { type: "verse", reference: "1 Reyes 3:9-12", referenceKey: "programs.manual_estudiante.semana12.les1.reference3", textKey: "programs.manual_estudiante.semana12.les1.verse3" },
             { type: "text", textKey: "programs.manual_estudiante.semana12.les1.objectives" },
           ],
           questions: [
@@ -277,9 +277,9 @@ export default {
           id: "les-1",
           titleKey: "programs.manual_estudiante.semana13.les1.title",
           contentBlocks: [
-            { type: "verse", reference: "2 Timoteo 2:2", textKey: "programs.manual_estudiante.semana13.les1.verse1" },
-            { type: "verse", reference: "Mateo 28:19-20", textKey: "programs.manual_estudiante.semana13.les1.verse2" },
-            { type: "verse", reference: "Hechos 6:1-4", textKey: "programs.manual_estudiante.semana13.les1.verse3" },
+            { type: "verse", reference: "2 Timoteo 2:2", referenceKey: "programs.manual_estudiante.semana13.les1.reference1", textKey: "programs.manual_estudiante.semana13.les1.verse1" },
+            { type: "verse", reference: "Mateo 28:19-20", referenceKey: "programs.manual_estudiante.semana13.les1.reference2", textKey: "programs.manual_estudiante.semana13.les1.verse2" },
+            { type: "verse", reference: "Hechos 6:1-4", referenceKey: "programs.manual_estudiante.semana13.les1.reference3", textKey: "programs.manual_estudiante.semana13.les1.verse3" },
             { type: "text", textKey: "programs.manual_estudiante.semana13.les1.objectives" },
           ],
           questions: [
@@ -299,9 +299,9 @@ export default {
           id: "les-1",
           titleKey: "programs.manual_estudiante.semana14.les1.title",
           contentBlocks: [
-            { type: "verse", reference: "2 Corintios 4:7-9", textKey: "programs.manual_estudiante.semana14.les1.verse1" },
-            { type: "verse", reference: "Filipenses 4:6-7", textKey: "programs.manual_estudiante.semana14.les1.verse2" },
-            { type: "verse", reference: "Salmo 46:1-2", textKey: "programs.manual_estudiante.semana14.les1.verse3" },
+            { type: "verse", reference: "2 Corintios 4:7-9", referenceKey: "programs.manual_estudiante.semana14.les1.reference1", textKey: "programs.manual_estudiante.semana14.les1.verse1" },
+            { type: "verse", reference: "Filipenses 4:6-7", referenceKey: "programs.manual_estudiante.semana14.les1.reference2", textKey: "programs.manual_estudiante.semana14.les1.verse2" },
+            { type: "verse", reference: "Salmo 46:1-2", referenceKey: "programs.manual_estudiante.semana14.les1.reference3", textKey: "programs.manual_estudiante.semana14.les1.verse3" },
             { type: "text", textKey: "programs.manual_estudiante.semana14.les1.objectives" },
           ],
           questions: [
@@ -321,9 +321,9 @@ export default {
           id: "les-1",
           titleKey: "programs.manual_estudiante.semana15.les1.title",
           contentBlocks: [
-            { type: "verse", reference: "Lucas 16:10-11", textKey: "programs.manual_estudiante.semana15.les1.verse1" },
-            { type: "verse", reference: "2 Corintios 9:6-8", textKey: "programs.manual_estudiante.semana15.les1.verse2" },
-            { type: "verse", reference: "Mateo 6:24", textKey: "programs.manual_estudiante.semana15.les1.verse3" },
+            { type: "verse", reference: "Lucas 16:10-11", referenceKey: "programs.manual_estudiante.semana15.les1.reference1", textKey: "programs.manual_estudiante.semana15.les1.verse1" },
+            { type: "verse", reference: "2 Corintios 9:6-8", referenceKey: "programs.manual_estudiante.semana15.les1.reference2", textKey: "programs.manual_estudiante.semana15.les1.verse2" },
+            { type: "verse", reference: "Mateo 6:24", referenceKey: "programs.manual_estudiante.semana15.les1.reference3", textKey: "programs.manual_estudiante.semana15.les1.verse3" },
             { type: "text", textKey: "programs.manual_estudiante.semana15.les1.objectives" },
           ],
           questions: [
@@ -343,9 +343,9 @@ export default {
           id: "les-1",
           titleKey: "programs.manual_estudiante.semana16.les1.title",
           contentBlocks: [
-            { type: "verse", reference: "Hebreos 12:1-3", textKey: "programs.manual_estudiante.semana16.les1.verse1" },
-            { type: "verse", reference: "2 Timoteo 4:7-8", textKey: "programs.manual_estudiante.semana16.les1.verse2" },
-            { type: "verse", reference: "Gálatas 6:9", textKey: "programs.manual_estudiante.semana16.les1.verse3" },
+            { type: "verse", reference: "Hebreos 12:1-3", referenceKey: "programs.manual_estudiante.semana16.les1.reference1", textKey: "programs.manual_estudiante.semana16.les1.verse1" },
+            { type: "verse", reference: "2 Timoteo 4:7-8", referenceKey: "programs.manual_estudiante.semana16.les1.reference2", textKey: "programs.manual_estudiante.semana16.les1.verse2" },
+            { type: "verse", reference: "Gálatas 6:9", referenceKey: "programs.manual_estudiante.semana16.les1.reference3", textKey: "programs.manual_estudiante.semana16.les1.verse3" },
             { type: "text", textKey: "programs.manual_estudiante.semana16.les1.objectives" },
           ],
           questions: [
